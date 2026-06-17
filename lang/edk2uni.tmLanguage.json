@@ -1,0 +1,23 @@
+{
+  "name": "EDK2 UNI",
+  "scopeName": "source.edk2uni",
+  "fileTypes": [
+    "uni",
+    "UNI"
+  ],
+  "patterns": [
+    {
+      "include": "#comment"
+    }
+  ],
+  "repository": {
+    "comment": {
+      "patterns": [
+        {
+          "name": "comment.line.double-slash.edk2uni",
+          "match": "//.*$"
+        }
+      ]
+    }
+  }
+}

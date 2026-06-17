@@ -1,0 +1,198 @@
+#==============================================================================
+#
+#  ## @file
+#  Syntax Extension Test INF File for EDK II v1.27.
+#
+#==============================================================================
+
+[Defines]
+  INF_VERSION                    = 1.27
+  INF_VERSION                    = 0x0001001B
+  BASE_NAME                      = CompleteDefinesAllKeywordsTest
+  FILE_GUID                      = 9F8D7C6B-5A4B-3210-AFED-0123456789AB
+  VERSION_STRING                 = 1.0
+  ENTRY_POINT                    = TestModuleEntryPoint
+  UNLOAD_IMAGE                   = TestModuleUnloadImage
+  CONSTRUCTOR                    = TestModuleConstructor
+  DESTRUCTOR                     = TestModuleDestructor
+  SHADOW                         = TRUE
+  SHADOW                         = FALSE
+  PCI_VENDOR_ID                  = 0x1234
+  PCI_DEVICE_ID                  = 0xABCD
+  PCI_CLASS_CODE                 = 0x020000
+  PCI_REVISION                   = 0x01
+  BUILD_NUMBER                   = 42
+  SPECIFICATION_VERSION          = 0x00020028
+  UEFI_SPECIFICATION_VERSION     = 0x00020050
+  EDK_RELEASE_VERSION            = 0x00020000
+  MODULE_UNI_FILE                = CompleteDefinesAllKeywordsTest.uni
+  COMPRESSED                     = FALSE
+  COMPRESSED                     = TRUE
+  PCD_IS_DRIVER                  = PEIM
+  PCD_IS_DRIVER                  = DXE_DRIVER
+  UEFI_HII_RESOURCE_SECTION      = TRUE
+  UEFI_HII_RESOURCE_SECTION      = FALSE
+  CUSTOM_MAKEFILE                = MSFT | nmake -f Makefile
+  MODULE_TYPE                    = BASE
+  MODULE_TYPE                    = SEC
+  MODULE_TYPE                    = PEI_CORE
+  MODULE_TYPE                    = PEIM
+  MODULE_TYPE                    = DXE_CORE
+  MODULE_TYPE                    = DXE_DRIVER
+  MODULE_TYPE                    = DXE_RUNTIME_DRIVER
+  MODULE_TYPE                    = DXE_SAL_DRIVER
+  MODULE_TYPE                    = DXE_SMM_DRIVER
+  MODULE_TYPE                    = SMM_CORE
+  MODULE_TYPE                    = UEFI_DRIVER
+  MODULE_TYPE                    = UEFI_APPLICATION
+  MODULE_TYPE                    = USER_DEFINED
+  LIBRARY_CLASS                  = TestLib
+  LIBRARY_CLASS                  = AdvancedLib | BASE SEC PEI_CORE PEIM DXE_CORE DXE_DRIVER DXE_RUNTIME_DRIVER DXE_SAL_DRIVER DXE_SMM_DRIVER SMM_CORE UEFI_DRIVER UEFI_APPLICATION USER_DEFINED
+  LIBRARY_CLASS                  = NullLib | NULL
+  DEFINE MY_HEX_VAL              = 0x1F2A3B4C
+  DEFINE MY_STR_VAL              = "VSCode-EDK2-Test-String"
+  DEFINE NESTED_MACRO            = $(MY_STR_VAL)_Suffix
+  DEFINE MULTI_LINE_MACRO        = ValuePartA \
+                                   ValuePartB \
+                                   ValuePartC
+
+[Sources]
+  Common/MainTest.c              | * | * | gEfiMdePkgTokenSpaceGuid.PcdDriverFeatureFlag
+  Common/Helper.h
+
+[Sources.IA32, Sources.X64, Sources.EBC]
+  X86_Ebc/ProcessorSpecific.c    | MSFT
+  X86_Ebc/AsmMath.nasm           | INTEL | "Optional Compiler Flags"
+
+[Sources.ARM, Sources.AARCH64]
+  Arm/ProcessorSpecific.S        | GCC   | * | gEfiMdeModulePkgTokenSpaceGuid.PcdArmFeature
+  Arm/AsmHelper.asm              | RVCT
+
+[Sources.RISCV64, Sources.LOONGARCH64]
+  RiscvLoongarch/Generic.c
+
+[Binaries.common]
+  PE32|Binaries/ReleaseDriver.efi|*
+  PEI_DEPEX|Binaries/PeiDriver.depex|DEBUG
+  DXE_DEPEX|Binaries/DxeDriver.depex|RELEASE
+  SMM_DEPEX|Binaries/SmmDriver.depex
+  TE|Binaries/TeImage.te
+  SEC|Binaries/SecSec.sec
+  BIN|Binaries/RawBlob.bin
+  LIB|Binaries/StaticLib.lib
+  ASL|Binaries/AcpiTable.aml
+  VER|Binaries/VersionInfo.ver
+  UI|Binaries/UserInterface.ui
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+
+[Packages.X64, Packages.AARCH64]
+  IntelFrameworkPkg/IntelFrameworkPkg.dec
+
+[LibraryClasses]
+  BaseLib
+  BaseMemoryLib
+  DebugLib|gEfiMdePkgTokenSpaceGuid.PcdDebugLibFeatureProperty
+  UefiBootServicesTableLib
+  UefiDriverEntryPoint
+
+[LibraryClasses.IA32, LibraryClasses.X64]
+  PciLib
+  IoLib
+
+[Protocols]
+  gEfiPciIoProtocolGuid                 ## CONSUMES
+  gEfiSimpleTextOutProtocolGuid         ## PRODUCES
+  gEfiLoadedImageProtocolGuid           ## SOMETIMES_CONSUMES
+  gEfiDriverBindingProtocolGuid         ## TO_START
+  gEfiComponentNameProtocolGuid         ## BY_START
+
+[Guids]
+  gEfiVariableGuid                      ## CONSUMES
+  gEfiHobListGuid                       ## SOMETIMES_PRODUCES
+  gEfiEventVirtualAddressChangeGuid     ## CONSUMES
+  gEfiFileInfoGuid                      ## SOMETIMES_CONSUMES
+
+[Ppis]
+  gEfiPeiMasterBootModePpiGuid          ## CONSUMES
+  gPeiNtThunkPpiGuid                    ## SOMETIMES_CONSUMES
+  gEfiPeiStallPpiGuid                   ## PRODUCES
+
+[FeaturePcd]
+  gEfiMdePkgTokenSpaceGuid.PcdTypeAFeatureTest | TRUE | 0x00000001
+  gEfiMdeModulePkgTokenSpaceGuid.PcdBrowserSupport | FALSE
+
+[FixedPcd]
+  gEfiMdePkgTokenSpaceGuid.PcdFixedTestDecimal | 987654321
+  gEfiMdePkgTokenSpaceGuid.PcdFixedTestHex     | 0xDEADBEEF | 0x00000002
+  gEfiMdePkgTokenSpaceGuid.PcdFixedTestBool    | TRUE
+  gEfiMdePkgTokenSpaceGuid.PcdFixedTestString  | $(MY_STR_VAL)
+  gEfiMdePkgTokenSpaceGuid.PcdFixedTestArray   | {0x01, 0x02, 0x03, 0x04, 0x05} | 0x00000003
+  gEfiMdePkgTokenSpaceGuid.PcdFixedTestUnicode | L"Unicode String Test"
+
+[Pcd]
+  gEfiMdePkgTokenSpaceGuid.PcdPlatformBootTimeOut | 15
+  gEfiMdePkgTokenSpaceGuid.PcdNoValueStandardTest
+
+[PatchableInModulePcd]
+  gEfiMdePkgTokenSpaceGuid.PcdPatchableDebugLevel | 0xFFFFFFFF
+  gEfiMdePkgTokenSpaceGuid.PcdNoValuePatchableTest
+
+[DynamicPcd]
+  gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageVariableBase | 0x00000000
+  gEfiMdeModulePkgTokenSpaceGuid.PcdNoValueDynamicTest
+
+[DynamicExPcd]
+  gEfiMdePkgTokenSpaceGuid.PcdDynamicExTestToken | 0x55AA
+  gEfiMdePkgTokenSpaceGuid.PcdNoValueDynamicExTest
+
+[Depex]
+  TRUE
+
+[Depex.common]
+  TRUE
+
+[Depex.common.PEIM]
+  FALSE
+
+[Depex.IA32.DXE_DRIVER]
+  NOT gEfiPcdProtocolGuid
+
+[Depex.X64.DXE_RUNTIME_DRIVER]
+  gEfiPciIoProtocolGuid AND gEfiVariableGuid
+
+[Depex.AARCH64.DXE_SMM_DRIVER]
+  gEfiHobListGuid OR gEfiFileInfoGuid
+
+[Depex.RISCV64.USER_DEFINED]
+  SOR gEfiPciIoProtocolGuid BEFORE gEfiLoadedImageProtocolGuid
+
+[Depex.LOONGARCH64]
+  gEfiPeiMasterBootModePpiGuid AFTER gPeiNtThunkPpiGuid
+
+[Depex.IA32.DXE_DRIVER, Depex.X64.DXE_DRIVER]
+  (gEfiPciIoProtocolGuid AND NOT gEfiVariableGuid) OR FALSE
+
+[BuildOptions]
+  MSFT:*_*_*_CC_FLAGS = /D EXTREME_TESTING=1 /Od /W4
+  GCC:RELEASE_*_*_CC_FLAGS = -DNDEBUG -O3 -Wall -Werror
+  *_*_IA32_DLINK_FLAGS = /ALIGN:4096 /MACHINE:X86
+  INTEL:DEBUG_MYTOOL_X64_ASM_FLAGS = -v -save-temps
+  XCODE:*_*_*_CC_FLAGS = -std=c99
+
+[BuildOptions.IA32]
+  MSFT:*_*_IA32_CC_FLAGS = /D TEST_IA32_ONLY
+
+[UserExtensions.TianoCore."ExtraInformation"]
+  StringData = "Hello VSCode Extension Developer Team"
+  MetaData = $(MY_HEX_VAL)
+  NestedBlock = {
+    Key1 = Value1
+    Key2 = Value2
+  }
+
+[UserExtensions.MyCustomVendor.Template_ID]
+  CustomField1 = 0x99
+  CustomField2 = "Custom Payload"

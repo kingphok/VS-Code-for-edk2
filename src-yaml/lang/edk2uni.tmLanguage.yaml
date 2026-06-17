@@ -1,0 +1,16 @@
+# This is the syntax definition source for EDK2 UNI files
+name: EDK2 UNI
+scopeName: source.edk2uni
+fileTypes:
+  - uni
+  - UNI
+
+patterns:
+  - include: "#comment"
+
+repository:
+  # Component for single-line comments starting with //
+  comment:
+    patterns:
+      - name: comment.line.double-slash.edk2uni
+        match: '//.*$'

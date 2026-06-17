@@ -1,0 +1,31 @@
+name: VS-Code-for-edk2
+displayName: VS-Code-for-edk2
+description: VS Code Extension for reading EDK2 Language easily.
+version: 0.0.1
+publisher: your-publisher-id
+engines:
+  vscode: "^1.120.0"
+categories:
+  - Programming Languages
+contributes:
+  languages:
+    - id: edk2inf
+      aliases:
+        - EDK2 INF
+      extensions:
+        - ".inf"
+      configuration: ./lang/edk2inf.configuration.json
+    - id: edk2uni
+      aliases:
+        - EDK2 UNI
+      extensions:
+        - ".uni"
+        - ".UNI"
+      configuration: ./lang/edk2uni.configuration.json
+  grammars:
+    - language: edk2inf
+      scopeName: source.edk2inf
+      path: ./lang/edk2inf.tmLanguage.json
+    - language: edk2uni
+      scopeName: source.edk2uni
+      path: ./lang/edk2uni.tmLanguage.json
