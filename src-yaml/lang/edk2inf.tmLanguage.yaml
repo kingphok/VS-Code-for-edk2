@@ -12,7 +12,7 @@ repository:
   # Component for single-line comments starting with #
   comment:
     patterns:
-      - name: comment.line.number-sign
+      - name: comment.line.number-sign.edk2inf
         match: '#.*$'
 
   # Component for core section headers, e.g., [Defines], [Components]

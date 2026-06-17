@@ -16,7 +16,7 @@
     "comment": {
       "patterns": [
         {
-          "name": "comment.line.number-sign",
+          "name": "comment.line.number-sign.edk2inf",
           "match": "#.*$"
         }
       ]
