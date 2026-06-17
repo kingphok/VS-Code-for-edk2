@@ -1,0 +1,22 @@
+# This is the syntax definition source for EDK2 DEC files
+name: EDK2 DEC
+scopeName: source.edk2dec
+fileTypes:
+  - dec
+
+patterns:
+  - include: "#comment"
+  - include: "#section"
+
+repository:
+  # Component for single-line comments starting with #
+  comment:
+    patterns:
+      - name: comment.line.number-sign.edk2dec
+        match: '#.*$'
+
+  # Component for core section headers, e.g., [Defines], [Components]
+  section:
+    patterns:
+      - name: entity.name.section.edk2dec
+        match: '^\s*\[[a-zA-Z0-9_,\.\| ]+\]'

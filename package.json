@@ -13,6 +13,38 @@
   "contributes": {
     "languages": [
       {
+        "id": "edk2dec",
+        "aliases": [
+          "EDK2 DEC"
+        ],
+        "extensions": [
+          ".dec"
+        ],
+        "configuration": "./lang/edk2dec.configuration.json"
+      },
+      {
+        "id": "edk2dsc",
+        "aliases": [
+          "EDK2 DSC"
+        ],
+        "extensions": [
+          ".dsc",
+          ".dsc.inc"
+        ],
+        "configuration": "./lang/edk2dsc.configuration.json"
+      },
+      {
+        "id": "edk2fdf",
+        "aliases": [
+          "EDK2 FDF"
+        ],
+        "extensions": [
+          ".fdf",
+          ".fdf.inc"
+        ],
+        "configuration": "./lang/edk2fdf.configuration.json"
+      },
+      {
         "id": "edk2inf",
         "aliases": [
           "EDK2 INF"
@@ -32,9 +64,36 @@
           ".UNI"
         ],
         "configuration": "./lang/edk2uni.configuration.json"
+      },
+      {
+        "id": "edk2vfr",
+        "aliases": [
+          "EDK2 VFR"
+        ],
+        "extensions": [
+          ".vfr",
+          ".vfi",
+          ".hfr"
+        ],
+        "configuration": "./lang/edk2vfr.configuration.json"
       }
     ],
     "grammars": [
+      {
+        "language": "edk2dec",
+        "scopeName": "source.edk2dec",
+        "path": "./lang/edk2dec.tmLanguage.json"
+      },
+      {
+        "language": "edk2dsc",
+        "scopeName": "source.edk2dsc",
+        "path": "./lang/edk2dsc.tmLanguage.json"
+      },
+      {
+        "language": "edk2fdf",
+        "scopeName": "source.edk2fdf",
+        "path": "./lang/edk2fdf.tmLanguage.json"
+      },
       {
         "language": "edk2inf",
         "scopeName": "source.edk2inf",
@@ -44,6 +103,11 @@
         "language": "edk2uni",
         "scopeName": "source.edk2uni",
         "path": "./lang/edk2uni.tmLanguage.json"
+      },
+      {
+        "language": "edk2vfr",
+        "scopeName": "source.edk2vfr",
+        "path": "./lang/edk2vfr.tmLanguage.json"
       }
     ]
   }

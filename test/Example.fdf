@@ -1,0 +1,103 @@
+#==============================================================================
+#
+#  ## @file
+#  Syntax Extension Test FDF File for EDK II v1.28.01
+#
+#==============================================================================
+
+[Defines]
+  FDF_SPECIFICATION              = 0x0001001B
+  DEFINE TARGET_VER              = 2
+  DEFINE SECURE_ENABLE           = TRUE
+  DEFINE COMPILER_SET            = "GCC"
+  DEFINE INF_OUTPUT_DIR          = "Build/Output"
+
+  SET gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel = 0x80000000
+
+!include MdePkg/MdePkgLibs.fdf
+
+[FD.TestPlatform_FD]
+  BaseAddress   = 0xFFF00000
+  Size          = 0x00100000
+  ErasePolarity = 1
+  BlockSize     = 0x00010000
+  NumBlocks     = 0x10
+
+  DEFINE FD_REGION_OFFSET        = 0x00000000
+
+  $(FD_REGION_OFFSET)|0x000C0000
+  gEfiMdePkgTokenSpaceGuid.PcdFlashFvMainBase|gEfiMdePkgTokenSpaceGuid.PcdFlashFvMainSize
+  FV = FV_MAIN
+
+  0x000C0000|0x00040000
+  gEfiMdePkgTokenSpaceGuid.PcdFlashFvRecoveryBase|gEfiMdePkgTokenSpaceGuid.PcdFlashFvRecoverySize
+  FV = FV_RECOVERY
+
+[FV.FV_MAIN]
+  BlockSize          = 0x00010000
+  FvBaseAddress      = 0xFFF00000
+  FvForceRebase      = TRUE
+  FvNameGuid         = 12345678-ABCD-4321-8888-A1B2C3D4E5F6
+  FvNameString       = TRUE
+  FvAlignment        = 16M
+
+  SET gEfiMdeModulePkgTokenSpaceGuid.PcdFvIsMain = TRUE
+
+  INF MdeModulePkg/Core/Dxe/DxeMain.inf
+  INF MdeModulePkg/Universal/BdsDxe/BdsDxe.inf
+
+  FILE RAW = 9A6A1234-ABCD-4321-8888-A1B2C3D4E5F6 {
+    SECTION RAW = TestPkg/Binary/Blob1.bin
+    SECTION RAW = TestPkg/Binary/Blob2.bin
+  }
+
+[FV.FV_RECOVERY]
+  BlockSize          = 0x00010000
+  FvAlignment        = Auto
+
+  INF MdeModulePkg/Core/Pei/PeiMain.inf
+
+[Capsule.TestCapsule]
+  CapsuleGuid = 87654321-ABCD-4321-8888-A1B2C3D4E5F6
+
+  INF MdeModulePkg/Universal/CapsuleRuntimeDxe/CapsuleRuntimeDxe.inf
+  FILE FD = TestPlatform_FD
+
+[FmpPayload.TestFmp]
+  ImageTypeId    = 44332211-ABCD-4321-8888-A1B2C3D4E5F6
+  ImageIndex     = 1
+  HardwareInstance = 0
+  MonotonicCount = 1
+
+  FV = FV_MAIN
+
+!if $(BUILD_TARGET) == "DEBUG" AND $(SECURE_ENABLE) == TRUE
+  SET gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel = 0x80000042
+!elif $(BUILD_TARGET) == "RELEASE" OR $(TARGET_VER) >= 2
+  SET gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel = 0x00000000
+!elif !$(SECURE_ENABLE)
+  SET gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel = 0x80000000
+!elif $(TARGET_VER) != 0 AND $(TARGET_VER) < 5
+  SET gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel = 0x0000000F
+!elif $(TARGET_VER) <= 1
+  SET gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel = 0x00000001
+!elif $(COMPILER_SET) in "GCC, CLANG"
+  SET gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel = 0x40000000
+!else
+  !error "Unsupported configuration combination detected in FDF!"
+!endif
+
+[Rule.Common.SEC]
+  FILE SEC = $(NAMED_GUID) {
+    PE32      PE32           $(INF_OUTPUT_DIR)/$(MODULE_NAME).efi
+    UI        STRING ="$(MODULE_NAME)" Optional
+    VERSION   STRING ="$(MODULE_VERSION)" Optional
+  }
+
+[Rule.Common.PEI_CORE]
+  FILE PEI_CORE = $(NAMED_GUID) {
+    TE       TE             $(INF_OUTPUT_DIR)/$(MODULE_NAME).efi
+  }
+
+[UserExtensions.TianoCore."ExtraFiles"]
+  PlatformExtra.uni

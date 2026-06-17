@@ -1,0 +1,24 @@
+{
+  "name": "EDK2 VFR",
+  "scopeName": "source.edk2vfr",
+  "fileTypes": [
+    "vfr",
+    "vfi",
+    "hfr"
+  ],
+  "patterns": [
+    {
+      "include": "#comment"
+    }
+  ],
+  "repository": {
+    "comment": {
+      "patterns": [
+        {
+          "name": "comment.line.double-slash.edk2vfr",
+          "match": "//.*$"
+        }
+      ]
+    }
+  }
+}

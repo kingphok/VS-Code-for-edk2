@@ -1,0 +1,17 @@
+# This is the syntax definition source for EDK2 VFR files
+name: EDK2 VFR
+scopeName: source.edk2vfr
+fileTypes:
+  - vfr
+  - vfi
+  - hfr
+
+patterns:
+  - include: "#comment"
+
+repository:
+  # Component for single-line comments starting with //
+  comment:
+    patterns:
+      - name: comment.line.double-slash.edk2vfr
+        match: '//.*$'

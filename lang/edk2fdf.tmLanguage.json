@@ -1,0 +1,34 @@
+{
+  "name": "EDK2 FDF",
+  "scopeName": "source.edk2fdf",
+  "fileTypes": [
+    "fdf",
+    "fdf.inc"
+  ],
+  "patterns": [
+    {
+      "include": "#comment"
+    },
+    {
+      "include": "#section"
+    }
+  ],
+  "repository": {
+    "comment": {
+      "patterns": [
+        {
+          "name": "comment.line.number-sign.edk2fdf",
+          "match": "#.*$"
+        }
+      ]
+    },
+    "section": {
+      "patterns": [
+        {
+          "name": "entity.name.section.edk2fdf",
+          "match": "^\\s*\\[[a-zA-Z0-9_,\\.\\| ]+\\]"
+        }
+      ]
+    }
+  }
+}

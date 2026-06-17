@@ -1,0 +1,34 @@
+{
+  "name": "EDK2 DSC",
+  "scopeName": "source.edk2dsc",
+  "fileTypes": [
+    "dsc",
+    "dsc.inc"
+  ],
+  "patterns": [
+    {
+      "include": "#comment"
+    },
+    {
+      "include": "#section"
+    }
+  ],
+  "repository": {
+    "comment": {
+      "patterns": [
+        {
+          "name": "comment.line.number-sign.edk2dsc",
+          "match": "#.*$"
+        }
+      ]
+    },
+    "section": {
+      "patterns": [
+        {
+          "name": "entity.name.section.edk2dsc",
+          "match": "^\\s*\\[[a-zA-Z0-9_,\\.\\| ]+\\]"
+        }
+      ]
+    }
+  }
+}

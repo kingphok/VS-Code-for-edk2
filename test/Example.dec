@@ -1,0 +1,62 @@
+#==============================================================================
+#
+#  ## @file
+#  Syntax Extension Test DEC File for EDK II v1.27.
+#
+#==============================================================================
+
+[Defines]
+  DEC_SPECIFICATION              = 1.27
+  PACKAGE_NAME                   = TestPkg
+  PACKAGE_GUID                   = 9A6A1234-ABCD-4321-8888-A1B2C3D4E5F6
+  PACKAGE_VERSION                = 1.00
+  PACKAGE_UNI_FILE               = TestPkg.uni
+
+[Includes.common]
+  Include
+  Include/Library
+
+[Includes.IA32, Includes.X64]
+  Include/Cpu/X86
+
+[Includes.ARM, Includes.AARCH64]
+  Include/Cpu/Arm
+
+[LibraryClasses.common]
+  TestLib|Include/Library/TestLib.h
+
+[LibraryClasses.IA32]
+  TestCpuLib|Include/Library/Ia32/TestCpuLib.h
+
+[Guids.common]
+  gTestPkgTokenSpaceGuid         = { 0x11223344, 0x5566, 0x7788, { 0x99, 0xAA, 0xBB, 0xCC, 0xDD, 0xEE, 0xFF, 0x00 } }
+  gTestEventGuid                 = { 0x22334455, 0x6677, 0x8899, { 0xAA, 0xBB, 0xCC, 0xDD, 0xEE, 0xFF, 0x00, 0x11 } }
+
+[Protocols.common]
+  gTestProtocolGuid              = { 0x33445566, 0x7788, 0x8899, { 0xBB, 0xCC, 0xDD, 0xEE, 0xFF, 0x00, 0x11, 0x22 } }
+
+[Ppis.common]
+  gTestPpiGuid                   = { 0x44556677, 0x8899, 0x99AA, { 0xCC, 0xDD, 0xEE, 0xFF, 0x00, 0x11, 0x22, 0x33 } }
+
+[PcdsFixedAtBuild.common]
+  gTestPkgTokenSpaceGuid.PcdFixedInt8|0x01|UINT8|0x00000001
+  gTestPkgTokenSpaceGuid.PcdFixedInt16|0x1234|UINT16|0x00000002
+  gTestPkgTokenSpaceGuid.PcdFixedInt32|0x12345678|UINT32|0x00000003
+  gTestPkgTokenSpaceGuid.PcdFixedInt64|0x1234567890ABCDEF|UINT64|0x00000004
+  gTestPkgTokenSpaceGuid.PcdFixedBool|TRUE|BOOLEAN|0x00000005
+  gTestPkgTokenSpaceGuid.PcdFixedString|"Test"|VOID*|0x00000006
+
+[PcdsFeatureFlag.common]
+  gTestPkgTokenSpaceGuid.PcdFeatureEnable|FALSE|BOOLEAN|0x00000007
+
+[PcdsPatchableInModule.common]
+  gTestPkgTokenSpaceGuid.PcdPatchInt32|0x00000000|UINT32|0x00000008
+
+[PcdsDynamic.common]
+  gTestPkgTokenSpaceGuid.PcdDynamicInt32|0x00000000|UINT32|0x00000009
+
+[PcdsDynamicEx.common]
+  gTestPkgTokenSpaceGuid.PcdDynamicExInt32|0x00000000|UINT32|0x0000000A
+
+[UserExtensions.TianoCore."ExtraFiles"]
+  TestPkgExtra.uni
