@@ -1,0 +1,24 @@
+[submodule "datasets/edk2-DecSpecification"]
+	path = datasets/edk2-DecSpecification
+	url = https://github.com/tianocore-docs/edk2-DecSpecification
+	branch = release/1.27
+[submodule "datasets/edk2-DscSpecification"]
+	path = datasets/edk2-DscSpecification
+	url = https://github.com/tianocore-docs/edk2-DscSpecification
+	branch = release/1.28
+[submodule "datasets/edk2-FdfSpecification"]
+	path = datasets/edk2-FdfSpecification
+	url = https://github.com/tianocore-docs/edk2-FdfSpecification
+	branch = release/1.28.01
+[submodule "datasets/edk2-InfSpecification"]
+	path = datasets/edk2-InfSpecification
+	url = https://github.com/tianocore-docs/edk2-InfSpecification
+	branch = release/1.27
+[submodule "datasets/edk2-UniSpecification"]
+	path = datasets/edk2-UniSpecification
+	url = https://github.com/tianocore-docs/edk2-UniSpecification
+	branch = release/1.40
+[submodule "datasets/edk2-VfrSpecification"]
+	path = datasets/edk2-VfrSpecification
+	url = https://github.com/tianocore-docs/edk2-VfrSpecification
+	branch = release/1.92

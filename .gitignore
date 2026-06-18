@@ -1,0 +1,12 @@
+datasets/*
+
+!datasets/.gitkeep
+!datasets/edk2-DecSpecification
+!datasets/edk2-DscSpecification
+!datasets/edk2-FdfSpecification
+!datasets/edk2-InfSpecification
+!datasets/edk2-UniSpecification
+!datasets/edk2-VfrSpecification
+
+
+
