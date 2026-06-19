@@ -41,3 +41,24 @@ foreach ($file in $yamlFiles) {
 }
 
 Write-Host "Success: All YAML files (including subdirectories) converted to UTF-8 (No BOM) JSON!" -ForegroundColor Green
+
+# Collect all JSON files under the source language directory recursively.
+$sourceLangDir = Join-Path $baseDir "lang"
+$jsonFiles = Get-ChildItem -Path $sourceLangDir -Filter "*.json" -Recurse
+# Target extension language folder in the user profile.
+$extensionPath = Join-Path $env:USERPROFILE ".vscode\extensions\VS-Code-for-edk2\lang"
+
+foreach ($file in $jsonFiles) {
+    # Preserve any subdirectory structure from sourceDir\lang in the destination.
+    $relativeLangPath = $file.FullName.Replace($sourceLangDir.TrimEnd('\') + "\", "")
+    $destinationFile = Join-Path $extensionPath $relativeLangPath
+    $destinationDir = Split-Path -Parent $destinationFile
+
+    if (-not (Test-Path $destinationDir)) {
+        New-Item -ItemType Directory -Path $destinationDir | Out-Null
+    }
+
+    # Copy each JSON file to the extension folder, overwriting existing files.
+    Copy-Item -Path $file.FullName -Destination $destinationFile -Force
+}
+Write-Host "Success: Copying .vscode\extensions\VS-Code-for-edk2 completed!" -ForegroundColor Green
