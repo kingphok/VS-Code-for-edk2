@@ -6,7 +6,13 @@ fileTypes:
 
 patterns:
   - include: "#comment"
-  - include: "#section"
+  - include: "#Section"
+  - include: "#define_statements"
+  - include: "#macro"
+  - include: "#moduleType"
+  - include: "#binary_file_type"
+  - include: "#constants_and_data"
+  - include: "#compiler_flag"
 
 repository:
   # Component for single-line comments starting with #
@@ -15,8 +21,161 @@ repository:
       - name: comment.line.number-sign.edk2inf
         match: '#.*$'
 
-  # Component for core section headers, e.g., [Defines], [Components]
-  section:
+  # 3.2 Component INF Definition, 3.8 PCD Sections
+  Section:
     patterns:
       - name: entity.name.section.edk2inf
-        match: '^\s*\[[a-zA-Z0-9_,\.\| ]+\]'
+        begin: '^[ \t]*(\[)'
+        end: '(\])'
+        beginCaptures:
+          '1': { name: punctuation.definition.section.begin.edk2inf }
+        endCaptures:
+          '1': { name: punctuation.definition.section.end.edk2inf }
+        patterns:
+          # 1. Error Detection: Match spaces trailing right after a dot character
+          - name: invalid.illegal.whitespace.edk2inf
+            match: '\.[ \t]+'
+
+          # 2. Dot Separator: Match a clean dot without trailing whitespace
+          - name: punctuation.separator.dot.edk2inf
+            match: '\.'
+
+          # 3. Standard Section Keywords
+          - name: keyword.control.edk2inf
+            match: '\b(Defines|BuildOptions|LibraryClasses|Packages|FixedPcd|FeaturePcd|PatchPcd|Pcd|PcdEx|Sources|Protocols|Ppis|Guids|Binaries|Depex|UserExtensions)\b'
+
+          # 4. Double-quoted Strings
+          - name: string.quoted.double.edk2inf
+            match: '"[^"\\]*(?:\\.[^"\\]*)*"'
+
+          # 5. Comma Separator: Match comma and any optional trailing whitespace
+          - name: punctuation.separator.comma.edk2inf
+            match: ',[ \t]*'
+
+          # 6. Architecture Modifiers / Parameters (e.g., IA32, common, X64)
+          - name: variable.parameter.edk2inf
+            match: '\b[a-zA-Z0-9_]+\b'
+
+  # 3.2 Component INF Definition
+  define_statements:
+    patterns:
+      # Group A: Keywords that map to C functions (ENTRY_POINT, UNLOAD_IMAGE, CONSTRUCTOR, DESTRUCTOR)
+      - begin: '^[ \t]*(ENTRY_POINT|UNLOAD_IMAGE|CONSTRUCTOR|DESTRUCTOR)[ \t]*(=)[ \t]*'
+        end: '$'
+        beginCaptures:
+          '1': { name: keyword.control.edk2inf }              # Highlights the C-function keywords
+          '2': { name: punctuation.separator.equals.edk2inf } # Highlights the '=' character
+        patterns:
+          # Successfully colors the right-hand side text as a C function name
+          - name: entity.name.function.edk2inf
+            match: '\b[a-zA-Z0-9_]+\b'
+
+      # Group B: General INF definition keywords (reusing your constants and string definitions)
+      - begin: '^[ \t]*(INF_VERSION|BASE_NAME|FILE_GUID|MODULE_TYPE|UEFI_SPECIFICATION_VERSION|PI_SPECIFICATION_VERSION|LIBRARY_CLASS|BUILD_NUMBER|VERSION_STRING|PCD_IS_DRIVER|SHADOW|CUSTOM_MAKEFILE|DPX_SOURCE|SPEC|MODULE_UNI_FILE|UEFI_HII_RESOURCE_SECTION|PEI_PCD_DRIVER|DXE_PCD_DRIVER|PCI_VENDOR_ID|PCI_DEVICE_ID|PCI_CLASS_CODE|PCI_REVISION|PCI_COMPRESS|EDK_RELEASE_VERSION)[ \t]*(=)[ \t]*'
+        end: '$'
+        beginCaptures:
+          '1': { name: keyword.control.edk2inf }              # Highlights all other standard keywords
+          '2': { name: punctuation.separator.equals.edk2inf } # Highlights the '=' character
+        patterns:
+          # Recognize specific EDK2 Module Type keywords on the right-hand side
+          - include: "#moduleType"
+          # Evaluates the right-hand side using your template library (strings, GUIDs, booleans, numbers)
+          - include: "#constants_and_data"
+
+  # 3.2.2 MACRO Statements
+  macro:
+    patterns:
+      - begin: '^[ \t]*\b(DEFINE)\b[ \t]+([a-zA-Z_][a-zA-Z0-9_]*)[ \t]*(=)[ \t]*'
+        end: '$'
+        beginCaptures:
+          '1': { name: keyword.other.define.edk2 }        # Highlights 'DEFINE'
+          '2': { name: variable.other.macro.edk2 }        # Highlights macro variable name (e.g., ABC)
+          '3': { name: keyword.operator.assignment.edk2 } # Highlights '='
+        patterns:
+          # Evaluates the right-hand side using your template library (constants, strings, macros, etc.)
+          - include: "#constants_and_data"
+
+  # 3.2.1 Common Definitions
+  moduleType:
+    patterns:
+      - name: variable.language.edk2inf
+        match: '\b(BASE|SEC|PEI_CORE|PEIM|DXE_CORE|DXE_DRIVER|SMM_CORE|DXE_RUNTIME_DRIVER|DXE_SAL_DRIVER|DXE_SMM_DRIVER|UEFI_DRIVER|UEFI_APPLICATION|USER_DEFINED)\b'
+
+  # 3.15 [Binaries] Section
+  binary_file_type:
+    patterns:
+      - name: variable.language.edk2inf
+        match: '\b(UNI_UI|UI|UNI_VER|VER|ACPI|ASL|PE32|PIC|FV|PEI_DEPEX|DXE_DEPEX|SMM_DEPEX|TE|BIN|RAW|COMPAT16|DISPOSABLE|LIB)\b'
+
+  # GUID, Macros, Strings, Hexadecimal/Decimal numbers, Booleans, Logical Operators, including after the "|" operator in LIBRARY_CLASS definitions
+  constants_and_data:
+    patterns:
+      # GUID (Format: 8-4-4-4-12 hex characters)
+      - name: constant.numeric.guid.edk2inf
+        match: '\b[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}\b'
+
+      # Macros / Environment Variables (e.g., $(MY_STR_VAL))
+      - include: "#macro_expression"
+
+      # Double-quoted Strings (e.g., "VSCode-EDK2-Test-String")
+      - include: "#string_expression"
+
+      # Include module types here so they can be recognized even after the "|" operator
+      - include: "#moduleType"
+
+      # Highlights the pipe separator "|" used in LIBRARY_CLASS
+      - name: keyword.operator.logical.pipe.edk2inf
+        match: '\|'
+
+      # Version Strings (e.g., 1.0, 1.27.1, 1.20.0.1)
+      - name: constant.numeric.version.edk2inf
+        match: '\b[0-9]+(\.[0-9]+)+\b'
+
+      # Boolean values (TRUE or FALSE only)
+      - name: constant.language.boolean.edk2inf
+        match: '\b(TRUE|FALSE)\b'
+
+      # Logical Operators (AND, OR, NOT) -> Placed here for clean grouping
+      - name: keyword.operator.logical.edk2inf
+        match: '\b(AND|OR|NOT|SOR)\b'
+
+      # Hexadecimal numbers (Starts with 0x or 0X)
+      - name: constant.numeric.hex.edk2inf
+        match: '\b0[xX][0-9a-fA-F]+\b'
+
+      # Decimal numbers (Unsigned integers)
+      - name: constant.numeric.decimal.edk2inf
+        match: '\b[0-9]+\b'
+
+  # --- Sub-repositories to prevent blocking the pattern chain ---
+  macro_expression:
+    name: string.interpolated.edk2inf
+    begin: '(\$\()'
+    end: '(\))'
+    beginCaptures:
+      '1': { name: punctuation.definition.variable.begin.edk2inf }
+    endCaptures:
+      '1': { name: punctuation.definition.variable.end.edk2inf }
+    patterns:
+      - name: variable.other.edk2inf
+        match: '[a-zA-Z0-9_]'
+
+  string_expression:
+    name: string.quoted.double.edk2inf
+    # Matches optional 'L' prefix followed by double quotes
+    begin: '(L)?"'
+    end: '"'
+    beginCaptures:
+      '1': { name: storage.type.string.edk2inf } # Highlights the 'L' prefix
+      '2': { name: punctuation.definition.string.begin.edk2inf }
+    endCaptures:
+      '0': { name: punctuation.definition.string.end.edk2inf }
+
+  #  BootOption compiler Define Flags (e.g., -D TEST_IA32_ONLY, /D TEST_IA32_ONLY)
+  compiler_flag:
+    patterns:
+      - name: meta.preprocessor.macro.edk2inf
+        match: '(-D|/D)[ \t]*([a-zA-Z0-9_]+)'
+        captures:
+          '1': { name: keyword.control.compiler.flag.edk2inf } # Highlights '-D' or '/D'
+          '2': { name: variable.other.macro.edk2inf }          # Highlights 'TEST_IA32_ONLY'
