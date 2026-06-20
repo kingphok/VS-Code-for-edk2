@@ -22,12 +22,9 @@
   PCI_CLASS_CODE                 = 0x020000
   PCI_REVISION                   = 0x01
   BUILD_NUMBER                   = 42
-  SPECIFICATION_VERSION          = 0x00020028
   UEFI_SPECIFICATION_VERSION     = 0x00020050
   EDK_RELEASE_VERSION            = 0x00020000
   MODULE_UNI_FILE                = CompleteDefinesAllKeywordsTest.uni
-  COMPRESSED                     = FALSE
-  COMPRESSED                     = TRUE
   PCD_IS_DRIVER                  = PEIM
   PCD_IS_DRIVER                  = DXE_DRIVER
   UEFI_HII_RESOURCE_SECTION      = TRUE
@@ -52,9 +49,6 @@
   DEFINE MY_HEX_VAL              = 0x1F2A3B4C
   DEFINE MY_STR_VAL              = "VSCode-EDK2-Test-String"
   DEFINE NESTED_MACRO            = $(MY_STR_VAL)_Suffix
-  DEFINE MULTI_LINE_MACRO        = ValuePartA \
-                                   ValuePartB \
-                                   ValuePartC
 
 [Sources]
   Common/MainTest.c              | * | * | gEfiMdePkgTokenSpaceGuid.PcdDriverFeatureFlag
@@ -83,6 +77,8 @@
   ASL|Binaries/AcpiTable.aml
   VER|Binaries/VersionInfo.ver
   UI|Binaries/UserInterface.ui
+  UNI_VER|Binaries/VersionInfo.ver
+  UNI_UI|Binaries/UserInterface.ui
 
 [Packages]
   MdePkg/MdePkg.dec
@@ -136,17 +132,13 @@
   gEfiMdePkgTokenSpaceGuid.PcdPlatformBootTimeOut | 15
   gEfiMdePkgTokenSpaceGuid.PcdNoValueStandardTest
 
-[PatchableInModulePcd]
+[PatchPcd]
   gEfiMdePkgTokenSpaceGuid.PcdPatchableDebugLevel | 0xFFFFFFFF
   gEfiMdePkgTokenSpaceGuid.PcdNoValuePatchableTest
 
-[DynamicPcd]
+[PcdEx]
   gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageVariableBase | 0x00000000
   gEfiMdeModulePkgTokenSpaceGuid.PcdNoValueDynamicTest
-
-[DynamicExPcd]
-  gEfiMdePkgTokenSpaceGuid.PcdDynamicExTestToken | 0x55AA
-  gEfiMdePkgTokenSpaceGuid.PcdNoValueDynamicExTest
 
 [Depex]
   TRUE
