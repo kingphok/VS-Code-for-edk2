@@ -7,6 +7,4 @@ datasets/*
 !datasets/edk2-InfSpecification
 !datasets/edk2-UniSpecification
 !datasets/edk2-VfrSpecification
-
-
-
+!datasets/test/*
