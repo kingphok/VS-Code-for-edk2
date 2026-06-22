@@ -1,0 +1,25 @@
+# This is the syntax definition source for EDK2 IDF files
+name: EDK2 IDF
+scopeName: source.edk2idf
+fileTypes:
+  - idf
+
+patterns:
+  - include: "#comment"
+  - include: "#image_directive"
+
+repository:
+  # Single-line comments starting with //
+  comment:
+    name: comment.line.double-slash.edk2idf
+    match: //.*$
+
+  # #image directive (e.g., #image IMG_LOGO TRANSPARENT Logo.bmp)
+  image_directive:
+    patterns:
+      - match: (?<![a-zA-Z0-9_])(#image)\b[ \t]+([a-zA-Z][a-zA-Z0-9_]*)(?:[ \t]+(TRANSPARENT)\b)?[ \t]+([a-zA-Z0-9_\-.,]+)
+        captures:
+          1: { name: keyword.other.define.edk2idf }
+          2: { name: variable.other.macro.edk2idf }
+          3: { name: storage.modifier.edk2idf }
+          4: { name: string.unquoted.filename.edk2idf }

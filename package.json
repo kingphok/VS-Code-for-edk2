@@ -45,6 +45,16 @@
         "configuration": "./lang/edk2fdf.configuration.json"
       },
       {
+        "id": "edk2idf",
+        "aliases": [
+          "EDK2 IDF"
+        ],
+        "extensions": [
+          ".idf"
+        ],
+        "configuration": "./lang/edk2idf.configuration.json"
+      },
+      {
         "id": "edk2inf",
         "aliases": [
           "EDK2 INF"
@@ -93,6 +103,11 @@
         "language": "edk2fdf",
         "scopeName": "source.edk2fdf",
         "path": "./lang/edk2fdf.tmLanguage.json"
+      },
+      {
+        "language": "edk2idf",
+        "scopeName": "source.edk2idf",
+        "path": "./lang/edk2idf.tmLanguage.json"
       },
       {
         "language": "edk2inf",
