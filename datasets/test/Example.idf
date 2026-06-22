@@ -1,0 +1,23 @@
+//==============================================================================
+//
+//  ## @file
+//  Syntax Extension Test IDF File for EDK II Image Description File .IDF File Format Specification, Revision 1.00
+//
+//==============================================================================
+
+// Basic Image Definitions (Syntax: #image <ImageId> <FileName>)
+#image IMAGE_LOGO_TIANO                 TianoCoreLogo.bmp
+#image IMAGE_ICON_SETTINGS              settings_icon.png
+#image IMAGE_SPLASH_SCREEN              splash-screen-main.jpg
+
+// Image Definitions with Transparent Attribute (Syntax: #image <ImageId> TRANSPARENT <FileName>)
+#image IMAGE_BUTTON_OK      TRANSPARENT ok_btn.bmp
+#image IMAGE_BUTTON_CANCEL  TRANSPARENT cancel_btn.png
+#image IMAGE_CURSOR_ARROW   TRANSPARENT cursor-arrow.bmp
+
+// Edge Cases for Filenames (No quotes allowed, with symbols/extensions)
+#image IMG_APP_ICON_123                 app_icon_v1.0.png
+#image IMG_BACKGROUND_DARK              dark-bg_mesh,alpha.bmp
+
+// End-of-line comment verification
+#image IMAGE_FOOTER                     footer.bmp // Trailing comment right here
