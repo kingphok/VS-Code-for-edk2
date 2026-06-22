@@ -22,3 +22,7 @@
 	path = datasets/edk2-VfrSpecification
 	url = https://github.com/tianocore-docs/edk2-VfrSpecification
 	branch = release/1.92
+[submodule "datasets/edk2-IdfSpecification"]
+	path = datasets/edk2-IdfSpecification
+	url = https://github.com/tianocore-docs/edk2-IdfSpecification
+	branch = release/1.00
