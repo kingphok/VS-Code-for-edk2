@@ -1,2 +1,16 @@
 comments:
   lineComment: "//"
+
+autoClosingPairs:
+  - open: '"'
+    close: '"'
+    notIn: ["string", "comment"]
+
+surroundingPairs:
+  - open: '"'
+    close: '"'
+
+folding:
+  markers:
+    start: '^[ \t]*(?<![a-zA-Z0-9_])#string\b'
+    end: '^(?=[ \t]*(?<![a-zA-Z0-9_])#string\b)'

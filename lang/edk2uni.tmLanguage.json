@@ -8,14 +8,191 @@
   "patterns": [
     {
       "include": "#comment"
+    },
+    {
+      "include": "#langdef_directive"
+    },
+    {
+      "include": "#fontdef_directive"
+    },
+    {
+      "include": "#font_directive"
+    },
+    {
+      "include": "#string_directive"
+    },
+    {
+      "include": "#language_directive"
+    },
+    {
+      "include": "#include_directive"
+    },
+    {
+      "include": "#quoted_string"
+    },
+    {
+      "include": "#constants_and_data"
     }
   ],
   "repository": {
     "comment": {
+      "name": "comment.line.double-slash.edk2uni",
+      "match": "//.*$"
+    },
+    "langdef_directive": {
       "patterns": [
         {
-          "name": "comment.line.double-slash.edk2uni",
-          "match": "//.*$"
+          "match": "(?<![a-zA-Z0-9_])(#langdef)\\b[ \\t]+([a-zA-Z]{2}(-[a-zA-Z0-9]{1,8})*)",
+          "captures": {
+            "1": {
+              "name": "keyword.other.define.edk2uni"
+            },
+            "2": {
+              "name": "variable.other.macro.edk2uni"
+            }
+          }
+        }
+      ]
+    },
+    "fontdef_directive": {
+      "patterns": [
+        {
+          "match": "(?<![a-zA-Z0-9_])(#fontdef)\\b[ \\t]+([a-zA-Z0-9_]+)[ \\t]+(\"[^\"]+\")?[ \\t]*([0-9]+)?[ \\t]*(\"[^\"]+\")?",
+          "captures": {
+            "1": {
+              "name": "keyword.other.define.edk2uni"
+            },
+            "2": {
+              "name": "variable.other.macro.edk2uni"
+            },
+            "3": {
+              "name": "string.quoted.double.font-name.edk2uni"
+            },
+            "4": {
+              "name": "constant.numeric.decimal.edk2uni"
+            },
+            "5": {
+              "name": "string.quoted.double.font-style.edk2uni"
+            }
+          }
+        }
+      ]
+    },
+    "font_directive": {
+      "patterns": [
+        {
+          "match": "(?<![a-zA-Z0-9_])(#font(?!def\\b))\\b[ \\t]+([a-zA-Z0-9_]+)",
+          "captures": {
+            "1": {
+              "name": "keyword.other.define.edk2uni"
+            },
+            "2": {
+              "name": "variable.other.macro.edk2uni"
+            }
+          }
+        }
+      ]
+    },
+    "string_directive": {
+      "patterns": [
+        {
+          "match": "(?<![a-zA-Z0-9_])(#string)\\b[ \\t]+([a-zA-Z0-9_-]+)",
+          "captures": {
+            "1": {
+              "name": "keyword.other.define.edk2uni"
+            },
+            "2": {
+              "name": "variable.other.macro.edk2uni"
+            }
+          }
+        }
+      ]
+    },
+    "language_directive": {
+      "patterns": [
+        {
+          "match": "(?<![a-zA-Z0-9_])(#language)\\b[ \\t]+([a-zA-Z]{2}(-[a-zA-Z0-9]{1,8})*)",
+          "captures": {
+            "1": {
+              "name": "keyword.other.define.edk2uni"
+            },
+            "2": {
+              "name": "variable.other.macro.edk2uni"
+            }
+          }
+        }
+      ]
+    },
+    "include_directive": {
+      "patterns": [
+        {
+          "match": "(?<![a-zA-Z0-9_])(#include)\\b",
+          "captures": {
+            "1": {
+              "name": "keyword.other.define.edk2uni"
+            }
+          }
+        }
+      ]
+    },
+    "quoted_string": {
+      "name": "string.quoted.double.edk2uni",
+      "begin": "\"",
+      "end": "\"|$",
+      "patterns": [
+        {
+          "name": "constant.character.escape.edk2uni",
+          "match": "\\\\(narrow|wide|br|nbr)"
+        },
+        {
+          "name": "constant.character.escape.edk2uni",
+          "match": "\\\\(n|r|t|\"|\\\\)"
+        },
+        {
+          "name": "constant.character.escape.edk2uni",
+          "match": "\\\\[x][0-9a-fA-F]{4}"
+        },
+        {
+          "name": "constant.character.escape.edk2uni",
+          "match": "\\\\f[bdeisu]"
+        },
+        {
+          "begin": "\\\\f!",
+          "end": "!",
+          "beginCaptures": {
+            "0": {
+              "name": "constant.character.escape.begin.edk2uni"
+            }
+          },
+          "endCaptures": {
+            "0": {
+              "name": "constant.character.escape.end.edk2uni"
+            }
+          },
+          "patterns": []
+        },
+        {
+          "begin": "\\\\fh!",
+          "end": "!",
+          "beginCaptures": {
+            "0": {
+              "name": "constant.character.escape.begin.edk2uni"
+            }
+          },
+          "endCaptures": {
+            "0": {
+              "name": "constant.character.escape.end.edk2uni"
+            }
+          },
+          "patterns": []
+        }
+      ]
+    },
+    "constants_and_data": {
+      "patterns": [
+        {
+          "name": "constant.numeric.decimal.edk2uni",
+          "match": "\\b[0-9]+\\b"
         }
       ]
     }
