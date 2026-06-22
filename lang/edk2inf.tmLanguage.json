@@ -133,13 +133,13 @@
           "end": "$",
           "beginCaptures": {
             "1": {
-              "name": "keyword.other.define.edk2"
+              "name": "keyword.other.define.edk2inf"
             },
             "2": {
-              "name": "variable.other.macro.edk2"
+              "name": "variable.other.macro.edk2inf"
             },
             "3": {
-              "name": "keyword.operator.assignment.edk2"
+              "name": "keyword.operator.assignment.edk2inf"
             }
           },
           "patterns": [

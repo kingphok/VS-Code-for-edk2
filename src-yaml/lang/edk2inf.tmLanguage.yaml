@@ -88,9 +88,9 @@ repository:
       - begin: '^[ \t]*\b(DEFINE)\b[ \t]+([a-zA-Z_][a-zA-Z0-9_]*)[ \t]*(=)[ \t]*'
         end: '$'
         beginCaptures:
-          '1': { name: keyword.other.define.edk2 }        # Highlights 'DEFINE'
-          '2': { name: variable.other.macro.edk2 }        # Highlights macro variable name (e.g., ABC)
-          '3': { name: keyword.operator.assignment.edk2 } # Highlights '='
+          '1': { name: keyword.other.define.edk2inf }        # Highlights 'DEFINE'
+          '2': { name: variable.other.macro.edk2inf }        # Highlights macro variable name (e.g., ABC)
+          '3': { name: keyword.operator.assignment.edk2inf } # Highlights '='
         patterns:
           # Evaluates the right-hand side using your template library (constants, strings, macros, etc.)
           - include: "#constants_and_data"
