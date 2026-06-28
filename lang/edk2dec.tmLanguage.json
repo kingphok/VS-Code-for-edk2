@@ -9,7 +9,7 @@
       "include": "#comment"
     },
     {
-      "include": "#section"
+      "include": "#Section"
     }
   ],
   "repository": {
@@ -21,11 +21,392 @@
         }
       ]
     },
-    "section": {
+    "Section": {
       "patterns": [
         {
           "name": "entity.name.section.edk2dec",
-          "match": "^\\s*\\[[a-zA-Z0-9_,\\.\\| ]+\\]"
+          "begin": "^[ \\t]*(\\[)(Defines)(\\])",
+          "end": "(?=^[ \\t]*\\[)",
+          "beginCaptures": {
+            "1": {
+              "name": "punctuation.definition.section.begin.edk2dec"
+            },
+            "2": {
+              "name": "keyword.control.edk2dec"
+            },
+            "3": {
+              "name": "punctuation.definition.section.end.edk2dec"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#comment"
+            },
+            {
+              "include": "#define_statements"
+            },
+            {
+              "include": "#macro_declaration"
+            },
+            {
+              "include": "#macro_expression"
+            }
+          ]
+        },
+        {
+          "name": "entity.name.section.edk2dec",
+          "begin": "^[ \\t]*\\[(Includes)\\b",
+          "end": "(?=^[ \\t]*\\[)",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.control.edk2dec"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#SectionInnerDotRule"
+            },
+            {
+              "include": "#comment"
+            },
+            {
+              "include": "#macro_declaration"
+            },
+            {
+              "include": "#macro_expression"
+            }
+          ]
+        },
+        {
+          "name": "entity.name.section.edk2dec",
+          "begin": "^[ \\t]*\\[(LibraryClasses)\\b",
+          "end": "(?=^[ \\t]*\\[)",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.control.edk2dec"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#SectionInnerDotRule"
+            },
+            {
+              "include": "#comment"
+            },
+            {
+              "include": "#macro_declaration"
+            },
+            {
+              "include": "#macro_expression"
+            },
+            {
+              "include": "#pipe_separator"
+            }
+          ]
+        },
+        {
+          "name": "entity.name.section.edk2dec",
+          "begin": "^[ \\t]*\\[(Guids|Protocols|Ppis)\\b",
+          "end": "(?=^[ \\t]*\\[)",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.control.edk2dec"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#SectionInnerDotRule"
+            },
+            {
+              "include": "#comment"
+            },
+            {
+              "include": "#hex_numbers"
+            },
+            {
+              "include": "#guid_protocol_ppi_variable"
+            }
+          ]
+        },
+        {
+          "name": "entity.name.section.edk2dec",
+          "begin": "^[ \\t]*\\[(PcdsDynamic|PcdsDynamicDefault|PcdsDynamicEx|PcdsDynamicExDefault|PcdsDynamicExHii|PcdsDynamicExVpd|PcdsDynamicHii|PcdsDynamicVpd|PcdsFeatureFlag|PcdsFixedAtBuild|PcdsPatchableInModule)\\b",
+          "end": "(?=^[ \\t]*\\[)",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.control.edk2dec"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#SectionInnerDotRule"
+            },
+            {
+              "include": "#comment"
+            },
+            {
+              "include": "#macro_expression"
+            },
+            {
+              "include": "#string_expression"
+            },
+            {
+              "include": "#pcd_uint_type"
+            },
+            {
+              "include": "#boolean_expression"
+            },
+            {
+              "include": "#hex_numbers"
+            },
+            {
+              "include": "#decimal_numbers"
+            },
+            {
+              "include": "#pipe_separator"
+            },
+            {
+              "include": "#pcd_variable"
+            }
+          ]
+        },
+        {
+          "name": "entity.name.section.edk2dec",
+          "begin": "^[ \\t]*\\[(UserExtensions)\\b",
+          "end": "(?=^[ \\t]*\\[)",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.control.edk2dec"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#SectionInnerDotRule"
+            },
+            {
+              "include": "#comment"
+            }
+          ]
+        }
+      ]
+    },
+    "SectionInnerDotRule": {
+      "patterns": [
+        {
+          "begin": "\\G",
+          "end": "(\\])",
+          "endCaptures": {
+            "1": {
+              "name": "punctuation.definition.section.end.edk2dec"
+            }
+          },
+          "patterns": [
+            {
+              "name": "keyword.control.edk2dec",
+              "match": "\\b(Includes|LibraryClasses|Guids|Protocols|Ppis|PcdsDynamic|PcdsDynamicDefault|PcdsDynamicEx|PcdsDynamicExDefault|PcdsDynamicExHii|PcdsDynamicExVpd|PcdsDynamicHii|PcdsDynamicVpd|PcdsFeatureFlag|PcdsFixedAtBuild|PcdsPatchableInModule|UserExtensions)\\b"
+            },
+            {
+              "name": "invalid.illegal.whitespace.edk2dec",
+              "match": "\\.[ \\t]+|\\.(?=\\])"
+            },
+            {
+              "name": "punctuation.separator.dot.edk2dec",
+              "match": "\\."
+            },
+            {
+              "name": "punctuation.separator.comma.edk2dec",
+              "match": ","
+            },
+            {
+              "name": "variable.parameter.edk2dec",
+              "match": "(?<=\\.)[a-zA-Z0-9_]+\\b"
+            },
+            {
+              "name": "string.quoted.double.edk2dec",
+              "match": "\"[^\"\\\\]*(?:\\\\.[^\"\\\\]*)*\""
+            }
+          ]
+        }
+      ]
+    },
+    "define_statements": {
+      "patterns": [
+        {
+          "begin": "^[ \\t]*(DEC_SPECIFICATION|PACKAGE_NAME|PACKAGE_GUID|PACKAGE_VERSION|PACKAGE_UNI_FILE)[ \\t]*(=)[ \\t]*",
+          "end": "$",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.control.edk2dec"
+            },
+            "2": {
+              "name": "punctuation.separator.equals.edk2dec"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#guid_expression"
+            },
+            {
+              "include": "#version_expression"
+            },
+            {
+              "include": "#hex_numbers"
+            },
+            {
+              "include": "#decimal_numbers"
+            }
+          ]
+        }
+      ]
+    },
+    "macro_declaration": {
+      "patterns": [
+        {
+          "begin": "^[ \\t]*\\b(DEFINE)\\b[ \\t]+([a-zA-Z_][a-zA-Z0-9_]*)[ \\t]*(=)[ \\t]*",
+          "end": "$",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.other.define.edk2dec"
+            },
+            "2": {
+              "name": "variable.other.macro.edk2dec"
+            },
+            "3": {
+              "name": "keyword.operator.assignment.edk2dec"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#macro_expression"
+            },
+            {
+              "include": "#string_expression"
+            },
+            {
+              "include": "#boolean_expression"
+            },
+            {
+              "include": "#hex_numbers"
+            },
+            {
+              "include": "#decimal_numbers"
+            }
+          ]
+        }
+      ]
+    },
+    "guid_expression": {
+      "patterns": [
+        {
+          "name": "constant.numeric.guid.edk2dec",
+          "match": "\\b[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}\\b"
+        }
+      ]
+    },
+    "macro_expression": {
+      "name": "string.interpolated.edk2dec",
+      "begin": "(\\$\\()",
+      "end": "(\\))",
+      "beginCaptures": {
+        "1": {
+          "name": "punctuation.definition.variable.begin.edk2dec"
+        }
+      },
+      "endCaptures": {
+        "1": {
+          "name": "punctuation.definition.variable.end.edk2dec"
+        }
+      },
+      "patterns": [
+        {
+          "name": "variable.other.edk2dec",
+          "match": "[a-zA-Z0-9_]+"
+        }
+      ]
+    },
+    "string_expression": {
+      "name": "string.quoted.double.edk2dec",
+      "begin": "(L)?\"",
+      "end": "\"",
+      "beginCaptures": {
+        "1": {
+          "name": "storage.type.string.edk2dec"
+        },
+        "2": {
+          "name": "punctuation.definition.string.begin.edk2dec"
+        }
+      },
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.definition.string.end.edk2dec"
+        }
+      }
+    },
+    "pcd_uint_type": {
+      "patterns": [
+        {
+          "name": "variable.language.edk2dec",
+          "match": "\\bVOID\\*"
+        },
+        {
+          "name": "variable.language.edk2dec",
+          "match": "\\b(UINT8|UINT16|UINT32|UINT64|BOOLEAN)\\b"
+        }
+      ]
+    },
+    "version_expression": {
+      "patterns": [
+        {
+          "name": "constant.numeric.version.edk2dec",
+          "match": "\\b[0-9]+(\\.[0-9]+)+\\b"
+        }
+      ]
+    },
+    "boolean_expression": {
+      "patterns": [
+        {
+          "name": "constant.language.boolean.edk2dec",
+          "match": "\\b(TRUE|FALSE)\\b"
+        }
+      ]
+    },
+    "hex_numbers": {
+      "patterns": [
+        {
+          "name": "constant.numeric.hex.edk2dec",
+          "match": "\\b0[xX][0-9a-fA-F]+\\b"
+        }
+      ]
+    },
+    "decimal_numbers": {
+      "patterns": [
+        {
+          "name": "constant.numeric.decimal.edk2dec",
+          "match": "\\b[0-9]+\\b"
+        }
+      ]
+    },
+    "pipe_separator": {
+      "patterns": [
+        {
+          "name": "keyword.operator.logical.pipe.edk2dec",
+          "match": "\\|"
+        }
+      ]
+    },
+    "guid_protocol_ppi_variable": {
+      "patterns": [
+        {
+          "name": "variable.other.guid.edk2dec",
+          "match": "\\b[a-zA-Z0-9_]+\\b(?=[ \\t]*=)"
+        }
+      ]
+    },
+    "pcd_variable": {
+      "patterns": [
+        {
+          "name": "variable.other.pcd.edk2dec",
+          "match": "(?<=\\.)[a-zA-Z0-9_]+\\b(?=[ \\t]*\\|)"
         }
       ]
     }
