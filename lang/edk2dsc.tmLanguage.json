@@ -7,14 +7,20 @@
   ],
   "patterns": [
     {
-      "include": "#comment"
+      "include": "#Comment"
     },
     {
-      "include": "#section"
+      "include": "#IncludeStatement"
+    },
+    {
+      "include": "#conditional_statements"
+    },
+    {
+      "include": "#EDK_II_DSC"
     }
   ],
   "repository": {
-    "comment": {
+    "Comment": {
       "patterns": [
         {
           "name": "comment.line.number-sign.edk2dsc",
@@ -22,11 +28,790 @@
         }
       ]
     },
-    "section": {
+    "IncludeStatement": {
+      "patterns": [
+        {
+          "begin": "^[ \\t]*(?i:(!include))[ \\t]+",
+          "end": "$",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.control.preprocessor.edk2dsc"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#Comment"
+            },
+            {
+              "name": "meta.preprocessor.string.edk2dsc",
+              "match": "[^#]+"
+            }
+          ]
+        }
+      ]
+    },
+    "conditional_statements": {
+      "patterns": [
+        {
+          "begin": "^[ \\t]*(?i:(!ifdef|!ifndef|!if|!elseif))\\b",
+          "end": "$",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.control.preprocessor.edk2dsc"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#Comment"
+            },
+            {
+              "include": "#MacroDefinition"
+            },
+            {
+              "include": "#string_expression"
+            },
+            {
+              "include": "#boolean_expression"
+            },
+            {
+              "include": "#hex_numbers"
+            },
+            {
+              "include": "#decimal_numbers"
+            },
+            {
+              "include": "#operators_operands"
+            }
+          ]
+        },
+        {
+          "begin": "^[ \\t]*(?i:(!else|!endif))\\b",
+          "end": "$",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.control.preprocessor.edk2dsc"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#Comment"
+            }
+          ]
+        },
+        {
+          "begin": "^[ \\t]*(?i:(!error))[ \\t]+",
+          "end": "$",
+          "beginCaptures": {
+            "1": {
+              "name": "invalid.illegal.edk2dsc"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#Comment"
+            },
+            {
+              "name": "string.edk2dsc",
+              "match": "\"[^\"\\\\]*(?:\\\\.[^\"\\\\]*)*\""
+            },
+            {
+              "name": "string.edk2dsc",
+              "match": "[^#]+"
+            }
+          ]
+        }
+      ]
+    },
+    "EDK_II_DSC": {
       "patterns": [
         {
           "name": "entity.name.section.edk2dsc",
-          "match": "^\\s*\\[[a-zA-Z0-9_,\\.\\| ]+\\]"
+          "begin": "^[ \\t]*\\[(?i:(Defines))\\]",
+          "end": "(?=^[ \\t]*\\[)",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.control.edk2dsc"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#Comment"
+            },
+            {
+              "include": "#IncludeStatement"
+            },
+            {
+              "include": "#conditional_statements"
+            },
+            {
+              "include": "#define_statements"
+            },
+            {
+              "include": "#macro_declaration"
+            },
+            {
+              "include": "#MacroDefinition"
+            }
+          ]
+        },
+        {
+          "name": "entity.name.section.edk2dsc",
+          "begin": "^[ \\t]*\\[(?i:(BuildOptions))\\b",
+          "end": "(?=^[ \\t]*\\[)",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.control.edk2dsc"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#section_dot_rule"
+            },
+            {
+              "include": "#Comment"
+            },
+            {
+              "include": "#IncludeStatement"
+            },
+            {
+              "include": "#conditional_statements"
+            },
+            {
+              "include": "#MacroDefinition"
+            },
+            {
+              "include": "#compiler_flag"
+            }
+          ]
+        },
+        {
+          "name": "entity.name.section.edk2dsc",
+          "begin": "^[ \\t]*\\[(?i:(SkuIds))\\]",
+          "end": "(?=^[ \\t]*\\[)",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.control.edk2dsc"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#Comment"
+            },
+            {
+              "include": "#IncludeStatement"
+            },
+            {
+              "include": "#conditional_statements"
+            },
+            {
+              "include": "#hex_numbers"
+            },
+            {
+              "include": "#decimal_numbers"
+            }
+          ]
+        },
+        {
+          "name": "entity.name.section.edk2dsc",
+          "begin": "^[ \\t]*\\[(?i:(LibraryClasses))\\b",
+          "end": "(?=^[ \\t]*\\[)",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.control.edk2dsc"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#section_dot_rule"
+            },
+            {
+              "include": "#Comment"
+            },
+            {
+              "include": "#IncludeStatement"
+            },
+            {
+              "include": "#conditional_statements"
+            },
+            {
+              "include": "#MacroDefinition"
+            },
+            {
+              "include": "#macro_declaration"
+            },
+            {
+              "include": "#FieldSeparator"
+            }
+          ]
+        },
+        {
+          "name": "entity.name.section.edk2dsc",
+          "begin": "^[ \\t]*\\[(?i:(PcdsFeatureFlag|PcdsFixedAtBuild|PcdsPatchableInModule|PcdsDynamicDefault|PcdsDynamicVpd|PcdsDynamicHii|PcdsDynamicExDefault|PcdsDynamicExVpd|PcdsDynamicExHii))\\b",
+          "end": "(?=^[ \\t]*\\[)",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.control.edk2dsc"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#section_dot_rule"
+            },
+            {
+              "include": "#Comment"
+            },
+            {
+              "include": "#IncludeStatement"
+            },
+            {
+              "include": "#conditional_statements"
+            },
+            {
+              "include": "#macro_declaration"
+            },
+            {
+              "include": "#MacroDefinition"
+            },
+            {
+              "include": "#string_expression"
+            },
+            {
+              "include": "#pcd_uint_type"
+            },
+            {
+              "include": "#boolean_expression"
+            },
+            {
+              "include": "#hex_numbers"
+            },
+            {
+              "include": "#decimal_numbers"
+            },
+            {
+              "include": "#FieldSeparator"
+            },
+            {
+              "include": "#pcd_variable"
+            }
+          ]
+        },
+        {
+          "name": "entity.name.section.edk2dsc",
+          "begin": "^[ \\t]*\\[(?i:(Components))\\b",
+          "end": "(?=^[ \\t]*\\[)",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.control.edk2dsc"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#section_dot_rule"
+            },
+            {
+              "include": "#IncludeStatement"
+            },
+            {
+              "include": "#conditional_statements"
+            },
+            {
+              "include": "#Comment"
+            },
+            {
+              "include": "#MacroDefinition"
+            },
+            {
+              "match": "\\b(EXEC)[ \\t]*(=)[ \\t]*([^\\{\\s#]+)",
+              "captures": {
+                "1": {
+                  "name": "keyword.control.edk2dsc"
+                },
+                "3": {
+                  "name": "string.edk2dsc"
+                }
+              }
+            },
+            {
+              "begin": "\\{",
+              "end": "\\}",
+              "beginCaptures": {
+                "0": {
+                  "name": "entity.name.section.encapsulation.edk2dsc"
+                }
+              },
+              "endCaptures": {
+                "0": {
+                  "name": "entity.name.section.encapsulation.edk2dsc"
+                }
+              },
+              "patterns": [
+                {
+                  "include": "#conditional_statements"
+                },
+                {
+                  "include": "#Comment"
+                },
+                {
+                  "include": "#MacroDefinition"
+                },
+                {
+                  "begin": "(<)(Defines)(>)",
+                  "end": "(?=<|\\})",
+                  "beginCaptures": {
+                    "2": {
+                      "name": "keyword.control.edk2dsc"
+                    }
+                  },
+                  "patterns": [
+                    {
+                      "include": "#Comment"
+                    },
+                    {
+                      "begin": "^[ \\t]*(FILE_GUID)[ \\t]*(=)[ \\t]*",
+                      "end": "$",
+                      "beginCaptures": {
+                        "1": {
+                          "name": "keyword.control.edk2dsc"
+                        }
+                      },
+                      "patterns": [
+                        {
+                          "include": "#RegistryFormatGUID"
+                        },
+                        {
+                          "include": "#MacroDefinition"
+                        },
+                        {
+                          "include": "#macro_declaration"
+                        },
+                        {
+                          "include": "#conditional_statements"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "begin": "(<)(LibraryClasses)(>)",
+                  "end": "(?=<|\\})",
+                  "beginCaptures": {
+                    "2": {
+                      "name": "keyword.control.edk2dsc"
+                    }
+                  },
+                  "patterns": [
+                    {
+                      "include": "#Comment"
+                    },
+                    {
+                      "include": "#IncludeStatement"
+                    },
+                    {
+                      "include": "#conditional_statements"
+                    },
+                    {
+                      "include": "#macro_declaration"
+                    },
+                    {
+                      "include": "#MacroDefinition"
+                    }
+                  ]
+                },
+                {
+                  "begin": "(<)(PcdsFeatureFlag|PcdsFixedAtBuild|PcdsPatchableInModule)(>)",
+                  "end": "(?=<|\\})",
+                  "beginCaptures": {
+                    "2": {
+                      "name": "keyword.control.edk2dsc"
+                    }
+                  },
+                  "patterns": [
+                    {
+                      "include": "#Comment"
+                    },
+                    {
+                      "include": "#IncludeStatement"
+                    },
+                    {
+                      "include": "#conditional_statements"
+                    },
+                    {
+                      "include": "#macro_declaration"
+                    },
+                    {
+                      "include": "#MacroDefinition"
+                    },
+                    {
+                      "include": "#string_expression"
+                    },
+                    {
+                      "include": "#pcd_uint_type"
+                    },
+                    {
+                      "include": "#boolean_expression"
+                    },
+                    {
+                      "include": "#hex_numbers"
+                    },
+                    {
+                      "include": "#decimal_numbers"
+                    },
+                    {
+                      "include": "#FieldSeparator"
+                    },
+                    {
+                      "include": "#pcd_variable"
+                    }
+                  ]
+                },
+                {
+                  "begin": "(<)(BuildOptions)(>)",
+                  "end": "(?=<|\\})",
+                  "beginCaptures": {
+                    "2": {
+                      "name": "keyword.control.edk2dsc"
+                    }
+                  },
+                  "patterns": [
+                    {
+                      "include": "#Comment"
+                    },
+                    {
+                      "include": "#IncludeStatement"
+                    },
+                    {
+                      "include": "#conditional_statements"
+                    },
+                    {
+                      "include": "#macro_declaration"
+                    },
+                    {
+                      "include": "#MacroDefinition"
+                    },
+                    {
+                      "include": "#compiler_flag"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "entity.name.section.edk2dsc",
+          "begin": "^[ \\t]*\\[(?i:(UserExtensions))\\b",
+          "end": "(?=^[ \\t]*\\[)",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.control.edk2dsc"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#section_dot_rule"
+            },
+            {
+              "include": "#Comment"
+            },
+            {
+              "include": "#conditional_statements"
+            },
+            {
+              "include": "#MacroDefinition"
+            },
+            {
+              "include": "#string_expression"
+            },
+            {
+              "include": "#boolean_expression"
+            },
+            {
+              "include": "#hex_numbers"
+            },
+            {
+              "include": "#decimal_numbers"
+            },
+            {
+              "include": "#RegistryFormatGUID"
+            }
+          ]
+        },
+        {
+          "name": "entity.name.section.edk2dsc",
+          "begin": "^[ \\t]*\\[(?i:(DefaultStores))\\]",
+          "end": "(?=^[ \\t]*\\[)",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.control.edk2dsc"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#Comment"
+            },
+            {
+              "include": "#conditional_statements"
+            },
+            {
+              "include": "#hex_numbers"
+            },
+            {
+              "include": "#decimal_numbers"
+            }
+          ]
+        },
+        {
+          "name": "entity.name.section.edk2dsc",
+          "begin": "^[ \\t]*\\[(?i:(Libraries))\\b",
+          "end": "(?=^[ \\t]*\\[)",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.control.edk2dsc"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#section_dot_rule"
+            },
+            {
+              "include": "#Comment"
+            },
+            {
+              "include": "#IncludeStatement"
+            },
+            {
+              "include": "#conditional_statements"
+            },
+            {
+              "include": "#macro_declaration"
+            },
+            {
+              "include": "#MacroDefinition"
+            }
+          ]
+        }
+      ]
+    },
+    "section_dot_rule": {
+      "patterns": [
+        {
+          "begin": "\\G",
+          "end": "\\]",
+          "patterns": [
+            {
+              "name": "keyword.control.edk2dsc",
+              "match": "(?i:\\b(BuildOptions|Libraries|LibraryClasses|PcdsFeatureFlag|PcdsFixedAtBuild|PcdsPatchableInModule|PcdsDynamicDefault|PcdsDynamicVpd|PcdsDynamicHii|PcdsDynamicExDefault|PcdsDynamicExVpd|PcdsDynamicExHii|Components|UserExtensions)\\b)"
+            },
+            {
+              "name": "invalid.illegal.whitespace.edk2dsc",
+              "match": "\\.[ \\t]+|\\.(?=\\])"
+            },
+            {
+              "name": "punctuation.separator.dot.edk2dsc",
+              "match": "\\."
+            },
+            {
+              "name": "punctuation.separator.comma.edk2dsc",
+              "match": ","
+            },
+            {
+              "name": "variable.parameter.edk2dsc",
+              "match": "(?<=[.|])[a-zA-Z0-9_]+\\b"
+            },
+            {
+              "name": "string.quoted.double.edk2dsc",
+              "match": "\"[^\"\\\\]*(?:\\\\.[^\"\\\\]*)*\""
+            },
+            {
+              "include": "#FieldSeparator"
+            }
+          ]
+        }
+      ]
+    },
+    "define_statements": {
+      "patterns": [
+        {
+          "begin": "^[ \\t]*(DSC_SPECIFICATION|PLATFORM_GUID|PLATFORM_VERSION|PLATFORM_NAME|SKUID_IDENTIFIER|SUPPORTED_ARCHITECTURES|BUILD_TARGETS|OUTPUT_DIRECTORY|FLASH_DEFINITION|BUILD_NUMBER|FIX_LOAD_TOP_MEMORY_ADDRESS|TIME_STAMP_FILE|RFC_LANGUAGES|ISO_LANGUAGES|VPD_TOOL_GUID|PCD_INFO_GENERATION|PCD_VAR_CHECK_GENERATION|PREBUILD|POSTBUILD)[ \\t]*(=)[ \\t]*",
+          "end": "$",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.control.edk2dsc"
+            },
+            "2": {
+              "name": "punctuation.separator.equals.edk2dsc"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#RegistryFormatGUID"
+            },
+            {
+              "include": "#version_expression"
+            },
+            {
+              "include": "#hex_numbers"
+            },
+            {
+              "include": "#decimal_numbers"
+            }
+          ]
+        }
+      ]
+    },
+    "macro_declaration": {
+      "patterns": [
+        {
+          "begin": "^[ \\t]*\\b(DEFINE)\\b[ \\t]+([a-zA-Z_][a-zA-Z0-9_]*)[ \\t]*(=)[ \\t]*",
+          "end": "$",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.other.define.edk2dsc"
+            },
+            "2": {
+              "name": "variable.other.macro.edk2dsc"
+            },
+            "3": {
+              "name": "keyword.operator.assignment.edk2dsc"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#MacroDefinition"
+            },
+            {
+              "include": "#string_expression"
+            },
+            {
+              "include": "#boolean_expression"
+            },
+            {
+              "include": "#hex_numbers"
+            },
+            {
+              "include": "#decimal_numbers"
+            },
+            {
+              "include": "#RegistryFormatGUID"
+            }
+          ]
+        }
+      ]
+    },
+    "RegistryFormatGUID": {
+      "patterns": [
+        {
+          "name": "constant.numeric.guid.edk2dsc",
+          "match": "\\b[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}\\b"
+        }
+      ]
+    },
+    "MacroDefinition": {
+      "name": "string.interpolated.edk2dsc",
+      "begin": "(\\$\\()",
+      "end": "(\\))",
+      "patterns": [
+        {
+          "name": "variable.other.edk2dsc",
+          "match": "[a-zA-Z0-9_]+"
+        }
+      ]
+    },
+    "string_expression": {
+      "name": "string.quoted.double.edk2dsc",
+      "begin": "(L)?\"",
+      "end": "\"",
+      "beginCaptures": {
+        "1": {
+          "name": "storage.type.string.edk2dsc"
+        }
+      }
+    },
+    "pcd_uint_type": {
+      "patterns": [
+        {
+          "name": "variable.language.edk2dsc",
+          "match": "\\bVOID\\*"
+        },
+        {
+          "name": "variable.language.edk2dsc",
+          "match": "\\b(UINT8|UINT16|UINT32|UINT64|BOOLEAN)\\b"
+        }
+      ]
+    },
+    "version_expression": {
+      "patterns": [
+        {
+          "name": "constant.numeric.version.edk2dsc",
+          "match": "\\b[0-9]+(\\.[0-9]+)+\\b"
+        }
+      ]
+    },
+    "boolean_expression": {
+      "patterns": [
+        {
+          "name": "constant.language.boolean.edk2dsc",
+          "match": "\\b(TRUE|FALSE)\\b"
+        }
+      ]
+    },
+    "hex_numbers": {
+      "patterns": [
+        {
+          "name": "constant.numeric.hex.edk2dsc",
+          "match": "\\b0[xX][0-9a-fA-F]+\\b"
+        }
+      ]
+    },
+    "decimal_numbers": {
+      "patterns": [
+        {
+          "name": "constant.numeric.decimal.edk2dsc",
+          "match": "\\b[0-9]+\\b"
+        }
+      ]
+    },
+    "FieldSeparator": {
+      "patterns": [
+        {
+          "name": "keyword.operator.logical.pipe.edk2dsc",
+          "match": "\\|"
+        }
+      ]
+    },
+    "pcd_variable": {
+      "patterns": [
+        {
+          "name": "variable.other.pcd.edk2dsc",
+          "match": "(?<=\\.)[a-zA-Z0-9_]+\\b(?=[ \\t]*\\|)"
+        }
+      ]
+    },
+    "compiler_flag": {
+      "patterns": [
+        {
+          "name": "meta.preprocessor.macro.edk2dsc",
+          "match": "(-D|/D)[ \\t]*([a-zA-Z0-9_]+)",
+          "captures": {
+            "1": {
+              "name": "keyword.control.compiler.flag.edk2dsc"
+            },
+            "2": {
+              "name": "variable.other.macro.edk2dsc"
+            }
+          }
+        }
+      ]
+    },
+    "operators_operands": {
+      "patterns": [
+        {
+          "name": "keyword.operator.edk2dsc",
+          "match": "(?<=[ \\t])(EQ|NE|in|IN|LE|GE|LT|GT|and|AND|or|OR|not|NOT|xor|XOR)(?=[ \\t])"
+        },
+        {
+          "name": "keyword.operator.edk2dsc",
+          "match": "==|!=|<=|>=|&&|\\|\\||<<|>>|\\?:|[<>\\+\\-\\*/%&\\|!~^]"
         }
       ]
     }
