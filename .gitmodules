@@ -9,7 +9,7 @@
 [submodule "datasets/edk2-FdfSpecification"]
 	path = datasets/edk2-FdfSpecification
 	url = https://github.com/tianocore-docs/edk2-FdfSpecification
-	branch = release/1.28.01
+	branch = main
 [submodule "datasets/edk2-InfSpecification"]
 	path = datasets/edk2-InfSpecification
 	url = https://github.com/tianocore-docs/edk2-InfSpecification
