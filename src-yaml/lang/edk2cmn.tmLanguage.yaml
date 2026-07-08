@@ -1,0 +1,179 @@
+# This is the common syntax definition for EDK2 files
+scopeName: source.edk2cmn
+fileTypes: []
+
+patterns:
+
+repository:
+  # EBNF: <Comment>, Single-line comments starting with #
+  Comment:
+    match: '#.*$'
+    name: comment.line.number-sign.edk2cmn
+
+  # EBNF: <IncludeStatement>, !include
+  IncludeStatement:
+    begin: '^[ \t]*(?i:(!include))[ \t]+'
+    end: '$'
+    beginCaptures:
+      '1': { name: keyword.control.preprocessor.edk2cmn }
+    patterns:
+      - include: "#Comment"
+      - match: '[^#]+'  # Match the path while strictly stopping before any '#' character
+        name: meta.preprocessor.string.edk2cmn
+
+  # EBNF: <Conditional>, !ifdef, !ifndef, !if, !elseif, !else, !endif, !error
+  Conditional:
+    patterns:
+      - begin: '^[ \t]*(?i:(!ifdef|!ifndef|!if|!elseif))\b'
+        end: '$'
+        beginCaptures:
+          '1': { name: keyword.control.preprocessor.edk2cmn }
+        patterns:
+          - include: "#Comment"
+          - include: "#MACROVAL"
+          - include: "#boolean_expression"
+          - include: "#hex_numbers"
+          - include: "#decimal_numbers"
+          - include: "#operators_operands"
+      - begin: '^[ \t]*(?i:(!else|!endif))\b'
+        end: '$'
+        beginCaptures:
+          '1': { name: keyword.control.preprocessor.edk2cmn }
+        patterns:
+          - include: "#Comment"
+
+      # !error Statements
+      - begin: '^[ \t]*(?i:(!error))[ \t]+'
+        end: '$'
+        beginCaptures:
+          '1': { name: invalid.illegal.edk2cmn }
+        patterns:
+          - include: "#Comment"
+          - match: '"[^"\\]*(?:\\.[^"\\]*)*"'
+            name: string.edk2cmn
+          - match: '[^#\r\n]+'
+            name: string.edk2cmn
+
+  # EBNF: <SetStmts>, <SetStatements>, SET
+  SetStatements:
+    begin: '^[ \t]*\b(SET)(?=[ \t])'
+    end: '$'
+    beginCaptures:
+      '1': { name: keyword.control.edk2cmn }
+    patterns:
+      - include: "#Comment"
+      - include: "#PcdName_PcdFieldName"
+      # =
+      - name: keyword.operator.assignment.edk2cmn
+        match: '='
+      # EBNF: <VALUE>
+      - include: "#hex_numbers"
+      - include: "#decimal_numbers"
+      - include: "#boolean_expression"
+      - include: "#string_expression"
+      - include: "#MACROVAL"
+      - include: "#operators_operands"
+
+  # EBNF: <PcdName> + <PcdFieldName>
+  PcdName_PcdFieldName:
+    match: '\b[a-zA-Z_][a-zA-Z0-9_]*\.([a-zA-Z_][a-zA-Z0-9_]*)(?:\.([a-zA-Z_][a-zA-Z0-9_]*)){0,1}\b'
+    captures:
+      '1': { name: variable.other.edk2cmn }  # EBNF: <PcdCName>
+      '2': { name: variable.other.edk2cmn }  # EBNF: <Field>
+
+  # EBNF: <MacroDefinition>, DEFINE
+  MacroDefinition:
+    begin: '^[ \t]*\b(DEFINE)\b[ \t]+([a-zA-Z_][a-zA-Z0-9_]*)[ \t]*(=)[ \t]*'
+    end: '$'
+    beginCaptures:
+      '1': { name: keyword.other.define.edk2cmn }        # Highlights 'DEFINE'
+      '2': { name: variable.other.macro.edk2cmn }        # Highlights macro variable name
+      '3': { name: keyword.operator.assignment.edk2cmn } # Highlights '='
+    patterns:
+      - include: "#Comment"
+      - include: "#MACROVAL"
+      - include: "#boolean_expression"
+      - include: "#hex_numbers"
+      - include: "#decimal_numbers"
+      - include: "#RegistryFormatGUID"
+      - include: "#string_expression"
+
+  # EBNF: <RegistryFormatGUID>, GUID (Format: 8-4-4-4-12 hex characters)
+  RegistryFormatGUID:
+    match: '\b[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}\b'
+    name: constant.numeric.guid.edk2cmn
+
+  # EBNF: <PCDVAL>, <NamedGuidOrPcd> ::= {"PCD(" <PcdName> ")"} {<RegistryFormatGUID>} {<GuidCName>}
+  PCDVAL:
+    begin: '\b(PCD)\('
+    end: '\)'
+    beginCaptures:
+      '1': { name: keyword.control.edk2cmn }
+    patterns:
+      - include: '#PcdName_PcdFieldName'
+
+  # EBNF: <MACROVAL>, Macros / Environment Variables (e.g., $(NAMED_MACRO))
+  MACROVAL:
+    match: '\$\([a-zA-Z_][a-zA-Z0-9_]*\)'
+    name: variable.other.edk2cmn
+
+  # Double-quoted Strings and unicode strings (e.g., L"string")
+  string_expression:
+    match: '(L)?"([^"\\]*(?:\\.[^"\\]*)*)"'
+    name: string.quoted.double.edk2cmn
+    captures:
+      '1': { name: storage.type.string.edk2cmn } # Highlights the 'L' prefix
+
+  # PCD Sections, PCD unit data type, expect UINTN
+  pcd_uint_type:
+    patterns:
+      # Match VOID* safely
+      - match: '\bVOID\*'
+        name: variable.language.edk2cmn
+      # Match other unit and boolean types
+      - match: '\b(UINT8|UINT16|UINT32|UINT64|BOOLEAN)\b'
+        name: variable.language.edk2cmn
+
+  # Version Strings (e.g., 1.27, 1.27.1)
+  version_expression:
+    match: '\b[0-9]+(\.[0-9]+)+\b'
+    name: constant.numeric.version.edk2cmn
+
+  # Boolean values (TRUE or FALSE only)
+  boolean_expression:
+    match: '\b(TRUE|FALSE)\b'
+    name: constant.language.boolean.edk2cmn
+
+  # Hexadecimal numbers (Starts with 0x or 0X)
+  hex_numbers:
+    match: '\b0[xX][0-9a-fA-F]+\b'
+    name: constant.numeric.hex.edk2cmn
+
+  # Decimal numbers (Unsigned integers)
+  decimal_numbers:
+    match: '\b[0-9]+\b'
+    name: constant.numeric.decimal.edk2cmn
+
+  # EBNF: <FieldSeparator>, "|"
+  FieldSeparator:
+    match: '\|'
+    name: keyword.operator.logical.pipe.edk2cmn
+
+  #  BuildOption compiler Define Flags (e.g., -D TEST_IA32_ONLY, /D TEST_IA32_ONLY)
+  compiler_flag:
+    match: '(-D|/D)[ \t]*([a-zA-Z0-9_]+)'
+    name: meta.preprocessor.macro.edk2cmn
+    captures:
+      '1': { name: keyword.control.compiler.flag.edk2cmn }  # Highlights '-D' or '/D'
+      '2': { name: variable.other.macro.edk2cmn }           # Highlights 'TEST_IA32_ONLY'
+
+  # Table 5 Operator Precedence and Supported Operands
+  operators_operands:
+    patterns:
+      # Letter operators(case-sensitive)
+      - match: '(?<=[ \t])(EQ|NE|in|IN|LE|GE|LT|GT|and|AND|or|OR|not|NOT|xor|XOR)(?=[ \t])'
+        name: keyword.operator.edk2cmn
+
+      # Character operators
+      - match: '==|!=|<=|>=|&&|\|\||<<|>>|\?:|[<>\+\-\*/%&\|!~^]'
+        name: keyword.operator.edk2cmn

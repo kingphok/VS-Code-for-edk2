@@ -90,6 +90,10 @@
     ],
     "grammars": [
       {
+        "scopeName": "source.edk2cmn",
+        "path": "./lang/edk2cmn.tmLanguage.json"
+      },
+      {
         "language": "edk2dec",
         "scopeName": "source.edk2dec",
         "path": "./lang/edk2dec.tmLanguage.json"

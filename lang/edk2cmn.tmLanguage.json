@@ -1,0 +1,273 @@
+{
+  "scopeName": "source.edk2cmn",
+  "fileTypes": [],
+  "patterns": null,
+  "repository": {
+    "Comment": {
+      "match": "#.*$",
+      "name": "comment.line.number-sign.edk2cmn"
+    },
+    "IncludeStatement": {
+      "begin": "^[ \\t]*(?i:(!include))[ \\t]+",
+      "end": "$",
+      "beginCaptures": {
+        "1": {
+          "name": "keyword.control.preprocessor.edk2cmn"
+        }
+      },
+      "patterns": [
+        {
+          "include": "#Comment"
+        },
+        {
+          "match": "[^#]+",
+          "name": "meta.preprocessor.string.edk2cmn"
+        }
+      ]
+    },
+    "Conditional": {
+      "patterns": [
+        {
+          "begin": "^[ \\t]*(?i:(!ifdef|!ifndef|!if|!elseif))\\b",
+          "end": "$",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.control.preprocessor.edk2cmn"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#Comment"
+            },
+            {
+              "include": "#MACROVAL"
+            },
+            {
+              "include": "#boolean_expression"
+            },
+            {
+              "include": "#hex_numbers"
+            },
+            {
+              "include": "#decimal_numbers"
+            },
+            {
+              "include": "#operators_operands"
+            }
+          ]
+        },
+        {
+          "begin": "^[ \\t]*(?i:(!else|!endif))\\b",
+          "end": "$",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.control.preprocessor.edk2cmn"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#Comment"
+            }
+          ]
+        },
+        {
+          "begin": "^[ \\t]*(?i:(!error))[ \\t]+",
+          "end": "$",
+          "beginCaptures": {
+            "1": {
+              "name": "invalid.illegal.edk2cmn"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#Comment"
+            },
+            {
+              "match": "\"[^\"\\\\]*(?:\\\\.[^\"\\\\]*)*\"",
+              "name": "string.edk2cmn"
+            },
+            {
+              "match": "[^#\\r\\n]+",
+              "name": "string.edk2cmn"
+            }
+          ]
+        }
+      ]
+    },
+    "SetStatements": {
+      "begin": "^[ \\t]*\\b(SET)(?=[ \\t])",
+      "end": "$",
+      "beginCaptures": {
+        "1": {
+          "name": "keyword.control.edk2cmn"
+        }
+      },
+      "patterns": [
+        {
+          "include": "#Comment"
+        },
+        {
+          "include": "#PcdName_PcdFieldName"
+        },
+        {
+          "name": "keyword.operator.assignment.edk2cmn",
+          "match": "="
+        },
+        {
+          "include": "#hex_numbers"
+        },
+        {
+          "include": "#decimal_numbers"
+        },
+        {
+          "include": "#boolean_expression"
+        },
+        {
+          "include": "#string_expression"
+        },
+        {
+          "include": "#MACROVAL"
+        },
+        {
+          "include": "#operators_operands"
+        }
+      ]
+    },
+    "PcdName_PcdFieldName": {
+      "match": "\\b[a-zA-Z_][a-zA-Z0-9_]*\\.([a-zA-Z_][a-zA-Z0-9_]*)(?:\\.([a-zA-Z_][a-zA-Z0-9_]*)){0,1}\\b",
+      "captures": {
+        "1": {
+          "name": "variable.other.edk2cmn"
+        },
+        "2": {
+          "name": "variable.other.edk2cmn"
+        }
+      }
+    },
+    "MacroDefinition": {
+      "begin": "^[ \\t]*\\b(DEFINE)\\b[ \\t]+([a-zA-Z_][a-zA-Z0-9_]*)[ \\t]*(=)[ \\t]*",
+      "end": "$",
+      "beginCaptures": {
+        "1": {
+          "name": "keyword.other.define.edk2cmn"
+        },
+        "2": {
+          "name": "variable.other.macro.edk2cmn"
+        },
+        "3": {
+          "name": "keyword.operator.assignment.edk2cmn"
+        }
+      },
+      "patterns": [
+        {
+          "include": "#Comment"
+        },
+        {
+          "include": "#MACROVAL"
+        },
+        {
+          "include": "#boolean_expression"
+        },
+        {
+          "include": "#hex_numbers"
+        },
+        {
+          "include": "#decimal_numbers"
+        },
+        {
+          "include": "#RegistryFormatGUID"
+        },
+        {
+          "include": "#string_expression"
+        }
+      ]
+    },
+    "RegistryFormatGUID": {
+      "match": "\\b[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}\\b",
+      "name": "constant.numeric.guid.edk2cmn"
+    },
+    "PCDVAL": {
+      "begin": "\\b(PCD)\\(",
+      "end": "\\)",
+      "beginCaptures": {
+        "1": {
+          "name": "keyword.control.edk2cmn"
+        }
+      },
+      "patterns": [
+        {
+          "include": "#PcdName_PcdFieldName"
+        }
+      ]
+    },
+    "MACROVAL": {
+      "match": "\\$\\([a-zA-Z_][a-zA-Z0-9_]*\\)",
+      "name": "variable.other.edk2cmn"
+    },
+    "string_expression": {
+      "match": "(L)?\"([^\"\\\\]*(?:\\\\.[^\"\\\\]*)*)\"",
+      "name": "string.quoted.double.edk2cmn",
+      "captures": {
+        "1": {
+          "name": "storage.type.string.edk2cmn"
+        }
+      }
+    },
+    "pcd_uint_type": {
+      "patterns": [
+        {
+          "match": "\\bVOID\\*",
+          "name": "variable.language.edk2cmn"
+        },
+        {
+          "match": "\\b(UINT8|UINT16|UINT32|UINT64|BOOLEAN)\\b",
+          "name": "variable.language.edk2cmn"
+        }
+      ]
+    },
+    "version_expression": {
+      "match": "\\b[0-9]+(\\.[0-9]+)+\\b",
+      "name": "constant.numeric.version.edk2cmn"
+    },
+    "boolean_expression": {
+      "match": "\\b(TRUE|FALSE)\\b",
+      "name": "constant.language.boolean.edk2cmn"
+    },
+    "hex_numbers": {
+      "match": "\\b0[xX][0-9a-fA-F]+\\b",
+      "name": "constant.numeric.hex.edk2cmn"
+    },
+    "decimal_numbers": {
+      "match": "\\b[0-9]+\\b",
+      "name": "constant.numeric.decimal.edk2cmn"
+    },
+    "FieldSeparator": {
+      "match": "\\|",
+      "name": "keyword.operator.logical.pipe.edk2cmn"
+    },
+    "compiler_flag": {
+      "match": "(-D|/D)[ \\t]*([a-zA-Z0-9_]+)",
+      "name": "meta.preprocessor.macro.edk2cmn",
+      "captures": {
+        "1": {
+          "name": "keyword.control.compiler.flag.edk2cmn"
+        },
+        "2": {
+          "name": "variable.other.macro.edk2cmn"
+        }
+      }
+    },
+    "operators_operands": {
+      "patterns": [
+        {
+          "match": "(?<=[ \\t])(EQ|NE|in|IN|LE|GE|LT|GT|and|AND|or|OR|not|NOT|xor|XOR)(?=[ \\t])",
+          "name": "keyword.operator.edk2cmn"
+        },
+        {
+          "match": "==|!=|<=|>=|&&|\\|\\||<<|>>|\\?:|[<>\\+\\-\\*/%&\\|!~^]",
+          "name": "keyword.operator.edk2cmn"
+        }
+      ]
+    }
+  }
+}
