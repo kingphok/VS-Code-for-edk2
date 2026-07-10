@@ -114,8 +114,9 @@ repository:
 
   # EBNF: <MACROVAL>, Macros / Environment Variables (e.g., $(NAMED_MACRO))
   MACROVAL:
-    match: '\$\([a-zA-Z_][a-zA-Z0-9_]*\)'
-    name: variable.other.edk2cmn
+    match: '\$\(([a-zA-Z_][a-zA-Z0-9_]*)\)'
+    captures:
+      '1': { name: variable.other.edk2cmn }
 
   # Double-quoted Strings and unicode strings (e.g., L"string")
   string_expression:
