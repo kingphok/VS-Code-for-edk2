@@ -3,10 +3,26 @@ comments:
 brackets:
   - - "["
     - "]"
+  - - "{"
+    - "}"
+  - - "("
+    - ")"
+  - - "$("
+    - ")"
 autoClosingPairs:
   - - "["
     - "]"
+  - - "{"
+    - "}"
+  - - "("
+    - ")"
+  - - "\""
+    - "\""
+  - open: "$("
+    close: ")"
+  - open: "L\""
+    close: "\""
 folding:
   markers:
-    start: "^\\s*\\[([^\\]]+)\\]"
-    end: "^\\s*(?=\\[)"
+    start: "^\\s*\\[([^\\]]+)\\]|^\\s*!(?i)(if|ifdef|ifndef)\\b"
+    end: "^\\s*!(?i)(endif)\\b"

@@ -6,18 +6,379 @@ fileTypes:
   - fdf.inc
 
 patterns:
-  - include: "#comment"
-  - include: "#section"
+  - include: source.edk2cmn#Comment
+  - include: source.edk2cmn#IncludeStatement
+  - include: source.edk2cmn#Conditional
+  - include: "#EDK_II_FDF"
+
+  # For !include file which not have section, include all patterns again...
+  - include: "#TokenStatements"
+  - include: "#RegionType"
+  - include: "#RegionLayout"
+  - include: "#InfStatements"
+  - include: "#ExtendedFvEntry"
+  - include: "#FvStatements"
+  - include: "#AprioriSection"
+  - include: "#FileStatements"
+  - include: "#LeafSections"
+  - include: source.edk2cmn#MacroDefinition
+  - include: source.edk2cmn#MACROVAL
+  - include: source.edk2cmn#SetStatements
+  - include: source.edk2cmn#hex_numbers
 
 repository:
-  # Component for single-line comments starting with #
-  comment:
+  # 3.2 FDF Definition
+  EDK_II_FDF:
     patterns:
-      - name: comment.line.number-sign.edk2fdf
-        match: '#.*$'
+      # 3.4 [Defines] Section
+      - begin: '^[ \t]*\[(?i:(Defines))\]'
+        end: '(?=^[ \t]*\[)'
+        name: entity.name.section.edk2fdf
+        beginCaptures:
+          '1': { name: keyword.control.edk2fdf }
+        patterns:
+          - include: source.edk2cmn#Comment
+          - include: source.edk2cmn#IncludeStatement
+          - include: source.edk2cmn#Conditional
+          - include: "#define_statements"
+          - include: source.edk2cmn#MacroDefinition
+          - include: source.edk2cmn#MACROVAL
+          - include: source.edk2cmn#SetStatements
 
-  # Component for core section headers
-  section:
+      # 3.5 [FD] Sections
+      - begin: '^[ \t]*\[(?i:(FD))\b'
+        end: '(?=^[ \t]*\[)'
+        name: entity.name.section.edk2fdf
+        beginCaptures:
+          '1': { name: keyword.control.edk2fdf }
+        patterns:
+          - include: "#section_dot_rule"
+          - include: source.edk2cmn#Comment
+          - include: source.edk2cmn#IncludeStatement
+          - include: source.edk2cmn#Conditional
+          - include: "#TokenStatements"
+          - include: "#RegionType"
+          - include: "#RegionLayout"
+          - include: "#InfStatements"
+          - include: source.edk2cmn#MacroDefinition
+          - include: source.edk2cmn#MACROVAL
+          - include: source.edk2cmn#SetStatements
+          - include: source.edk2cmn#hex_numbers
+
+      # 3.6 [FV] Sections
+      - begin: '^[ \t]*\[(?i:(FV))\b'
+        end: '(?=^[ \t]*\[)'
+        name: entity.name.section.edk2fdf
+        beginCaptures:
+          '1': { name: keyword.control.edk2fdf }
+        patterns:
+          - include: "#section_dot_rule"
+          - include: source.edk2cmn#Comment
+          - include: source.edk2cmn#IncludeStatement
+          - include: source.edk2cmn#Conditional
+          - include: "#ExtendedFvEntry"
+          - include: "#FvStatements"
+          - include: "#InfStatements"
+          - include: "#AprioriSection"
+          - include: "#FileStatements"
+          - include: "#LeafSections"
+          - include: source.edk2cmn#MacroDefinition
+          - include: source.edk2cmn#MACROVAL
+          - include: source.edk2cmn#SetStatements
+
+      # ## 3.7 [Capsule] Sections
+      - begin: '^[ \t]*\[(?i:(Capsule))\b'
+        end: '(?=^[ \t]*\[)'
+        name: entity.name.section.edk2fdf
+        beginCaptures:
+          '1': { name: keyword.control.edk2fdf }
+        patterns:
+          - include: "#section_dot_rule"
+          - include: source.edk2cmn#Comment
+          - include: source.edk2cmn#Conditional
+          - include: source.edk2cmn#MacroDefinition
+          - include: source.edk2cmn#MACROVAL
+          - include: source.edk2cmn#SetStatements
+          - include: "#UefiTokens"
+          - include: "#InfStatements"
+          - include: "#FmpPayload"
+          - include: "#FmpFileStatement"
+          - include: "#FileStatements"
+          - include: "#ExtendedFvEntry"
+          - include: "#LeafSections"
+          - include: "#AprioriSection"
+
+      # 3.8 [FmpPayload] Sections
+      - begin: '^[ \t]*\[(?i:(FmpPayload))\b'
+        end: '(?=^[ \t]*\[)'
+        name: entity.name.section.edk2fdf
+        beginCaptures:
+          '1': { name: keyword.control.edk2fdf }
+        patterns:
+          - include: "#section_dot_rule"
+          - include: source.edk2cmn#Comment
+          - include: source.edk2cmn#Conditional
+          - include: source.edk2cmn#MACROVAL
+          - include: "#FmpTokens"
+          - include: "#FmpFileStatement"
+
+      # 3.9 [Rule] Sections
+      - begin: '^[ \t]*\[(?i:(Rule))\b'
+        end: '(?=^[ \t]*\[)'
+        name: entity.name.section.edk2fdf
+        beginCaptures:
+          '1': { name: keyword.control.edk2fdf }
+        patterns:
+          - include: "#section_dot_rule"
+          - include: source.edk2cmn#Comment
+          - include: source.edk2cmn#MACROVAL
+          - include: "#FileStatements"
+          - include: "#rule_secion_keyword"
+          - include: source.edk2cmn#boolean_expression
+          - include: source.edk2cmn#hex_numbers
+          - include: source.edk2cmn#decimal_numbers
+          - include: source.edk2cmn#RegistryFormatGUID
+          - include: source.edk2cmn#MACROVAL
+
+      # 3.10 PCI OptionRom Section
+      - begin: '^[ \t]*\[(?i:(OptionRom))\b'
+        end: '(?=^[ \t]*\[)'
+        name: entity.name.section.edk2fdf
+        beginCaptures:
+          '1': { name: keyword.control.edk2fdf }
+        patterns:
+          - include: "#section_dot_rule"
+          - include: source.edk2cmn#Comment
+          - include: source.edk2cmn#MACROVAL
+          - include: "#pci_optionrom_secion_keyword"
+          - include: source.edk2cmn#hex_numbers
+          - include: source.edk2cmn#decimal_numbers
+          - include: source.edk2cmn#boolean_expression
+
+  # 2.2.1 Section Entries. Generic Section, except [Defines], parsing from end to begin
+  section_dot_rule:
+    begin: '\G'
+    end: '\]'
     patterns:
-      - name: entity.name.section.edk2fdf
-        match: '^\s*\[[a-zA-Z0-9_,\.\| ]+\]'
+      # Generic section name
+      - match: '(?i:\b(FD|FV|Capsule|FmpPayload|Rules|OptionRom)\b)'
+        name: keyword.control.edk2fdf
+
+      # Error Detection: Match spaces trailing right after a dot character
+      - match: '\.[ \t]+|\.(?=\])'
+        name: invalid.illegal.whitespace.edk2fdf
+
+      # Dot Separator: Match a clean dot without trailing whitespace
+      - match: '\.'
+        name: punctuation.separator.dot.edk2fdf
+
+      # Comma Separator
+      - match: ','
+        name: punctuation.separator.comma.edk2fdf
+
+      # $(arch), $(SkuIdentifier) (e.g., IA32, common, X64, Default)
+      - match: '(?<=[.|])[a-zA-Z0-9_]+\b'
+        name: variable.parameter.edk2fdf
+
+      # Double-quoted Strings
+      - match: '"[^"\\]*(?:\\.[^"\\]*)*"'
+        name: string.quoted.double.edk2fdf
+
+      - include: source.edk2cmn#FieldSeparator
+
+  # 3.4 [Defines] Section
+  define_statements:
+    begin: '^[ \t]*(FDF_SPECIFICATION|FDF_VERSION)[ \t]*(=)[ \t]*'
+    end: '$'
+    beginCaptures:
+      '1': { name: keyword.control.edk2fdf }               # Highlights [Defines] specific parameters
+      '2': { name: punctuation.separator.equals.edk2fdf }  # Highlights the '=' character
+    patterns:
+      - include: source.edk2cmn#Comment
+      - include: source.edk2cmn#version_expression
+      - include: source.edk2cmn#hex_numbers
+      - include: source.edk2cmn#decimal_numbers
+
+  # 3.5 [FD] Sections
+  # EBNF: <TokenStatements>
+  TokenStatements:
+    begin: '^[ \t]*(BaseAddress|Size|ErasePolarity|BlockSize|NumBlocks)[ \t]*(=)[ \t]*'
+    end: '$'
+    beginCaptures:
+      '1': { name: keyword.control.edk2fdf }               # Highlights [FD] specific parameters
+      '2': { name: punctuation.separator.equals.edk2fdf }  # Highlights the '=' character
+    patterns:
+      - include: source.edk2cmn#Comment
+      - include: source.edk2cmn#MACROVAL
+      - include: source.edk2cmn#hex_numbers
+      - include: source.edk2cmn#decimal_numbers
+      - include: source.edk2cmn#PcdName_PcdFieldName
+
+  # EBNF: <RegionType>, expect INF
+  RegionType:
+    begin: '^[ \t]*(FV|FILE|CAPSULE|DATA)[ \t]*(=)[ \t]*'
+    end: '$'
+    beginCaptures:
+      '1': { name: keyword.control.edk2fdf }               # Highlights [FD] specific parameters
+      '2': { name: punctuation.separator.equals.edk2fdf }  # Highlights the '=' character
+    patterns:
+      - include: source.edk2cmn#Comment
+      - include: source.edk2cmn#hex_numbers
+      - include: source.edk2cmn#MACROVAL
+
+  # EBNF: <RegionLayout>, Offset|Size
+  RegionLayout:
+    begin: '^[ \t]*(?=[a-zA-Z_][a-zA-Z0-9_.]*[ \t]*\|[ \t]*[a-zA-Z_])'
+    end: '$'
+    patterns:
+      - include: source.edk2cmn#Comment
+      - include: source.edk2cmn#PcdName_PcdFieldName
+
+  # EBNF: <InfRegion>, <InfStatements>
+  InfStatements:
+    begin: '^[ \t]*\b(INF)\b(?:[ \t]+(USE|RuleOverride|VERSION|UI)[ \t]*(=))?'
+    end: '$'
+    beginCaptures:
+      '1': { name: keyword.control.edk2fdf }               # Highlights INF specific parameters
+      '2': { name: keyword.control.edk2fdf }               # Highlights INF specific parameters
+      '3': { name: punctuation.separator.equals.edk2fdf }  # Highlights the '=' character
+    patterns:
+      - include: source.edk2cmn#Comment
+      - include: source.edk2cmn#string_expression
+      - include: source.edk2cmn#MACROVAL
+
+  # 3.6 [FV] Sections
+  # EBNF: <ExtendedFvEntry>
+  ExtendedFvEntry:
+    begin: '^[ \t]*(FV_EXT_ENTRY_TYPE)\b'
+    end: '\}'
+    beginCaptures:
+      '1': { name: keyword.control.edk2fdf }
+    patterns:
+      - match: '\b(TYPE|FILE|DATA)\b'
+        name: keyword.other.edk2fdf
+      - match: '='
+        name: keyword.operator.assignment.edk2fdf
+      - include: source.edk2cmn#Comment
+      - include: source.edk2cmn#hex_numbers
+      - include: source.edk2cmn#MACROVAL
+
+  # EBNF: <FvStatements>
+  FvStatements:
+    begin: '^[ \t]*(BlockSize|NumBlocks|FvBaseAddress|FvForceRebase|FvAlignment|MEMORY_MAPPED|LOCK_CAP|LOCK_STATUS|WRITE_LOCK_CAP|WRITE_LOCK_STATUS|WRITE_ENABLED_CAP|WRITE_DISABLED_CAP|WRITE_STATUS|STICKY_WRITE|WRITE_POLICY_RELIABLE|READ_LOCK_CAP|READ_LOCK_STATUS|READ_ENABLED_CAP|READ_DISABLED_CAP|READ_STATUS|WEAK_ALIGNMENT|ERASE_POLARITY|FileSystemGuid|VariableSignatureGuid|VariabeRegionSize|FtwWorkingSpaceSize|FtwSpareSpaceSize|FvNameGuid|FvUsedSizeEnable|FvNameString)[ \t]*(=)[ \t]*'
+    end: '$'
+    beginCaptures:
+      '1': { name: keyword.control.edk2fdf }               # Highlights [FV] specific parameters
+      '2': { name: punctuation.separator.equals.edk2fdf }  # Highlights the '=' character
+    patterns:
+      - include: source.edk2cmn#Comment
+      - include: source.edk2cmn#MACROVAL
+      - include: source.edk2cmn#RegistryFormatGUID
+      - include: source.edk2cmn#PCDVAL
+      - include: source.edk2cmn#boolean_expression
+      - include: source.edk2cmn#hex_numbers
+      - include: source.edk2cmn#decimal_numbers
+
+  # EBNF: <PeiAprioriSection>, <DxeAprioriSection>, APRIORI PEI, APRIORI DXE
+  AprioriSection:
+    begin: '^[ \t]*\b(APRIORI)[ \t]+(PEI|DXE)[ \t]*\{'
+    end: '\}'
+    beginCaptures:
+      '1': { name: keyword.control.edk2fdf }
+      '2': { name: keyword.control.edk2fdf }
+    patterns:
+      - include: source.edk2cmn#Comment
+      - include: "#InfStatements"
+
+  # EBNF: <FileStatements>, FILE
+  FileStatements:
+    begin: '^[ \t]*\b(FILE)\b'
+    end: '$'
+    beginCaptures:
+      '1': { name: keyword.control.edk2fdf }
+    patterns:
+      - include: source.edk2cmn#Comment
+      - include: source.edk2cmn#MACROVAL
+      - include: source.edk2cmn#PCDVAL
+      - include: source.edk2cmn#RegistryFormatGUID
+      - match: '\b(SEC|PEI_CORE|PEIM|FREEFORM|PEI_DXE_COMBO|DRIVER|DXE_CORE|APPLICATION|SMM_CORE|SMM|MM_CORE_STANDALONE|MM_STANDALONE|RAW|NON_FFS_FILE|FV_IMAGE)\b'
+        name: keyword.control.edk2fdf
+
+  # EBNF: <LeafSections>, SECTION
+  LeafSections:
+    begin: '^[ \t]*\b(SECTION)\b'
+    end: '$'
+    beginCaptures:
+      '1': { name: keyword.control.edk2fdf }
+    patterns:
+      - include: source.edk2cmn#Comment
+      - include: source.edk2cmn#MACROVAL
+      - include: source.edk2cmn#PCDVAL
+      - include: source.edk2cmn#RegistryFormatGUID
+      - include: source.edk2cmn#boolean_expression
+      - include: source.edk2cmn#string_expression
+      - include: source.edk2cmn#decimal_numbers
+      - match: '\b(Align|BUILD_NUM|COMPRESS|GUIDED|VERSION|UI|FV_IMAGE|BUILD_NUM|SUBTYPE_GUID|COMPAT16|PE32|PIC|TE|RAW|DXE_DEPEX|SMM_DEPEX|PEI_DEPEX|COMPRESS|GUIDED|PROCESSING_REQUIRED|AUTH_STATUS_VALID|EXTRA_HEADER_SIZE|PEI_DEPEX_EXP|DXE_DEPEX_EXP|SMM_DEPEX_EXP)\b'
+        name: keyword.control.edk2fdf
+
+  # 3.7 [Capsule] Sections
+  # EBNF: <UefiTokens>, <FvStatements>, <FdStatements>
+  UefiTokens:
+    begin: '^[ \t]*(CAPSULE_GUID|CAPSULE_HEADER_SIZE|CAPSULE_FLAGS|CAPSULE_HEADER_INIT_VERSION|FV|FD)[ \t]*(=)[ \t]*'
+    end: '$'
+    beginCaptures:
+      '1': { name: keyword.control.edk2fdf }               # Highlights [Capsule] specific parameters
+      '2': { name: punctuation.separator.equals.edk2fdf }  # Highlights the '=' character
+    patterns:
+      - include: source.edk2cmn#Comment
+      - include: source.edk2cmn#MACROVAL
+      - include: source.edk2cmn#PCDVAL
+      - include: source.edk2cmn#RegistryFormatGUID
+      - include: source.edk2cmn#decimal_numbers
+      - include: source.edk2cmn#hex_numbers
+
+  # EBNF: <FmpPayload>, FMP_PAYLOAD
+  FmpPayload:
+    begin: '^[ \t]*\b(FMP_PAYLOAD)\b'
+    end: '$'
+    beginCaptures:
+      '1': { name: keyword.control.edk2fdf }
+    patterns:
+      - include: source.edk2cmn#Comment
+
+  # EBNF: <FmpFileStatement>, FILE DATA
+  FmpFileStatement:
+    begin: '^[ \t]*\b(FILE)\b[ \t]+\b(DATA)\b'
+    end: '$'
+    beginCaptures:
+      '1': { name: keyword.control.edk2fdf }
+      '2': { name: keyword.control.edk2fdf }
+    patterns:
+      - include: source.edk2cmn#Comment
+      - include: source.edk2cmn#MACROVAL
+
+  # 3.8 [FmpPayload] Sections
+  # EBNF: <FmpTokens>
+  FmpTokens:
+    begin: '^[ \t]*(IMAGE_HEADER_INIT_VERSION|IMAGE_TYPE_ID|IMAGE_INDEX|HARDWARE_INSTANCE|MONOTONIC_COUNT|CERTIFICATE_GUID|FV|FD)[ \t]*(=)[ \t]*'
+    end: '$'
+    beginCaptures:
+      '1': { name: keyword.control.edk2fdf }               # Highlights [FmpPayload] specific parameters
+      '2': { name: punctuation.separator.equals.edk2fdf }  # Highlights the '=' character
+    patterns:
+      - include: source.edk2cmn#Comment
+      - include: source.edk2cmn#MACROVAL
+      - include: source.edk2cmn#PCDVAL
+      - include: source.edk2cmn#RegistryFormatGUID
+      - include: source.edk2cmn#decimal_numbers
+      - include: source.edk2cmn#hex_numbers
+
+  # 3.9 [Rule] Sections
+  rule_secion_keyword:
+    match: '\b(FILE|NON_FFS_FILE|RAW|FV_IMAGE|SEC|PEI_CORE|PEIM|PEI_DXE_COMBO|FREEFORM|DRIVER|DXE_CORE|APPLICATION|SMM_CORE|SMM|MM_CORE_STANDALONE|MM_STANDALONE|RELOCS_STRIPPED|RELOCS_RETAINED|Fixed|Checksum|Align|COMPAT16|PE32|PIC|TE|FV_IMAGE|RAW|DXE_DEPEX|UI|PEI_DEPEX|SMM_DEPEX|VERSION|SUBTYPE_GUID|COMPRESS|PI_STD|PI_NONE|GUIDED|PROCESSING_REQUIRED|AUTH_STATUS_VALID|EXTRA_HEADER_SIZE|BIN|RAW|ACPI|ASL|Optional|STRING|BUILD_NUM|FvBaseAddress|FvAlignment|MEMORY_MAPPED|LOCK_CAP|LOCK_STATUS|WRITE_LOCK_CAP|WRITE_LOCK_STATUS|WRITE_ENABLED_CAP|WRITE_DISABLED_CAP|WRITE_STATUS|STICKY_WRITE|WRITE_POLICY_RELIABLE|READ_LOCK_CAP|READ_LOCK_STATUS|READ_ENABLED_CAP|READ_DISABLED_CAP|READ_STATUS|APRIORI PEI|APRIORI DXE)\b'
+    name: keyword.control.edk2fdf
+
+  # 3.10 PCI OptionRom Section
+  pci_optionrom_secion_keyword:
+    match: '\b(INF|USE|PCI_VENDOR_ID|PCI_CLASS_CODE|PCI_DEVICE_ID|PCI_REVISION|PCI_COMPRESS|FILE|EFI|BIN)\b'
+    name: keyword.control.edk2fdf
