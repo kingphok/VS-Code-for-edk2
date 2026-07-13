@@ -5,25 +5,39 @@
 #
 #==============================================================================
 
+!error DO NOT include this FDF file
+!ErroR "DO NOT include this FDF file"  # commnet
+
 [Defines]
-  FDF_SPECIFICATION              = 0x0001001B
-  DEFINE TARGET_VER              = 2
+  FDF_SPECIFICATION              = 0x0001001B  # Comment
+  FDF_VERSION                    = 1.29
+  DEFINE TARGET_VER              = 2     # Comment
   DEFINE SECURE_ENABLE           = TRUE
   DEFINE COMPILER_SET            = "GCC"
   DEFINE INF_OUTPUT_DIR          = "Build/Output"
+  DEFINE FD_SIZE                 = 0x100000
+  DEFINE FD_BLOCK_SIZE           = 0x00010000
 
-  SET gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel = 0x80000000
+!ifdef $(TARGET_VER) == 2
+  SET gEfiMdePkgTokenSpaceGuid.PcdDebugEnable = TRUE                         # EBNF: "SET" {<PcdName>}
+!elseif $(BUILD_TARGET) == "RELEASE" OR $(TARGET_VER) >= 2
+  SET gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel = 0x80000000          # EBNF: "SET" {<PcdName>}
+!elseif $(COMPILER_SET) in "GCC, CLANG"
+  SET gEfiMdePkgTokenSpaceGuid.PcdSetupConfig.TimeOut = 10 * $(TARGET_VER)   # EBNF: "SET" {<PcdFieldName>}
+!else
+  !error "Unsupported configuration combination detected in FDF!"
+!endif
 
-!include MdePkg/MdePkgLibs.fdf
+!include MdePkg/MdePkgLibs.fdf.inc # comment
 
 [FD.TestPlatform_FD]
-  BaseAddress   = 0xFFF00000
-  Size          = 0x00100000
-  ErasePolarity = 1
-  BlockSize     = 0x00010000
+  BaseAddress   = 0x0|gTestPkgTokenSpaceGuid.PcdSetupConfig.FdBaseAddress  # comment
+  Size          = $(FD_SIZE)|gTestPkgTokenSpaceGuid.PcdFdSize
+  ErasePolarity = 1  # comment
+  BlockSize     = $(FD_BLOCK_SIZE)
   NumBlocks     = 0x10
 
-  DEFINE FD_REGION_OFFSET        = 0x00000000
+  DEFINE FD_REGION_OFFSET        = 0x00000000  # Comment
 
   $(FD_REGION_OFFSET)|0x000C0000
   gEfiMdePkgTokenSpaceGuid.PcdFlashFvMainBase|gEfiMdePkgTokenSpaceGuid.PcdFlashFvMainSize
@@ -32,16 +46,46 @@
   0x000C0000|0x00040000
   gEfiMdePkgTokenSpaceGuid.PcdFlashFvRecoveryBase|gEfiMdePkgTokenSpaceGuid.PcdFlashFvRecoverySize
   FV = FV_RECOVERY
+  FV = FV/FvRecovery.fv
+
+  0x00100000|0x00A000
+  gEfiMdePkgTokenSpaceGuid.PcdFlashNvStorageBase|gEfiMdePkgTokenSpaceGuid.PcdFlashNvStorageSize
+  DATA = { # Variable Store
+  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+  }
+
+  0x0CA000 | 0x002000
+  gEfiMdePkgTokenSpaceGuid.PcdUCoreAddress|gEfiMdePkgTokenSpaceGuid.PcdUCoreSize
+  FILE = FV/Microcode.bin
+
+  0x0E0000 | 0x020000
+  gEfiMdePkgTokenSpaceGuid.PcdFlashFvRecoveryBase|gEfiMdePkgTokenSpaceGuid.PcdFlashFvRecoverySize
+  CAPSULE = UiCapsuleName
+
+  INF USE = IA32 $(EFI_SOURCE)/Sample/Sample.inf
+  INF RuleOverride = DemoCompress $(EFI_SOURCE)/Sample/Sample.inf
+  INF VERSION = "1.0" $(EFI_SOURCE)/Sample/Sample.inf
+  INF UI = "SampleUI" $(EFI_SOURCE)/Sample/Sample.inf
+
+  !include MdePkg/MdePkgFd.fdf.inc # comment
 
 [FV.FV_MAIN]
   BlockSize          = 0x00010000
   FvBaseAddress      = 0xFFF00000
-  FvForceRebase      = TRUE
-  FvNameGuid         = 12345678-ABCD-4321-8888-A1B2C3D4E5F6
-  FvNameString       = TRUE
+  FvForceRebase      = FALSE
+  FvNameGuid         = 12345678-ABCD-4321-8888-A1B2C3D4E5F6   # Comment
   FvAlignment        = 16M
 
-  SET gEfiMdeModulePkgTokenSpaceGuid.PcdFvIsMain = TRUE
+  SET gEfiMdePkgTokenSpaceGuid.PcdFvIsMain = TRUE
+
+  FV_EXT_ENTRY_TYPE TYPE = 0x0001 {
+    FILE = $(OUTPUT_DIRECTORY)/$(TARGET)_$(TOOL_CHAIN_TAG)/OemConfigData.bin
+  }
+
+  FV_EXT_ENTRY_TYPE TYPE = 0x0002 {
+    DATA = { 0x01, 0x02, 0x03, 0x04 }
+  }
 
   INF MdeModulePkg/Core/Dxe/DxeMain.inf
   INF MdeModulePkg/Universal/BdsDxe/BdsDxe.inf
@@ -51,41 +95,116 @@
     SECTION RAW = TestPkg/Binary/Blob2.bin
   }
 
+  FILE SEC = PCD(gEfiMdePkgTokenSpaceGuid.PcdSecFileGuid) {  # comment
+    SECTION PE32 = $(SEC_OUTPUT_PATH)/SecIa32.efi
+  }
+
+  FILE DRIVER = 5D695E11-9B3F-4b83-B25F-4A8D5D69BE07  {
+    SECTION PE32 = Intel3.5/EFIX64/E3522X2.EFI
+  }
+
+  !include MdePkg/MdePkgFv.fdf.inc # comment
+
+  APRIORI DXE {
+    INF MdeModulePkg/Universal/PCD/Dxe/Pcd.inf
+    INF Nt32Pkg/MetronomeDxe/MetronomeDxe.inf
+    }
+
 [FV.FV_RECOVERY]
   BlockSize          = 0x00010000
   FvAlignment        = Auto
 
+  SECTION GUIDED 3EA022A4-1439-4ff2-B4E4-A6F65A13A9AB
+
   INF MdeModulePkg/Core/Pei/PeiMain.inf
+  FILE FV_IMAGE = EF41A0E1-40B1-481f-958E-6FB4D9B12E76 {
+    FvAlignment           = 512K
+    WRITE_POLICY_RELIABLE = TRUE
+    SECTION GUIDED 3EA022A4-1439-4ff2-B4E4-A6F65A13A9AB {
+      SECTION FV_IMAGE = Dxe {
+        APRIORI DXE {
+          INF $(WORKSPACE)/a/a.inf
+          INF $(WORKSPACE)/a/b/b.inf
+        }
+        INF a/d/d.inf
+        ...
+      }
+    }
+  }
+
+  APRIORI PEI {
+    INF $(MdeModulePkg)/ReportStatusCodeRouterPei/ReportStatusCodeRouterPei.inf
+  }
+
+  SECTION PE32 = $(OUTPUT_DIRECTORY)/$(TARGET)_$(TOOL_CHAIN_TAG)/X64/DxeMain.efi  #
+  SECTION RAW = MdeModulePkg/Logo/Logo.bmp
+  SECTION TE = MyPlatform/Bin/PeiCore.te
+  SECTION VERSION = "1.0"
+  SECTION Align = 4K VERSION = "2.14"
+  SECTION BUILD_NUM = 0x0001002A VERSION = "1.0.1"
+  SECTION Align = 16B BUILD_NUM = 42 VERSION = "3.0"  #
+  SECTION UI = "MyDxeDriver"
+  SECTION Align = 32B UI = "SecureBootModule"
+  SECTION DXE_DEPEX = MyPlatform/Dxe/MyDriver/MyDriver.depex
+  SECTION PEI_DEPEX = PCD(gEfiMdePkgTokenSpaceGuid.PcdPeiCoreDepexGuid)  #
+  SECTION COMPRESS PI_STD {
+    SECTION PE32 = $(WORKSPACE)/DxeMain.efi
+    SECTION UI = "SampleDriver"  # comment
+  }
+  SECTION GUIDED EE4E5898-3914-4259-9D6E-DC7BD79403CF Align = 8K {
+    SECTION PE32 = Intel/Bin/SecretDriver.efi
+    SECTION PEI_DEPEX_EXP = { gEfiPeiMemoryDiscoveredPpiGuid }
+    SECTION DXE_DEPEX_EXP = { gEfiPeiMemoryDiscoveredPpiGuid AND gEfiPeiBootInRecoveryModePpiGuid }
+    SECTION SMM_DEPEX_EXP = { TRUE }
+  }
 
 [Capsule.TestCapsule]
-  CapsuleGuid = 87654321-ABCD-4321-8888-A1B2C3D4E5F6
+  CAPSULE_GUID        = 87654321-ABCD-4321-8888-A1B2C3D4E5F6
+  CAPSULE_HEADER_SIZE = 32
+  CAPSULE_FLAGS = PersistAcrossReset, InitiateReset
+  CAPSULE_HEADER_SIZE = 0x20
+  CAPSULE_HEADER_INIT_VERSION = 0x1
+  FILE DATA   = $(OUTPUT_DIR)Driver1.efi
+  FILE DATA   = Driver2.efi  # zero or more
+  FMP_PAYLOAD = Payload1     # zero or more
+
+  DEFINE LOCAL_VERSION = 0x00010005
 
   INF MdeModulePkg/Universal/CapsuleRuntimeDxe/CapsuleRuntimeDxe.inf
   FILE FD = TestPlatform_FD
 
+  FILE FV_IMAGE = EF41A0E1-40B1-481f-958E-6FB4D9B12E76 {
+    SECTION GUIDED 3EA022A4-1439-4ff2-B4E4-A6F65A13A9AB {
+      SECTION FV_IMAGE = Dxe {
+        APRIORI DXE {
+          INF a/a/a.inf
+          INF a/c/c.inf
+          INF a/b/b.inf
+        }
+        INF a/d/d.inf
+      }
+    }
+  }
+
+  FILE RAW = $(OUTPUT_DIR)/Logo.ffs
+  !if $(X64_BOOT_ENABLE) == TRUE
+    FV = FvMain
+  !else
+    FV = FvRecovery
+  !endif
+
 [FmpPayload.TestFmp]
-  ImageTypeId    = 44332211-ABCD-4321-8888-A1B2C3D4E5F6
-  ImageIndex     = 1
-  HardwareInstance = 0
-  MonotonicCount = 1
+  IMAGE_HEADER_INIT_VERSION = 0x02
+  IMAGE_TYPE_ID     = 938A6F2E-9711-49CE-90D5-7ED68AC96501
+  IMAGE_INDEX       = 0x1
+  HARDWARE_INSTANCE = 0x0
+  MONOTONIC_COUNT   = 1234
+  CERTIFICATE_GUID  = PCD(gEfiMdePkgTokenSpaceGuid.PcdSecFileGuid)  # comment
 
-  FV = FV_MAIN
+  FILE DATA = Image.bin
 
-!if $(BUILD_TARGET) == "DEBUG" AND $(SECURE_ENABLE) == TRUE
-  SET gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel = 0x80000042
-!elif $(BUILD_TARGET) == "RELEASE" OR $(TARGET_VER) >= 2
-  SET gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel = 0x00000000
-!elif !$(SECURE_ENABLE)
-  SET gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel = 0x80000000
-!elif $(TARGET_VER) != 0 AND $(TARGET_VER) < 5
-  SET gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel = 0x0000000F
-!elif $(TARGET_VER) <= 1
-  SET gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel = 0x00000001
-!elif $(COMPILER_SET) in "GCC, CLANG"
-  SET gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel = 0x40000000
-!else
-  !error "Unsupported configuration combination detected in FDF!"
-!endif
+  FV = FV_MAIN.fv
+  FD = BIOS.fd
 
 [Rule.Common.SEC]
   FILE SEC = $(NAMED_GUID) {
@@ -99,5 +218,124 @@
     TE       TE             $(INF_OUTPUT_DIR)/$(MODULE_NAME).efi
   }
 
-[UserExtensions.TianoCore."ExtraFiles"]
-  PlatformExtra.uni
+[Rule.IA32.SEC]
+  FILE SEC = $(NAMED_GUID) Fixed Align=32 |.efi
+
+[Rule.Common.PEIM]
+  FILE PEIM = $(NAMED_GUID) {
+    TE TE |.te
+    PEI_DEPEX PEI_DEPEX Optional |.Depex
+    VERSION STRING    = "$(INF_VERSION)" Optional BUILD_NUM = $(BUILD_NUM)
+    UI UNI_UI Optional | .uni
+  }
+
+[Rule.Common.PEIM.PE32]
+  FILE PEIM = $(NAMED_GUID) {
+    PEI_DEPEX PEI_DEPEX Optional | .dxs
+    COMPRESS {
+      PE32 PE32 |.efi
+      VERSION UNI_VER Optional BUILD_NUM = $(BUILD_NUM) | .ver
+      UI UI Optional | .ui
+    }
+  }
+
+[Rule.Common.PEI_CORE]
+  FILE PEI_CORE = $(NAMED_GUID) {
+    PE32    PE32 Align=4K             $(INF_OUTPUT)/$(MODULE_NAME).efi
+    UI      STRING = "$(MODULE_NAME)" Optional
+    VERSION STRING = "$(INF_VERSION)" Optional BUILD_NUM=$(BUILD_NUMBER)
+  }
+
+[Rule.Common.PEIM]
+  FILE PEIM = $(NAMED_GUID){
+    PEI_DEPEX PEI_DEPEX                 Optional $(INF_OUTPUT)/$(MODULE_NAME).depex
+    PE32      PE32 Align=4K             $(INF_OUTPUT)/$(MODULE_NAME).efi
+    UI        STRING = "$(MODULE_NAME)" Optional
+    VERSION   STRING = "$(INF_VERSION)" Optional BUILD_NUM=$(BUILD_NUMBER)
+  }
+
+[Rule.Common.DXE_CORE]
+  FILE DXE_CORE = $(NAMED_GUID) {
+    COMPRESS PI_STD {
+      PE32    PE32                      $(INF_OUTPUT)/$(MODULE_NAME).efi
+      UI      STRING = "$(MODULE_NAME)" Optional
+      VERSION STRING = "$(INF_VERSION)" Optional BUILD_NUM=$(BUILD_NUMBER)
+    }
+  }
+
+[Rule.Common.UEFI_DRIVER]
+  FILE DRIVER = $(NAMED_GUID) {
+    DXE_DEPEX DXE_DEPEX Optional $(INF_OUTPUT)/$(MODULE_NAME).depex
+    COMPRESS PI_STD {
+      GUIDED {
+        PE32    PE32                      $(INF_OUTPUT)/$(MODULE_NAME).efi
+        UI      STRING = "$(MODULE_NAME)" Optional
+        VERSION STRING = "$(INF_VERSION)" Optional BUILD_NUM=$(BUILD_NUMBER)
+      }
+    }
+  }
+
+[Rule.Common.UEFI_DRIVER.TIANOCOMPRESSED]
+  FILE DRIVER = $(NAMED_GUID) {
+    DXE_DEPEX DXE_DEPEX Optional $(INF_OUTPUT)/$(MODULE_NAME).depex
+    GUIDED A31280AD-481E-41B6-95E8-127F4C984779 PROCESSING_REQUIRED = TRUE {
+      PE32    PE32                      $(INF_OUTPUT)/$(MODULE_NAME).efi
+      UI      STRING = "$(MODULE_NAME)" Optional
+      VERSION STRING = "$(INF_VERSION)" Optional BUILD_NUM=$(BUILD_NUMBER)
+    }
+  }
+
+[Rule.Common.DXE_DRIVER]
+  FILE DRIVER = $(NAMED_GUID) {
+    DXE_DEPEX   DXE_DEPEX Optional        $(INF_OUTPUT)/$(MODULE_NAME).depex
+    COMPRESS PI_STD {
+      GUIDED {
+        PE32    PE32                      $(INF_OUTPUT)/$(MODULE_NAME).efi
+        UI      STRING = "$(MODULE_NAME)" Optional
+        VERSION STRING = "$(INF_VERSION)" Optional BUILD_NUM=$(BUILD_NUMBER)
+      }
+    }
+  }
+
+[Rule.Common.DXE_RUNTIME_DRIVER]
+  FILE DRIVER = $(NAMED_GUID) {
+    DXE_DEPEX   DXE_DEPEX Optional        $(INF_OUTPUT)/$(MODULE_NAME).depex
+    COMPRESS PI_STD {
+      GUIDED {
+        PE32    PE32                      $(INF_OUTPUT)/$(MODULE_NAME).efi
+        UI      STRING = "$(MODULE_NAME)" Optional
+        VERSION STRING = "$(INF_VERSION)" Optional BUILD_NUM=$(BUILD_NUMBER)
+      }
+    }
+  }
+
+[Rule.Common.UEFI_APPLICATION]
+  FILE APPLICATION = $(NAMED_GUID) {
+    COMPRESS PI_STD {
+      GUIDED {
+        PE32    PE32                      $(INF_OUTPUT)/$(MODULE_NAME).efi
+        UI      STRING = "$(MODULE_NAME)" Optional
+        VERSION STRING = "$(INF_VERSION)" Optional BUILD_NUM=$(BUILD_NUMBER)
+      }
+    }
+  }
+
+[Rule.Common.USER_DEFINED.ACPITABLE]
+  FILE FREEFORM = $(NAMED_GUID) {
+    RAW ACPI Optional |.acpi
+    RAW ASL  Optional |.aml
+  }
+
+[Rule.Common.FV_IMAGE]
+  FILE FV_IMAGE = $(NAMED_GUID) {
+    FvBaseAddress = 0x0
+    FvAlignment = 0x1000
+    MEMORY_MAPPED = FALSE
+  }
+
+[OptionRom.AtaPassThru]
+  INF USE = X64 OptionRomPkg/AtaPassThruDxe/AtaPassThruDxe.inf {
+    PCI_VENDOR_ID = 0xabcd
+    PCI_DEVICE_ID = 0x0A03 0x0B03
+    PCI_REVISION = 0x0001
+  }
