@@ -29,7 +29,8 @@
         ],
         "extensions": [
           ".dsc",
-          ".dsc.inc"
+          ".dsc.inc",
+          ".template"
         ],
         "configuration": "./lang/edk2dsc.configuration.json"
       },

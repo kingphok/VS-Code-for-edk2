@@ -4,66 +4,32 @@ scopeName: source.edk2dsc
 fileTypes:
   - dsc
   - dsc.inc
+  - template
 
 patterns:
-  - include: "#Comment"
-  - include: "#IncludeStatement"
-  - include: "#conditional_statements"
+  - include: source.edk2cmn#Comment
+  - include: source.edk2cmn#IncludeStatement
+  - include: source.edk2cmn#Conditional
   - include: "#EDK_II_DSC"
 
+  # For !include file which not have section, include all patterns again...
+  - include: "#define_statements"
+  - include: source.edk2cmn#MacroDefinition
+  - include: source.edk2cmn#MACROVAL
+  - include: source.edk2cmn#compiler_flag
+  - include: source.edk2cmn#hex_numbers
+  - include: source.edk2cmn#decimal_numbers
+  - include: source.edk2cmn#boolean_expression
+  - include: source.edk2cmn#FieldSeparator
+  - include: source.edk2cmn#string_expression
+  - include: source.edk2cmn#pcd_uint_type
+  - include: source.edk2cmn#boolean_expression
+  - include: source.edk2cmn#PCDVAL
+  # Put pattern of [Components] section in the last
+  - include: "#Exec"
+  - include: "#Edk2Struct"
+
 repository:
-  # Component for single-line comments starting with #
-  Comment:
-    patterns:
-      - name: comment.line.number-sign.edk2dsc
-        match: '#.*$'
-
-  # 3.3.4 !include Statements
-  IncludeStatement:
-    patterns:
-      - begin: '^[ \t]*(?i:(!include))[ \t]+'
-        end: '$'
-        beginCaptures:
-          '1': { name: keyword.control.preprocessor.edk2dsc }
-        patterns:
-          - include: "#Comment"
-          - name: meta.preprocessor.string.edk2dsc
-            match: '[^#]+'  # Match the path while strictly stopping before any '#' character
-
-  # 3.3.3 Conditional Directive Blocks
-  conditional_statements:
-    patterns:
-      - begin: '^[ \t]*(?i:(!ifdef|!ifndef|!if|!elseif))\b'
-        end: '$'
-        beginCaptures:
-          '1': { name: keyword.control.preprocessor.edk2dsc }
-        patterns:
-          - include: "#Comment"
-          - include: "#MacroDefinition"
-          - include: "#string_expression"
-          - include: "#boolean_expression"
-          - include: "#hex_numbers"
-          - include: "#decimal_numbers"
-          - include: "#operators_operands"
-      - begin: '^[ \t]*(?i:(!else|!endif))\b'
-        end: '$'
-        beginCaptures:
-          '1': { name: keyword.control.preprocessor.edk2dsc }
-        patterns:
-          - include: "#Comment"
-
-      # 3.3.5 !error Statements
-      - begin: '^[ \t]*(?i:(!error))[ \t]+'
-        end: '$'
-        beginCaptures:
-          '1': { name: invalid.illegal.edk2dsc }
-        patterns:
-          - include: "#Comment"
-          - name: string.edk2dsc
-            match: '"[^"\\]*(?:\\.[^"\\]*)*"'
-          - name: string.edk2dsc
-            match: '[^#]+'
-
   # 3.3 Platform DSC Definition
   EDK_II_DSC:
     patterns:
@@ -74,12 +40,12 @@ repository:
         beginCaptures:
           '1': { name: keyword.control.edk2dsc }
         patterns:
-          - include: "#Comment"
-          - include: "#IncludeStatement"
-          - include: "#conditional_statements"
+          - include: source.edk2cmn#Comment
+          - include: source.edk2cmn#IncludeStatement
+          - include: source.edk2cmn#Conditional
           - include: "#define_statements"
-          - include: "#macro_declaration"
-          - include: "#MacroDefinition"
+          - include: source.edk2cmn#MacroDefinition
+          - include: source.edk2cmn#MACROVAL
 
       # 3.6 [BuildOptions] Sections
       - name: entity.name.section.edk2dsc
@@ -88,12 +54,12 @@ repository:
         beginCaptures:
           '1': { name: keyword.control.edk2dsc }
         patterns:
+          - include: source.edk2cmn#Comment
+          - include: source.edk2cmn#IncludeStatement
+          - include: source.edk2cmn#Conditional
           - include: "#section_dot_rule"
-          - include: "#Comment"
-          - include: "#IncludeStatement"
-          - include: "#conditional_statements"
-          - include: "#MacroDefinition"
-          - include: "#compiler_flag"
+          - include: source.edk2cmn#MACROVAL
+          - include: source.edk2cmn#compiler_flag
 
       # 3.7 [SkuIds] Section
       - name: entity.name.section.edk2dsc
@@ -102,11 +68,11 @@ repository:
         beginCaptures:
           '1': { name: keyword.control.edk2dsc }
         patterns:
-          - include: "#Comment"
-          - include: "#IncludeStatement"
-          - include: "#conditional_statements"
-          - include: "#hex_numbers"
-          - include: "#decimal_numbers"
+          - include: source.edk2cmn#Comment
+          - include: source.edk2cmn#IncludeStatement
+          - include: source.edk2cmn#Conditional
+          - include: source.edk2cmn#hex_numbers
+          - include: source.edk2cmn#decimal_numbers
 
       # 3.8 [LibraryClasses] Sections
       - name: entity.name.section.edk2dsc
@@ -115,13 +81,13 @@ repository:
         beginCaptures:
           '1': { name: keyword.control.edk2dsc }
         patterns:
+          - include: source.edk2cmn#Comment
+          - include: source.edk2cmn#IncludeStatement
+          - include: source.edk2cmn#Conditional
           - include: "#section_dot_rule"
-          - include: "#Comment"
-          - include: "#IncludeStatement"
-          - include: "#conditional_statements"
-          - include: "#MacroDefinition"
-          - include: "#macro_declaration"
-          - include: "#FieldSeparator"
+          - include: source.edk2cmn#MACROVAL
+          - include: source.edk2cmn#MacroDefinition
+          - include: source.edk2cmn#FieldSeparator
 
       # 3.9 PCD Sections
       - name: entity.name.section.edk2dsc
@@ -130,19 +96,19 @@ repository:
         beginCaptures:
           '1': { name: keyword.control.edk2dsc }
         patterns:
+          - include: source.edk2cmn#Comment
+          - include: source.edk2cmn#IncludeStatement
+          - include: source.edk2cmn#Conditional
           - include: "#section_dot_rule"
-          - include: "#Comment"
-          - include: "#IncludeStatement"
-          - include: "#conditional_statements"
-          - include: "#macro_declaration"
-          - include: "#MacroDefinition"
-          - include: "#string_expression"
-          - include: "#pcd_uint_type"
-          - include: "#boolean_expression"
-          - include: "#hex_numbers"
-          - include: "#decimal_numbers"
-          - include: "#FieldSeparator"
-          - include: "#pcd_variable"
+          - include: source.edk2cmn#MacroDefinition
+          - include: source.edk2cmn#MACROVAL
+          - include: source.edk2cmn#string_expression
+          - include: source.edk2cmn#pcd_uint_type
+          - include: source.edk2cmn#boolean_expression
+          - include: source.edk2cmn#hex_numbers
+          - include: source.edk2cmn#decimal_numbers
+          - include: source.edk2cmn#FieldSeparator
+          - include: source.edk2cmn#PCDVAL
 
       # 3.10 [Components] Sections
       - name: entity.name.section.edk2dsc
@@ -152,89 +118,12 @@ repository:
           '1': { name: keyword.control.edk2dsc }
         patterns:
           - include: "#section_dot_rule"
-          - include: "#IncludeStatement"
-          - include: "#conditional_statements"
-          - include: "#Comment"
-          - include: "#MacroDefinition"
-
-          # EBNF: <Exec>
-          - match: '\b(EXEC)[ \t]*(=)[ \t]*([^\{\s#]+)'
-            captures:
-              '1': { name: keyword.control.edk2dsc }
-              '3': { name: string.edk2dsc }
-
-          # EBNF: <Edk2Struct>
-          - begin: '\{'
-            end: '\}'
-            beginCaptures:
-              '0': { name: entity.name.section.encapsulation.edk2dsc }
-            endCaptures:
-              '0': { name: entity.name.section.encapsulation.edk2dsc }
-            patterns:
-              - include: "#conditional_statements"
-              - include: "#Comment"
-              - include: "#MacroDefinition"
-
-              # <Defines>
-              - begin: '(<)(Defines)(>)'
-                end: '(?=<|\})'
-                beginCaptures:
-                  '2': { name: keyword.control.edk2dsc }
-                patterns:
-                  - include: "#Comment"
-                  - begin: '^[ \t]*(FILE_GUID)[ \t]*(=)[ \t]*'
-                    end: '$'
-                    beginCaptures:
-                      '1': { name: keyword.control.edk2dsc }
-                    patterns:
-                      - include: "#RegistryFormatGUID"
-                      - include: "#MacroDefinition"
-                      - include: "#macro_declaration"
-                      - include: "#conditional_statements"
-
-              # <LibraryClasses>
-              - begin: '(<)(LibraryClasses)(>)'
-                end: '(?=<|\})'
-                beginCaptures:
-                  '2': { name: keyword.control.edk2dsc }
-                patterns:
-                  - include: "#Comment"
-                  - include: "#IncludeStatement"
-                  - include: "#conditional_statements"
-                  - include: "#macro_declaration"
-                  - include: "#MacroDefinition"
-
-              # <PcdsFeatureFlag>, <PcdsFixedAtBuild>, <PcdsPatchableInModule>
-              - begin: '(<)(PcdsFeatureFlag|PcdsFixedAtBuild|PcdsPatchableInModule)(>)'
-                end: '(?=<|\})'
-                beginCaptures:
-                  '2': { name: keyword.control.edk2dsc }
-                patterns:
-                  - include: "#Comment"
-                  - include: "#IncludeStatement"
-                  - include: "#conditional_statements"
-                  - include: "#macro_declaration"
-                  - include: "#MacroDefinition"
-                  - include: "#string_expression"
-                  - include: "#pcd_uint_type"
-                  - include: "#boolean_expression"
-                  - include: "#hex_numbers"
-                  - include: "#decimal_numbers"
-                  - include: "#FieldSeparator"
-                  - include: "#pcd_variable"
-
-              # <BuildOptions>
-              - begin: '(<)(BuildOptions)(>)'
-                end: '(?=<|\})'
-                beginCaptures:
-                  '2': { name: keyword.control.edk2dsc }
-                patterns:
-                  - include: "#Comment"
-                  - include: "#IncludeStatement"
-                  - include: "#conditional_statements"
-                  - include: "#macro_declaration"
-                  - include: "#MacroDefinition"
-                  - include: "#compiler_flag"
+          - include: source.edk2cmn#IncludeStatement
+          - include: source.edk2cmn#Conditional
+          - include: source.edk2cmn#Comment
+          - include: source.edk2cmn#MACROVAL
+          - include: "#Exec"
+          - include: "#Edk2Struct"
 
       # 3.11 [UserExtensions] Sections
       - name: entity.name.section.edk2dsc
@@ -244,14 +133,14 @@ repository:
           '1': { name: keyword.control.edk2dsc }
         patterns:
           - include: "#section_dot_rule"
-          - include: "#Comment"
-          - include: "#conditional_statements"
-          - include: "#MacroDefinition"
-          - include: "#string_expression"
-          - include: "#boolean_expression"
-          - include: "#hex_numbers"
-          - include: "#decimal_numbers"
-          - include: "#RegistryFormatGUID"
+          - include: source.edk2cmn#Comment
+          - include: source.edk2cmn#Conditional
+          - include: source.edk2cmn#MACROVAL
+          - include: source.edk2cmn#string_expression
+          - include: source.edk2cmn#boolean_expression
+          - include: source.edk2cmn#hex_numbers
+          - include: source.edk2cmn#decimal_numbers
+          - include: source.edk2cmn#RegistryFormatGUID
 
       # 3.12 [DefaultStores] Section
       - name: entity.name.section.edk2dsc
@@ -260,10 +149,10 @@ repository:
         beginCaptures:
           '1': { name: keyword.control.edk2dsc }
         patterns:
-          - include: "#Comment"
-          - include: "#conditional_statements"
-          - include: "#hex_numbers"
-          - include: "#decimal_numbers"
+          - include: source.edk2cmn#Comment
+          - include: source.edk2cmn#Conditional
+          - include: source.edk2cmn#hex_numbers
+          - include: source.edk2cmn#decimal_numbers
 
       # [Libraries] Sections, only for building EDK module
       - name: entity.name.section.edk2dsc
@@ -273,11 +162,11 @@ repository:
           '1': { name: keyword.control.edk2dsc }
         patterns:
           - include: "#section_dot_rule"
-          - include: "#Comment"
-          - include: "#IncludeStatement"
-          - include: "#conditional_statements"
-          - include: "#macro_declaration"
-          - include: "#MacroDefinition"
+          - include: source.edk2cmn#Comment
+          - include: source.edk2cmn#IncludeStatement
+          - include: source.edk2cmn#Conditional
+          - include: source.edk2cmn#MacroDefinition
+          - include: source.edk2cmn#MACROVAL
 
   # 2.2.1 Section Entries. Generic Section, except [Defines], parsing from end to begin
   section_dot_rule:
@@ -309,7 +198,7 @@ repository:
           - name: string.quoted.double.edk2dsc
             match: '"[^"\\]*(?:\\.[^"\\]*)*"'
 
-          - include: "#FieldSeparator"
+          - include: source.edk2cmn#FieldSeparator
 
   # 3.5 [Defines] Section, Table 6 EDK II [Defines] Section Elements
   define_statements:
@@ -320,113 +209,90 @@ repository:
           '1': { name: keyword.control.edk2dsc }               # Highlights [Defines] specific parameters
           '2': { name: punctuation.separator.equals.edk2dsc }  # Highlights the '=' character
         patterns:
-          - include: "#RegistryFormatGUID"
-          - include: "#version_expression"
-          - include: "#hex_numbers"
-          - include: "#decimal_numbers"
+          - include: source.edk2cmn#RegistryFormatGUID
+          - include: source.edk2cmn#version_expression
+          - include: source.edk2cmn#hex_numbers
+          - include: source.edk2cmn#decimal_numbers
+          - include: source.edk2cmn#boolean_expression
 
-  # 3.2.2 MACRO Statements
-  macro_declaration:
-    patterns:
-      - begin: '^[ \t]*\b(DEFINE)\b[ \t]+([a-zA-Z_][a-zA-Z0-9_]*)[ \t]*(=)[ \t]*'
-        end: '$'
-        beginCaptures:
-          '1': { name: keyword.other.define.edk2dsc }        # Highlights 'DEFINE'
-          '2': { name: variable.other.macro.edk2dsc }        # Highlights macro variable name
-          '3': { name: keyword.operator.assignment.edk2dsc } # Highlights '='
-        patterns:
-          - include: "#MacroDefinition"
-          - include: "#string_expression"
-          - include: "#boolean_expression"
-          - include: "#hex_numbers"
-          - include: "#decimal_numbers"
-          - include: "#RegistryFormatGUID"
+  # 3.10 [Components] Sections
+  # EBNF: <Exec>
+  Exec:
+    match: '\b(EXEC)[ \t]*(=)[ \t]*([^\{\s#]+)'
+    captures:
+      '1': { name: keyword.control.edk2dsc }
+      '3': { name: string.edk2dsc }
 
-  # GUID (Format: 8-4-4-4-12 hex characters)
-  RegistryFormatGUID:
-    patterns:
-      - name: constant.numeric.guid.edk2dsc
-        match: '\b[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}\b'
-
-  # Macros / Environment Variables (e.g., $(NAMED_MACRO))
-  MacroDefinition:
-    name: string.interpolated.edk2dsc
-    begin: '(\$\()'
-    end: '(\))'
-    patterns:
-      - name: variable.other.edk2dsc
-        match: '[a-zA-Z0-9_]+'
-
-  # Double-quoted Strings and unicode strings (e.g., L"string")
-  string_expression:
-    name: string.quoted.double.edk2dsc
-    begin: '(L)?"' # Matches optional 'L' prefix followed by double quotes
-    end: '"'
+  # EBNF: <Edk2Struct>
+  Edk2Struct:
+    begin: '\{'
+    end: '\}'
     beginCaptures:
-      '1': { name: storage.type.string.edk2dsc } # Highlights the 'L' prefix
-
-  # 3.10 PCD Sections, PCD unit data type, expect UINTN
-  pcd_uint_type:
+      '0': { name: entity.name.section.encapsulation.edk2dsc }
+    endCaptures:
+      '0': { name: entity.name.section.encapsulation.edk2dsc }
     patterns:
-      # Match VOID* safely
-      - name: variable.language.edk2dsc
-        match: '\bVOID\*'
-      # Match other unit and boolean types
-      - name: variable.language.edk2dsc
-        match: '\b(UINT8|UINT16|UINT32|UINT64|BOOLEAN)\b'
+      - include: source.edk2cmn#Conditional
+      - include: source.edk2cmn#Comment
+      - include: source.edk2cmn#MACROVAL
 
-  # Version Strings (e.g., 1.27, 1.27.1)
-  version_expression:
-    patterns:
-      - name: constant.numeric.version.edk2dsc
-        match: '\b[0-9]+(\.[0-9]+)+\b'
+      # <Defines>
+      - begin: '(<)(Defines)(>)'
+        end: '(?=<|\})'
+        beginCaptures:
+          '2': { name: keyword.control.edk2dsc }
+        patterns:
+          - include: source.edk2cmn#Comment
+          - begin: '^[ \t]*(FILE_GUID)[ \t]*(=)[ \t]*'
+            end: '$'
+            beginCaptures:
+              '1': { name: keyword.control.edk2dsc }
+            patterns:
+              - include: source.edk2cmn#RegistryFormatGUID
+              - include: source.edk2cmn#MACROVAL
+              - include: source.edk2cmn#MacroDefinition
+              - include: source.edk2cmn#Conditional
 
-  boolean_expression:
-    patterns:
-      # Boolean values (TRUE or FALSE only)
-      - name: constant.language.boolean.edk2dsc
-        match: '\b(TRUE|FALSE)\b'
+      # <LibraryClasses>
+      - begin: '(<)(LibraryClasses)(>)'
+        end: '(?=<|\})'
+        beginCaptures:
+          '2': { name: keyword.control.edk2dsc }
+        patterns:
+          - include: source.edk2cmn#Comment
+          - include: source.edk2cmn#IncludeStatement
+          - include: source.edk2cmn#Conditional
+          - include: source.edk2cmn#MacroDefinition
+          - include: source.edk2cmn#MACROVAL
 
-  # Hexadecimal numbers (Starts with 0x or 0X)
-  hex_numbers:
-    patterns:
-      - name: constant.numeric.hex.edk2dsc
-        match: '\b0[xX][0-9a-fA-F]+\b'
+      # <PcdsFeatureFlag>, <PcdsFixedAtBuild>, <PcdsPatchableInModule>
+      - begin: '(<)(PcdsFeatureFlag|PcdsFixedAtBuild|PcdsPatchableInModule)(>)'
+        end: '(?=<|\})'
+        beginCaptures:
+          '2': { name: keyword.control.edk2dsc }
+        patterns:
+          - include: source.edk2cmn#Comment
+          - include: source.edk2cmn#IncludeStatement
+          - include: source.edk2cmn#Conditional
+          - include: source.edk2cmn#MacroDefinition
+          - include: source.edk2cmn#MACROVAL
+          - include: source.edk2cmn#string_expression
+          - include: source.edk2cmn#pcd_uint_type
+          - include: source.edk2cmn#boolean_expression
+          - include: source.edk2cmn#hex_numbers
+          - include: source.edk2cmn#decimal_numbers
+          - include: source.edk2cmn#FieldSeparator
+          - include: source.edk2cmn#PCDVAL
 
-  # Decimal numbers (Unsigned integers)
-  decimal_numbers:
-    patterns:
-      - name: constant.numeric.decimal.edk2dsc
-        match: '\b[0-9]+\b'
-
-  # EBNF: <FieldSeparator> "|"
-  FieldSeparator:
-    patterns:
-      - name: keyword.operator.logical.pipe.edk2dsc
-        match: '\|'
-
-  # pcd variable (between a dot "." and a pipe symbol "|")
-  pcd_variable:
-    patterns:
-      - name: variable.other.pcd.edk2dsc
-        match: '(?<=\.)[a-zA-Z0-9_]+\b(?=[ \t]*\|)'
-
-  #  BuildOption compiler Define Flags (e.g., -D TEST_IA32_ONLY, /D TEST_IA32_ONLY)
-  compiler_flag:
-    patterns:
-      - name: meta.preprocessor.macro.edk2dsc
-        match: '(-D|/D)[ \t]*([a-zA-Z0-9_]+)'
-        captures:
-          '1': { name: keyword.control.compiler.flag.edk2dsc } # Highlights '-D' or '/D'
-          '2': { name: variable.other.macro.edk2dsc }          # Highlights 'TEST_IA32_ONLY'
-
-  # Table 5 Operator Precedence and Supported Operands, https://github.com/tianocore/edk2/blob/master/BaseTools/Source/Python/Common/Expression.py
-  operators_operands:
-    patterns:
-      # Letter operators(case-sensitive)
-      - name: keyword.operator.edk2dsc
-        match: '(?<=[ \t])(EQ|NE|in|IN|LE|GE|LT|GT|and|AND|or|OR|not|NOT|xor|XOR)(?=[ \t])'
-
-      # Character operators
-      - name: keyword.operator.edk2dsc
-        match: '==|!=|<=|>=|&&|\|\||<<|>>|\?:|[<>\+\-\*/%&\|!~^]'
+      # <BuildOptions>
+      - begin: '(<)(BuildOptions)(>)'
+        end: '(?=<|\})'
+        beginCaptures:
+          '2': { name: keyword.control.edk2dsc }
+        patterns:
+          - include: source.edk2cmn#Comment
+          - include: source.edk2cmn#IncludeStatement
+          - include: source.edk2cmn#Conditional
+          - include: source.edk2cmn#MacroDefinition
+          - include: source.edk2cmn#MACROVAL
+          - include: source.edk2cmn#compiler_flag

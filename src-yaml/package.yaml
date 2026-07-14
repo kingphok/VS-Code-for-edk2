@@ -21,6 +21,7 @@ contributes:
       extensions:
         - ".dsc"
         - ".dsc.inc"
+        - ".template"
       configuration: ./lang/edk2dsc.configuration.json
     - id: edk2fdf
       aliases:
