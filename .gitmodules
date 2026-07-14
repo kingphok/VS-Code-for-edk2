@@ -1,7 +1,7 @@
 [submodule "datasets/edk2-DecSpecification"]
 	path = datasets/edk2-DecSpecification
 	url = https://github.com/tianocore-docs/edk2-DecSpecification
-	branch = release/1.27
+	branch = main
 [submodule "datasets/edk2-DscSpecification"]
 	path = datasets/edk2-DscSpecification
 	url = https://github.com/tianocore-docs/edk2-DscSpecification
