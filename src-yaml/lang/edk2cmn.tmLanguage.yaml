@@ -118,12 +118,19 @@ repository:
     captures:
       '1': { name: variable.other.edk2cmn }
 
-  # Double-quoted Strings and unicode strings (e.g., L"string")
+  # Strings and unicode strings (e.g., L"string")
   string_expression:
-    match: '(L)?"([^"\\]*(?:\\.[^"\\]*)*)"'
-    name: string.quoted.double.edk2cmn
-    captures:
-      '1': { name: storage.type.string.edk2cmn } # Highlights the 'L' prefix
+    patterns:
+      # Double-quoted ""
+      - match: '(L)?"([^"\\]*(?:\\.[^"\\]*)*)"'
+        name: string.quoted.double.edk2cmn
+        captures:
+          '1': { name: storage.type.string.edk2cmn } # Highlights the 'L' prefix
+      # Single-quoted ''
+      - match: "(L)?'([^'\\\\]*(?:\\\\.[^'\\\\]*)*)'"
+        name: string.quoted.single.edk2cmn
+        captures:
+          '1': { name: storage.type.string.edk2cmn } # Highlights the 'L' prefix
 
   # PCD Sections, PCD unit data type, expect UINTN
   pcd_uint_type:

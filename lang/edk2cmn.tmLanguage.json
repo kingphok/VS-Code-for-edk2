@@ -209,13 +209,26 @@
       }
     },
     "string_expression": {
-      "match": "(L)?\"([^\"\\\\]*(?:\\\\.[^\"\\\\]*)*)\"",
-      "name": "string.quoted.double.edk2cmn",
-      "captures": {
-        "1": {
-          "name": "storage.type.string.edk2cmn"
+      "patterns": [
+        {
+          "match": "(L)?\"([^\"\\\\]*(?:\\\\.[^\"\\\\]*)*)\"",
+          "name": "string.quoted.double.edk2cmn",
+          "captures": {
+            "1": {
+              "name": "storage.type.string.edk2cmn"
+            }
+          }
+        },
+        {
+          "match": "(L)?'([^'\\\\]*(?:\\\\.[^'\\\\]*)*)'",
+          "name": "string.quoted.single.edk2cmn",
+          "captures": {
+            "1": {
+              "name": "storage.type.string.edk2cmn"
+            }
+          }
         }
-      }
+      ]
     },
     "pcd_uint_type": {
       "patterns": [
