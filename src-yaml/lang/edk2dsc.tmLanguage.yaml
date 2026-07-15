@@ -34,9 +34,9 @@ repository:
   EDK_II_DSC:
     patterns:
       # 3.5 [Defines] Section
-      - name: entity.name.section.edk2dsc
-        begin: '^[ \t]*\[(?i:(Defines))\]'
+      - begin: '^[ \t]*\[(?i:(Defines))\]'
         end: '(?=^[ \t]*\[)'
+        name: entity.name.section.edk2dsc
         beginCaptures:
           '1': { name: keyword.control.edk2dsc }
         patterns:
@@ -48,9 +48,9 @@ repository:
           - include: source.edk2cmn#MACROVAL
 
       # 3.6 [BuildOptions] Sections
-      - name: entity.name.section.edk2dsc
-        begin: '^[ \t]*\[(?i:(BuildOptions))\b'
+      - begin: '^[ \t]*\[(?i:(BuildOptions))\b'
         end: '(?=^[ \t]*\[)'
+        name: entity.name.section.edk2dsc
         beginCaptures:
           '1': { name: keyword.control.edk2dsc }
         patterns:
@@ -62,9 +62,9 @@ repository:
           - include: source.edk2cmn#compiler_flag
 
       # 3.7 [SkuIds] Section
-      - name: entity.name.section.edk2dsc
-        begin: '^[ \t]*\[(?i:(SkuIds))\]'
+      - begin: '^[ \t]*\[(?i:(SkuIds))\]'
         end: '(?=^[ \t]*\[)'
+        name: entity.name.section.edk2dsc
         beginCaptures:
           '1': { name: keyword.control.edk2dsc }
         patterns:
@@ -75,9 +75,9 @@ repository:
           - include: source.edk2cmn#decimal_numbers
 
       # 3.8 [LibraryClasses] Sections
-      - name: entity.name.section.edk2dsc
-        begin: '^[ \t]*\[(?i:(LibraryClasses))\b'
+      - begin: '^[ \t]*\[(?i:(LibraryClasses))\b'
         end: '(?=^[ \t]*\[)'
+        name: entity.name.section.edk2dsc
         beginCaptures:
           '1': { name: keyword.control.edk2dsc }
         patterns:
@@ -90,9 +90,9 @@ repository:
           - include: source.edk2cmn#FieldSeparator
 
       # 3.9 PCD Sections
-      - name: entity.name.section.edk2dsc
-        begin: '^[ \t]*\[(?i:(PcdsFeatureFlag|PcdsFixedAtBuild|PcdsPatchableInModule|PcdsDynamicDefault|PcdsDynamicVpd|PcdsDynamicHii|PcdsDynamicExDefault|PcdsDynamicExVpd|PcdsDynamicExHii))\b'
+      - begin: '^[ \t]*\[(?i:(PcdsFeatureFlag|PcdsFixedAtBuild|PcdsPatchableInModule|PcdsDynamicDefault|PcdsDynamicVpd|PcdsDynamicHii|PcdsDynamicExDefault|PcdsDynamicExVpd|PcdsDynamicExHii))\b'
         end: '(?=^[ \t]*\[)'
+        name: entity.name.section.edk2dsc
         beginCaptures:
           '1': { name: keyword.control.edk2dsc }
         patterns:
@@ -111,9 +111,9 @@ repository:
           - include: source.edk2cmn#PCDVAL
 
       # 3.10 [Components] Sections
-      - name: entity.name.section.edk2dsc
-        begin: '^[ \t]*\[(?i:(Components))\b'
+      - begin: '^[ \t]*\[(?i:(Components))\b'
         end: '(?=^[ \t]*\[)'
+        name: entity.name.section.edk2dsc
         beginCaptures:
           '1': { name: keyword.control.edk2dsc }
         patterns:
@@ -126,9 +126,9 @@ repository:
           - include: "#Edk2Struct"
 
       # 3.11 [UserExtensions] Sections
-      - name: entity.name.section.edk2dsc
-        begin: '^[ \t]*\[(?i:(UserExtensions))\b'
+      - begin: '^[ \t]*\[(?i:(UserExtensions))\b'
         end: '(?=^[ \t]*\[)'
+        name: entity.name.section.edk2dsc
         beginCaptures:
           '1': { name: keyword.control.edk2dsc }
         patterns:
@@ -143,9 +143,9 @@ repository:
           - include: source.edk2cmn#RegistryFormatGUID
 
       # 3.12 [DefaultStores] Section
-      - name: entity.name.section.edk2dsc
-        begin: '^[ \t]*\[(?i:(DefaultStores))\]'
+      - begin: '^[ \t]*\[(?i:(DefaultStores))\]'
         end: '(?=^[ \t]*\[)'
+        name: entity.name.section.edk2dsc
         beginCaptures:
           '1': { name: keyword.control.edk2dsc }
         patterns:
@@ -155,9 +155,9 @@ repository:
           - include: source.edk2cmn#decimal_numbers
 
       # [Libraries] Sections, only for building EDK module
-      - name: entity.name.section.edk2dsc
-        begin: '^[ \t]*\[(?i:(Libraries))\b'
+      - begin: '^[ \t]*\[(?i:(Libraries))\b'
         end: '(?=^[ \t]*\[)'
+        name: entity.name.section.edk2dsc
         beginCaptures:
           '1': { name: keyword.control.edk2dsc }
         patterns:
@@ -170,50 +170,48 @@ repository:
 
   # 2.2.1 Section Entries. Generic Section, except [Defines], parsing from end to begin
   section_dot_rule:
+    begin: '\G'
+    end: '\]'
     patterns:
-      - begin: '\G'
-        end: '\]'
-        patterns:
-          # Generic section name
-          - name: keyword.control.edk2dsc
-            match: '(?i:\b(BuildOptions|Libraries|LibraryClasses|PcdsFeatureFlag|PcdsFixedAtBuild|PcdsPatchableInModule|PcdsDynamicDefault|PcdsDynamicVpd|PcdsDynamicHii|PcdsDynamicExDefault|PcdsDynamicExVpd|PcdsDynamicExHii|Components|UserExtensions)\b)'
+      # Generic section name
+      - match: '(?i:\b(BuildOptions|Libraries|LibraryClasses|PcdsFeatureFlag|PcdsFixedAtBuild|PcdsPatchableInModule|PcdsDynamicDefault|PcdsDynamicVpd|PcdsDynamicHii|PcdsDynamicExDefault|PcdsDynamicExVpd|PcdsDynamicExHii|Components|UserExtensions)\b)'
+        name: keyword.control.edk2dsc
 
-          # Error Detection: Match spaces trailing right after a dot character
-          - name: invalid.illegal.whitespace.edk2dsc
-            match: '\.[ \t]+|\.(?=\])'
+      # Error Detection: Match spaces trailing right after a dot character
+      - match: '\.[ \t]+|\.(?=\])'
+        name: invalid.illegal.whitespace.edk2dsc
 
-          # Dot Separator: Match a clean dot without trailing whitespace
-          - name: punctuation.separator.dot.edk2dsc
-            match: '\.'
+      # Dot Separator: Match a clean dot without trailing whitespace
+      - match: '\.'
+        name: punctuation.separator.dot.edk2dsc
 
-          # Comma Separator
-          - name: punctuation.separator.comma.edk2dsc
-            match: ','
+      # Comma Separator
+      - match: ','
+        name: punctuation.separator.comma.edk2dsc
 
-          # $(arch), $(SkuIdentifier) (e.g., IA32, common, X64, Default)
-          - name: variable.parameter.edk2dsc
-            match: '(?<=[.|])[a-zA-Z0-9_]+\b'
+      # $(arch), $(SkuIdentifier) (e.g., IA32, common, X64, Default)
+      - match: '(?<=[.|])[a-zA-Z0-9_]+\b'
+        name: variable.parameter.edk2dsc
 
-          # Double-quoted Strings
-          - name: string.quoted.double.edk2dsc
-            match: '"[^"\\]*(?:\\.[^"\\]*)*"'
+      # Double-quoted Strings
+      - match: '"[^"\\]*(?:\\.[^"\\]*)*"'
+        name: string.quoted.double.edk2dsc
 
-          - include: source.edk2cmn#FieldSeparator
+      - include: source.edk2cmn#FieldSeparator
 
   # 3.5 [Defines] Section, Table 6 EDK II [Defines] Section Elements
   define_statements:
+    begin: '^[ \t]*(DSC_SPECIFICATION|PLATFORM_GUID|PLATFORM_VERSION|PLATFORM_NAME|SKUID_IDENTIFIER|SUPPORTED_ARCHITECTURES|BUILD_TARGETS|OUTPUT_DIRECTORY|FLASH_DEFINITION|BUILD_NUMBER|FIX_LOAD_TOP_MEMORY_ADDRESS|TIME_STAMP_FILE|RFC_LANGUAGES|ISO_LANGUAGES|VPD_TOOL_GUID|PCD_INFO_GENERATION|PCD_VAR_CHECK_GENERATION|PREBUILD|POSTBUILD)[ \t]*(=)[ \t]*'
+    end: '$'
+    beginCaptures:
+      '1': { name: keyword.control.edk2dsc }               # Highlights [Defines] specific parameters
+      '2': { name: punctuation.separator.equals.edk2dsc }  # Highlights the '=' character
     patterns:
-      - begin: '^[ \t]*(DSC_SPECIFICATION|PLATFORM_GUID|PLATFORM_VERSION|PLATFORM_NAME|SKUID_IDENTIFIER|SUPPORTED_ARCHITECTURES|BUILD_TARGETS|OUTPUT_DIRECTORY|FLASH_DEFINITION|BUILD_NUMBER|FIX_LOAD_TOP_MEMORY_ADDRESS|TIME_STAMP_FILE|RFC_LANGUAGES|ISO_LANGUAGES|VPD_TOOL_GUID|PCD_INFO_GENERATION|PCD_VAR_CHECK_GENERATION|PREBUILD|POSTBUILD)[ \t]*(=)[ \t]*'
-        end: '$'
-        beginCaptures:
-          '1': { name: keyword.control.edk2dsc }               # Highlights [Defines] specific parameters
-          '2': { name: punctuation.separator.equals.edk2dsc }  # Highlights the '=' character
-        patterns:
-          - include: source.edk2cmn#RegistryFormatGUID
-          - include: source.edk2cmn#version_expression
-          - include: source.edk2cmn#hex_numbers
-          - include: source.edk2cmn#decimal_numbers
-          - include: source.edk2cmn#boolean_expression
+      - include: source.edk2cmn#RegistryFormatGUID
+      - include: source.edk2cmn#version_expression
+      - include: source.edk2cmn#hex_numbers
+      - include: source.edk2cmn#decimal_numbers
+      - include: source.edk2cmn#boolean_expression
 
   # 3.10 [Components] Sections
   # EBNF: <Exec>
