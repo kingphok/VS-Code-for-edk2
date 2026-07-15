@@ -13,7 +13,7 @@
 [submodule "datasets/edk2-InfSpecification"]
 	path = datasets/edk2-InfSpecification
 	url = https://github.com/tianocore-docs/edk2-InfSpecification
-	branch = release/1.27
+	branch = main
 [submodule "datasets/edk2-UniSpecification"]
 	path = datasets/edk2-UniSpecification
 	url = https://github.com/tianocore-docs/edk2-UniSpecification
