@@ -5,18 +5,12 @@ fileTypes:
   - dec
 
 patterns:
-  - include: "#comment"
-  - include: "#Section"
+  - include: source.edk2cmn#Comment
+  - include: "#EDK_II_DEC"
 
 repository:
-  # Component for single-line comments starting with #
-  comment:
-    patterns:
-      - name: comment.line.number-sign.edk2dec
-        match: '#.*$'
-
-  # Sections Definition
-  Section:
+  # 3.2 Package Declaration (DEC) Definitions, EBNF: <EDK_II_DEC>
+  EDK_II_DEC:
     patterns:
       # 3.4 [Defines] Section
       - name: entity.name.section.edk2dec
@@ -27,10 +21,10 @@ repository:
           '2': { name: keyword.control.edk2dec }
           '3': { name: punctuation.definition.section.end.edk2dec }
         patterns:
-          - include: "#comment"
+          - include: source.edk2cmn#Comment
           - include: "#define_statements"
-          - include: "#macro_declaration"
-          - include: "#macro_expression"
+          - include: source.edk2cmn#MacroDefinition
+          - include: source.edk2cmn#MACROVAL
 
       # 3.5 [Includes] Sections
       - name: entity.name.section.edk2dec
@@ -40,9 +34,9 @@ repository:
           '1': { name: keyword.control.edk2dec }
         patterns:
           - include: "#SectionInnerDotRule"
-          - include: "#comment"
-          - include: "#macro_declaration"
-          - include: "#macro_expression"
+          - include: source.edk2cmn#Comment
+          - include: source.edk2cmn#MacroDefinition
+          - include: source.edk2cmn#MACROVAL
 
       # 3.9 [LibraryClasses] Sections
       - name: entity.name.section.edk2dec
@@ -52,10 +46,10 @@ repository:
           '1': { name: keyword.control.edk2dec }
         patterns:
           - include: "#SectionInnerDotRule"
-          - include: "#comment"
-          - include: "#macro_declaration"
-          - include: "#macro_expression"
-          - include: "#pipe_separator"
+          - include: source.edk2cmn#Comment
+          - include: source.edk2cmn#MacroDefinition
+          - include: source.edk2cmn#MACROVAL
+          - include: source.edk2cmn#FieldSeparator
 
       # 3.6 [Guids] / 3.7 [Protocols] / 3.8 [PPIs] Sections
       - name: entity.name.section.edk2dec
@@ -65,8 +59,8 @@ repository:
           '1': { name: keyword.control.edk2dec }
         patterns:
           - include: "#SectionInnerDotRule"
-          - include: "#comment"
-          - include: "#hex_numbers"
+          - include: source.edk2cmn#Comment
+          - include: source.edk2cmn#hex_numbers
           - include: "#guid_protocol_ppi_variable"
 
       # 3.10 PCD Sections, comment in https://github.com/tianocore/edk2/blob/master/BaseTools/Source/Python/Workspace/MetaFileParser.py
@@ -77,15 +71,15 @@ repository:
           '1': { name: keyword.control.edk2dec }
         patterns:
           - include: "#SectionInnerDotRule"
-          - include: "#comment"
-          - include: "#macro_expression"
-          - include: "#string_expression"
-          - include: "#pcd_uint_type"
-          - include: "#boolean_expression"
-          - include: "#hex_numbers"
-          - include: "#decimal_numbers"
-          - include: "#pipe_separator"
-          - include: "#pcd_variable"
+          - include: source.edk2cmn#Comment
+          - include: source.edk2cmn#MACROVAL
+          - include: source.edk2cmn#string_expression
+          - include: source.edk2cmn#pcd_uint_type
+          - include: source.edk2cmn#boolean_expression
+          - include: source.edk2cmn#hex_numbers
+          - include: source.edk2cmn#decimal_numbers
+          - include: source.edk2cmn#FieldSeparator
+          - include: source.edk2cmn#PcdName_PcdFieldName
 
       # 3.11 [UserExtensions] Sections
       - name: entity.name.section.edk2dec
@@ -95,7 +89,7 @@ repository:
           '1': { name: keyword.control.edk2dec }
         patterns:
           - include: "#SectionInnerDotRule"
-          - include: "#comment"
+          - include: source.edk2cmn#Comment
 
   # Generic Section, parsing from end to begin
   SectionInnerDotRule:
@@ -115,7 +109,7 @@ repository:
 
           # Dot Separator: Match a clean dot without trailing whitespace
           - name: punctuation.separator.dot.edk2dec
-            match: '\.' 
+            match: '\.'
 
           # 5. Comma Separator
           - name: punctuation.separator.comma.edk2dec
@@ -138,106 +132,13 @@ repository:
           '1': { name: keyword.control.edk2dec }               # Highlights [Defines] specific parameters
           '2': { name: punctuation.separator.equals.edk2dec }  # Highlights the '=' character
         patterns:
-          - include: "#guid_expression"
-          - include: "#version_expression"
-          - include: "#hex_numbers"
-          - include: "#decimal_numbers"
+          - include: source.edk2cmn#RegistryFormatGUID
+          - include: source.edk2cmn#version_expression
+          - include: source.edk2cmn#hex_numbers
+          - include: source.edk2cmn#decimal_numbers
 
-  # 3.2.2 MACRO Statements
-  macro_declaration:
-    patterns:
-      - begin: '^[ \t]*\b(DEFINE)\b[ \t]+([a-zA-Z_][a-zA-Z0-9_]*)[ \t]*(=)[ \t]*'
-        end: '$'
-        beginCaptures:
-          '1': { name: keyword.other.define.edk2dec }        # Highlights 'DEFINE'
-          '2': { name: variable.other.macro.edk2dec }        # Highlights macro variable name
-          '3': { name: keyword.operator.assignment.edk2dec } # Highlights '='
-        patterns:
-          - include: "#macro_expression"
-          - include: "#string_expression"
-          - include: "#boolean_expression"
-          - include: "#hex_numbers"
-          - include: "#decimal_numbers"
-
-  # GUID, Macros, Strings, Data Types, and Numbers used in PCD and Section declarations
-  guid_expression:
-    patterns:
-      # GUID (Format: 8-4-4-4-12 hex characters)
-      - name: constant.numeric.guid.edk2dec
-        match: '\b[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}\b'
-
-  # Macros / Environment Variables (e.g., $(NAMED_MACRO))
-  macro_expression:
-    name: string.interpolated.edk2dec
-    begin: '(\$\()'
-    end: '(\))'
-    beginCaptures:
-      '1': { name: punctuation.definition.variable.begin.edk2dec }
-    endCaptures:
-      '1': { name: punctuation.definition.variable.end.edk2dec }
-    patterns:
-      - name: variable.other.edk2dec
-        match: '[a-zA-Z0-9_]+'
-
-  # Double-quoted Strings and C-style wide strings (e.g., L"string")
-  string_expression:
-    name: string.quoted.double.edk2dec
-    begin: '(L)?"' # Matches optional 'L' prefix followed by double quotes
-    end: '"'
-    beginCaptures:
-      '1': { name: storage.type.string.edk2dec } # Highlights the 'L' prefix
-      '2': { name: punctuation.definition.string.begin.edk2dec }
-    endCaptures:
-      '0': { name: punctuation.definition.string.end.edk2dec }
-
-  # 3.10 PCD Sections, PCD unit data type, without UINTN
-  pcd_uint_type:
-    patterns:
-      # Match VOID* safely
-      - name: variable.language.edk2dec
-        match: '\bVOID\*'
-      # Match other unit and boolean types
-      - name: variable.language.edk2dec
-        match: '\b(UINT8|UINT16|UINT32|UINT64|BOOLEAN)\b'
-
-  # Version Strings (e.g., 1.27, 1.27.1)
-  version_expression:
-    patterns:
-      - name: constant.numeric.version.edk2dec
-        match: '\b[0-9]+(\.[0-9]+)+\b'
-
-  boolean_expression:
-    patterns:
-      # Boolean values (TRUE or FALSE only)
-      - name: constant.language.boolean.edk2dec
-        match: '\b(TRUE|FALSE)\b'
-
-  # Hexadecimal numbers (Starts with 0x or 0X)
-  hex_numbers:
-    patterns:
-      - name: constant.numeric.hex.edk2dec
-        match: '\b0[xX][0-9a-fA-F]+\b'
-
-  # Decimal numbers (Unsigned integers)
-  decimal_numbers:
-    patterns:
-      - name: constant.numeric.decimal.edk2dec
-        match: '\b[0-9]+\b'
-
-  # Pipe separator "|"
-  pipe_separator:
-    patterns:
-      - name: keyword.operator.logical.pipe.edk2dec
-        match: '\|'
-  
   # GUID, Protocol, PPI variable (left side of the equals sign "=")
   guid_protocol_ppi_variable:
     patterns:
       - name: variable.other.guid.edk2dec
         match: '\b[a-zA-Z0-9_]+\b(?=[ \t]*=)'
-
-  # pcd variable (between a dot "." and a pipe symbol "|")
-  pcd_variable:
-    patterns:
-      - name: variable.other.pcd.edk2dec
-        match: '(?<=\.)[a-zA-Z0-9_]+\b(?=[ \t]*\|)'

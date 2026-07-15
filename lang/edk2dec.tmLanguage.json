@@ -6,22 +6,14 @@
   ],
   "patterns": [
     {
-      "include": "#comment"
+      "include": "source.edk2cmn#Comment"
     },
     {
-      "include": "#Section"
+      "include": "#EDK_II_DEC"
     }
   ],
   "repository": {
-    "comment": {
-      "patterns": [
-        {
-          "name": "comment.line.number-sign.edk2dec",
-          "match": "#.*$"
-        }
-      ]
-    },
-    "Section": {
+    "EDK_II_DEC": {
       "patterns": [
         {
           "name": "entity.name.section.edk2dec",
@@ -40,16 +32,16 @@
           },
           "patterns": [
             {
-              "include": "#comment"
+              "include": "source.edk2cmn#Comment"
             },
             {
               "include": "#define_statements"
             },
             {
-              "include": "#macro_declaration"
+              "include": "source.edk2cmn#MacroDefinition"
             },
             {
-              "include": "#macro_expression"
+              "include": "source.edk2cmn#MACROVAL"
             }
           ]
         },
@@ -67,13 +59,13 @@
               "include": "#SectionInnerDotRule"
             },
             {
-              "include": "#comment"
+              "include": "source.edk2cmn#Comment"
             },
             {
-              "include": "#macro_declaration"
+              "include": "source.edk2cmn#MacroDefinition"
             },
             {
-              "include": "#macro_expression"
+              "include": "source.edk2cmn#MACROVAL"
             }
           ]
         },
@@ -91,16 +83,16 @@
               "include": "#SectionInnerDotRule"
             },
             {
-              "include": "#comment"
+              "include": "source.edk2cmn#Comment"
             },
             {
-              "include": "#macro_declaration"
+              "include": "source.edk2cmn#MacroDefinition"
             },
             {
-              "include": "#macro_expression"
+              "include": "source.edk2cmn#MACROVAL"
             },
             {
-              "include": "#pipe_separator"
+              "include": "source.edk2cmn#FieldSeparator"
             }
           ]
         },
@@ -118,10 +110,10 @@
               "include": "#SectionInnerDotRule"
             },
             {
-              "include": "#comment"
+              "include": "source.edk2cmn#Comment"
             },
             {
-              "include": "#hex_numbers"
+              "include": "source.edk2cmn#hex_numbers"
             },
             {
               "include": "#guid_protocol_ppi_variable"
@@ -142,31 +134,31 @@
               "include": "#SectionInnerDotRule"
             },
             {
-              "include": "#comment"
+              "include": "source.edk2cmn#Comment"
             },
             {
-              "include": "#macro_expression"
+              "include": "source.edk2cmn#MACROVAL"
             },
             {
-              "include": "#string_expression"
+              "include": "source.edk2cmn#string_expression"
             },
             {
-              "include": "#pcd_uint_type"
+              "include": "source.edk2cmn#pcd_uint_type"
             },
             {
-              "include": "#boolean_expression"
+              "include": "source.edk2cmn#boolean_expression"
             },
             {
-              "include": "#hex_numbers"
+              "include": "source.edk2cmn#hex_numbers"
             },
             {
-              "include": "#decimal_numbers"
+              "include": "source.edk2cmn#decimal_numbers"
             },
             {
-              "include": "#pipe_separator"
+              "include": "source.edk2cmn#FieldSeparator"
             },
             {
-              "include": "#pcd_variable"
+              "include": "source.edk2cmn#PcdName_PcdFieldName"
             }
           ]
         },
@@ -184,7 +176,7 @@
               "include": "#SectionInnerDotRule"
             },
             {
-              "include": "#comment"
+              "include": "source.edk2cmn#Comment"
             }
           ]
         }
@@ -244,153 +236,18 @@
           },
           "patterns": [
             {
-              "include": "#guid_expression"
+              "include": "source.edk2cmn#RegistryFormatGUID"
             },
             {
-              "include": "#version_expression"
+              "include": "source.edk2cmn#version_expression"
             },
             {
-              "include": "#hex_numbers"
+              "include": "source.edk2cmn#hex_numbers"
             },
             {
-              "include": "#decimal_numbers"
+              "include": "source.edk2cmn#decimal_numbers"
             }
           ]
-        }
-      ]
-    },
-    "macro_declaration": {
-      "patterns": [
-        {
-          "begin": "^[ \\t]*\\b(DEFINE)\\b[ \\t]+([a-zA-Z_][a-zA-Z0-9_]*)[ \\t]*(=)[ \\t]*",
-          "end": "$",
-          "beginCaptures": {
-            "1": {
-              "name": "keyword.other.define.edk2dec"
-            },
-            "2": {
-              "name": "variable.other.macro.edk2dec"
-            },
-            "3": {
-              "name": "keyword.operator.assignment.edk2dec"
-            }
-          },
-          "patterns": [
-            {
-              "include": "#macro_expression"
-            },
-            {
-              "include": "#string_expression"
-            },
-            {
-              "include": "#boolean_expression"
-            },
-            {
-              "include": "#hex_numbers"
-            },
-            {
-              "include": "#decimal_numbers"
-            }
-          ]
-        }
-      ]
-    },
-    "guid_expression": {
-      "patterns": [
-        {
-          "name": "constant.numeric.guid.edk2dec",
-          "match": "\\b[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}\\b"
-        }
-      ]
-    },
-    "macro_expression": {
-      "name": "string.interpolated.edk2dec",
-      "begin": "(\\$\\()",
-      "end": "(\\))",
-      "beginCaptures": {
-        "1": {
-          "name": "punctuation.definition.variable.begin.edk2dec"
-        }
-      },
-      "endCaptures": {
-        "1": {
-          "name": "punctuation.definition.variable.end.edk2dec"
-        }
-      },
-      "patterns": [
-        {
-          "name": "variable.other.edk2dec",
-          "match": "[a-zA-Z0-9_]+"
-        }
-      ]
-    },
-    "string_expression": {
-      "name": "string.quoted.double.edk2dec",
-      "begin": "(L)?\"",
-      "end": "\"",
-      "beginCaptures": {
-        "1": {
-          "name": "storage.type.string.edk2dec"
-        },
-        "2": {
-          "name": "punctuation.definition.string.begin.edk2dec"
-        }
-      },
-      "endCaptures": {
-        "0": {
-          "name": "punctuation.definition.string.end.edk2dec"
-        }
-      }
-    },
-    "pcd_uint_type": {
-      "patterns": [
-        {
-          "name": "variable.language.edk2dec",
-          "match": "\\bVOID\\*"
-        },
-        {
-          "name": "variable.language.edk2dec",
-          "match": "\\b(UINT8|UINT16|UINT32|UINT64|BOOLEAN)\\b"
-        }
-      ]
-    },
-    "version_expression": {
-      "patterns": [
-        {
-          "name": "constant.numeric.version.edk2dec",
-          "match": "\\b[0-9]+(\\.[0-9]+)+\\b"
-        }
-      ]
-    },
-    "boolean_expression": {
-      "patterns": [
-        {
-          "name": "constant.language.boolean.edk2dec",
-          "match": "\\b(TRUE|FALSE)\\b"
-        }
-      ]
-    },
-    "hex_numbers": {
-      "patterns": [
-        {
-          "name": "constant.numeric.hex.edk2dec",
-          "match": "\\b0[xX][0-9a-fA-F]+\\b"
-        }
-      ]
-    },
-    "decimal_numbers": {
-      "patterns": [
-        {
-          "name": "constant.numeric.decimal.edk2dec",
-          "match": "\\b[0-9]+\\b"
-        }
-      ]
-    },
-    "pipe_separator": {
-      "patterns": [
-        {
-          "name": "keyword.operator.logical.pipe.edk2dec",
-          "match": "\\|"
         }
       ]
     },
@@ -399,14 +256,6 @@
         {
           "name": "variable.other.guid.edk2dec",
           "match": "\\b[a-zA-Z0-9_]+\\b(?=[ \\t]*=)"
-        }
-      ]
-    },
-    "pcd_variable": {
-      "patterns": [
-        {
-          "name": "variable.other.pcd.edk2dec",
-          "match": "(?<=\\.)[a-zA-Z0-9_]+\\b(?=[ \\t]*\\|)"
         }
       ]
     }
