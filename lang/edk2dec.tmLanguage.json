@@ -16,18 +16,12 @@
     "EDK_II_DEC": {
       "patterns": [
         {
-          "name": "entity.name.section.edk2dec",
-          "begin": "^[ \\t]*(\\[)(Defines)(\\])",
+          "begin": "^[ \\t]*\\[(?i:(Defines))\\]",
           "end": "(?=^[ \\t]*\\[)",
+          "name": "entity.name.section.edk2dec",
           "beginCaptures": {
             "1": {
-              "name": "punctuation.definition.section.begin.edk2dec"
-            },
-            "2": {
               "name": "keyword.control.edk2dec"
-            },
-            "3": {
-              "name": "punctuation.definition.section.end.edk2dec"
             }
           },
           "patterns": [
@@ -46,9 +40,9 @@
           ]
         },
         {
-          "name": "entity.name.section.edk2dec",
           "begin": "^[ \\t]*\\[(Includes)\\b",
           "end": "(?=^[ \\t]*\\[)",
+          "name": "entity.name.section.edk2dec",
           "beginCaptures": {
             "1": {
               "name": "keyword.control.edk2dec"
@@ -56,7 +50,7 @@
           },
           "patterns": [
             {
-              "include": "#SectionInnerDotRule"
+              "include": "#section_dot_rule"
             },
             {
               "include": "source.edk2cmn#Comment"
@@ -70,9 +64,9 @@
           ]
         },
         {
-          "name": "entity.name.section.edk2dec",
           "begin": "^[ \\t]*\\[(LibraryClasses)\\b",
           "end": "(?=^[ \\t]*\\[)",
+          "name": "entity.name.section.edk2dec",
           "beginCaptures": {
             "1": {
               "name": "keyword.control.edk2dec"
@@ -80,7 +74,7 @@
           },
           "patterns": [
             {
-              "include": "#SectionInnerDotRule"
+              "include": "#section_dot_rule"
             },
             {
               "include": "source.edk2cmn#Comment"
@@ -97,9 +91,9 @@
           ]
         },
         {
-          "name": "entity.name.section.edk2dec",
           "begin": "^[ \\t]*\\[(Guids|Protocols|Ppis)\\b",
           "end": "(?=^[ \\t]*\\[)",
+          "name": "entity.name.section.edk2dec",
           "beginCaptures": {
             "1": {
               "name": "keyword.control.edk2dec"
@@ -107,7 +101,7 @@
           },
           "patterns": [
             {
-              "include": "#SectionInnerDotRule"
+              "include": "#section_dot_rule"
             },
             {
               "include": "source.edk2cmn#Comment"
@@ -121,9 +115,9 @@
           ]
         },
         {
-          "name": "entity.name.section.edk2dec",
           "begin": "^[ \\t]*\\[(PcdsDynamic|PcdsDynamicDefault|PcdsDynamicEx|PcdsDynamicExDefault|PcdsDynamicExHii|PcdsDynamicExVpd|PcdsDynamicHii|PcdsDynamicVpd|PcdsFeatureFlag|PcdsFixedAtBuild|PcdsPatchableInModule)\\b",
           "end": "(?=^[ \\t]*\\[)",
+          "name": "entity.name.section.edk2dec",
           "beginCaptures": {
             "1": {
               "name": "keyword.control.edk2dec"
@@ -131,7 +125,7 @@
           },
           "patterns": [
             {
-              "include": "#SectionInnerDotRule"
+              "include": "#section_dot_rule"
             },
             {
               "include": "source.edk2cmn#Comment"
@@ -163,9 +157,9 @@
           ]
         },
         {
-          "name": "entity.name.section.edk2dec",
           "begin": "^[ \\t]*\\[(UserExtensions)\\b",
           "end": "(?=^[ \\t]*\\[)",
+          "name": "entity.name.section.edk2dec",
           "beginCaptures": {
             "1": {
               "name": "keyword.control.edk2dec"
@@ -173,7 +167,7 @@
           },
           "patterns": [
             {
-              "include": "#SectionInnerDotRule"
+              "include": "#section_dot_rule"
             },
             {
               "include": "source.edk2cmn#Comment"
@@ -182,82 +176,65 @@
         }
       ]
     },
-    "SectionInnerDotRule": {
+    "section_dot_rule": {
+      "begin": "\\G",
+      "end": "\\]",
       "patterns": [
         {
-          "begin": "\\G",
-          "end": "(\\])",
-          "endCaptures": {
-            "1": {
-              "name": "punctuation.definition.section.end.edk2dec"
-            }
-          },
-          "patterns": [
-            {
-              "name": "keyword.control.edk2dec",
-              "match": "\\b(Includes|LibraryClasses|Guids|Protocols|Ppis|PcdsDynamic|PcdsDynamicDefault|PcdsDynamicEx|PcdsDynamicExDefault|PcdsDynamicExHii|PcdsDynamicExVpd|PcdsDynamicHii|PcdsDynamicVpd|PcdsFeatureFlag|PcdsFixedAtBuild|PcdsPatchableInModule|UserExtensions)\\b"
-            },
-            {
-              "name": "invalid.illegal.whitespace.edk2dec",
-              "match": "\\.[ \\t]+|\\.(?=\\])"
-            },
-            {
-              "name": "punctuation.separator.dot.edk2dec",
-              "match": "\\."
-            },
-            {
-              "name": "punctuation.separator.comma.edk2dec",
-              "match": ","
-            },
-            {
-              "name": "variable.parameter.edk2dec",
-              "match": "(?<=\\.)[a-zA-Z0-9_]+\\b"
-            },
-            {
-              "name": "string.quoted.double.edk2dec",
-              "match": "\"[^\"\\\\]*(?:\\\\.[^\"\\\\]*)*\""
-            }
-          ]
+          "match": "\\b(Includes|LibraryClasses|Guids|Protocols|Ppis|PcdsDynamic|PcdsDynamicDefault|PcdsDynamicEx|PcdsDynamicExDefault|PcdsDynamicExHii|PcdsDynamicExVpd|PcdsDynamicHii|PcdsDynamicVpd|PcdsFeatureFlag|PcdsFixedAtBuild|PcdsPatchableInModule|UserExtensions)\\b",
+          "name": "keyword.control.edk2dec"
+        },
+        {
+          "match": "\\.[ \\t]+|\\.(?=\\])",
+          "name": "invalid.illegal.whitespace.edk2dec"
+        },
+        {
+          "name": "punctuation.separator.dot.edk2dec",
+          "match": "\\."
+        },
+        {
+          "match": ",",
+          "name": "punctuation.separator.comma.edk2dec"
+        },
+        {
+          "match": "(?<=\\.)[a-zA-Z0-9_]+\\b",
+          "name": "variable.parameter.edk2dec"
+        },
+        {
+          "match": "\"[^\"\\\\]*(?:\\\\.[^\"\\\\]*)*\"",
+          "name": "string.quoted.double.edk2dec"
         }
       ]
     },
     "define_statements": {
+      "begin": "^[ \\t]*(DEC_SPECIFICATION|PACKAGE_NAME|PACKAGE_GUID|PACKAGE_VERSION|PACKAGE_UNI_FILE)[ \\t]*(=)[ \\t]*",
+      "end": "$",
+      "beginCaptures": {
+        "1": {
+          "name": "keyword.control.edk2dec"
+        },
+        "2": {
+          "name": "punctuation.separator.equals.edk2dec"
+        }
+      },
       "patterns": [
         {
-          "begin": "^[ \\t]*(DEC_SPECIFICATION|PACKAGE_NAME|PACKAGE_GUID|PACKAGE_VERSION|PACKAGE_UNI_FILE)[ \\t]*(=)[ \\t]*",
-          "end": "$",
-          "beginCaptures": {
-            "1": {
-              "name": "keyword.control.edk2dec"
-            },
-            "2": {
-              "name": "punctuation.separator.equals.edk2dec"
-            }
-          },
-          "patterns": [
-            {
-              "include": "source.edk2cmn#RegistryFormatGUID"
-            },
-            {
-              "include": "source.edk2cmn#version_expression"
-            },
-            {
-              "include": "source.edk2cmn#hex_numbers"
-            },
-            {
-              "include": "source.edk2cmn#decimal_numbers"
-            }
-          ]
+          "include": "source.edk2cmn#RegistryFormatGUID"
+        },
+        {
+          "include": "source.edk2cmn#version_expression"
+        },
+        {
+          "include": "source.edk2cmn#hex_numbers"
+        },
+        {
+          "include": "source.edk2cmn#decimal_numbers"
         }
       ]
     },
     "guid_protocol_ppi_variable": {
-      "patterns": [
-        {
-          "name": "variable.other.guid.edk2dec",
-          "match": "\\b[a-zA-Z0-9_]+\\b(?=[ \\t]*=)"
-        }
-      ]
+      "match": "\\b[a-zA-Z0-9_]+\\b(?=[ \\t]*=)",
+      "name": "variable.other.guid.edk2dec"
     }
   }
 }

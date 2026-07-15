@@ -13,13 +13,11 @@ repository:
   EDK_II_DEC:
     patterns:
       # 3.4 [Defines] Section
-      - name: entity.name.section.edk2dec
-        begin: '^[ \t]*(\[)(Defines)(\])'
+      - begin: '^[ \t]*\[(?i:(Defines))\]'
         end: '(?=^[ \t]*\[)'
+        name: entity.name.section.edk2dec
         beginCaptures:
-          '1': { name: punctuation.definition.section.begin.edk2dec }
-          '2': { name: keyword.control.edk2dec }
-          '3': { name: punctuation.definition.section.end.edk2dec }
+          '1': { name: keyword.control.edk2dec }
         patterns:
           - include: source.edk2cmn#Comment
           - include: "#define_statements"
@@ -27,50 +25,50 @@ repository:
           - include: source.edk2cmn#MACROVAL
 
       # 3.5 [Includes] Sections
-      - name: entity.name.section.edk2dec
-        begin: '^[ \t]*\[(Includes)\b'
+      - begin: '^[ \t]*\[(Includes)\b'
         end: '(?=^[ \t]*\[)'
+        name: entity.name.section.edk2dec
         beginCaptures:
           '1': { name: keyword.control.edk2dec }
         patterns:
-          - include: "#SectionInnerDotRule"
+          - include: "#section_dot_rule"
           - include: source.edk2cmn#Comment
           - include: source.edk2cmn#MacroDefinition
           - include: source.edk2cmn#MACROVAL
 
       # 3.9 [LibraryClasses] Sections
-      - name: entity.name.section.edk2dec
-        begin: '^[ \t]*\[(LibraryClasses)\b'
+      - begin: '^[ \t]*\[(LibraryClasses)\b'
         end: '(?=^[ \t]*\[)'
+        name: entity.name.section.edk2dec
         beginCaptures:
           '1': { name: keyword.control.edk2dec }
         patterns:
-          - include: "#SectionInnerDotRule"
+          - include: "#section_dot_rule"
           - include: source.edk2cmn#Comment
           - include: source.edk2cmn#MacroDefinition
           - include: source.edk2cmn#MACROVAL
           - include: source.edk2cmn#FieldSeparator
 
       # 3.6 [Guids] / 3.7 [Protocols] / 3.8 [PPIs] Sections
-      - name: entity.name.section.edk2dec
-        begin: '^[ \t]*\[(Guids|Protocols|Ppis)\b'
+      - begin: '^[ \t]*\[(Guids|Protocols|Ppis)\b'
         end: '(?=^[ \t]*\[)'
+        name: entity.name.section.edk2dec
         beginCaptures:
           '1': { name: keyword.control.edk2dec }
         patterns:
-          - include: "#SectionInnerDotRule"
+          - include: "#section_dot_rule"
           - include: source.edk2cmn#Comment
           - include: source.edk2cmn#hex_numbers
           - include: "#guid_protocol_ppi_variable"
 
       # 3.10 PCD Sections, comment in https://github.com/tianocore/edk2/blob/master/BaseTools/Source/Python/Workspace/MetaFileParser.py
-      - name: entity.name.section.edk2dec
-        begin: '^[ \t]*\[(PcdsDynamic|PcdsDynamicDefault|PcdsDynamicEx|PcdsDynamicExDefault|PcdsDynamicExHii|PcdsDynamicExVpd|PcdsDynamicHii|PcdsDynamicVpd|PcdsFeatureFlag|PcdsFixedAtBuild|PcdsPatchableInModule)\b'
+      - begin: '^[ \t]*\[(PcdsDynamic|PcdsDynamicDefault|PcdsDynamicEx|PcdsDynamicExDefault|PcdsDynamicExHii|PcdsDynamicExVpd|PcdsDynamicHii|PcdsDynamicVpd|PcdsFeatureFlag|PcdsFixedAtBuild|PcdsPatchableInModule)\b'
         end: '(?=^[ \t]*\[)'
+        name: entity.name.section.edk2dec
         beginCaptures:
           '1': { name: keyword.control.edk2dec }
         patterns:
-          - include: "#SectionInnerDotRule"
+          - include: "#section_dot_rule"
           - include: source.edk2cmn#Comment
           - include: source.edk2cmn#MACROVAL
           - include: source.edk2cmn#string_expression
@@ -82,63 +80,58 @@ repository:
           - include: source.edk2cmn#PcdName_PcdFieldName
 
       # 3.11 [UserExtensions] Sections
-      - name: entity.name.section.edk2dec
-        begin: '^[ \t]*\[(UserExtensions)\b'
+      - begin: '^[ \t]*\[(UserExtensions)\b'
         end: '(?=^[ \t]*\[)'
+        name: entity.name.section.edk2dec
         beginCaptures:
           '1': { name: keyword.control.edk2dec }
         patterns:
-          - include: "#SectionInnerDotRule"
+          - include: "#section_dot_rule"
           - include: source.edk2cmn#Comment
 
   # Generic Section, parsing from end to begin
-  SectionInnerDotRule:
+  section_dot_rule:
+    begin: '\G'
+    end: '\]'
     patterns:
-      - begin: '\G'
-        end: '(\])'
-        endCaptures:
-          '1': { name: punctuation.definition.section.end.edk2dec }
-        patterns:
-          # Generic section name
-          - name: keyword.control.edk2dec
-            match: '\b(Includes|LibraryClasses|Guids|Protocols|Ppis|PcdsDynamic|PcdsDynamicDefault|PcdsDynamicEx|PcdsDynamicExDefault|PcdsDynamicExHii|PcdsDynamicExVpd|PcdsDynamicHii|PcdsDynamicVpd|PcdsFeatureFlag|PcdsFixedAtBuild|PcdsPatchableInModule|UserExtensions)\b'
+      # Generic section name
+      - match: '\b(Includes|LibraryClasses|Guids|Protocols|Ppis|PcdsDynamic|PcdsDynamicDefault|PcdsDynamicEx|PcdsDynamicExDefault|PcdsDynamicExHii|PcdsDynamicExVpd|PcdsDynamicHii|PcdsDynamicVpd|PcdsFeatureFlag|PcdsFixedAtBuild|PcdsPatchableInModule|UserExtensions)\b'
+        name: keyword.control.edk2dec
 
-          # Error Detection: Match spaces trailing right after a dot character
-          - name: invalid.illegal.whitespace.edk2dec
-            match: '\.[ \t]+|\.(?=\])'
+      # Error Detection: Match spaces trailing right after a dot character
+      - match: '\.[ \t]+|\.(?=\])'
+        name: invalid.illegal.whitespace.edk2dec
 
-          # Dot Separator: Match a clean dot without trailing whitespace
-          - name: punctuation.separator.dot.edk2dec
-            match: '\.'
+      # Dot Separator: Match a clean dot without trailing whitespace
+      - name: punctuation.separator.dot.edk2dec
+        match: '\.'
 
-          # 5. Comma Separator
-          - name: punctuation.separator.comma.edk2dec
-            match: ','
+      # Comma Separator
+      - match: ','
+        name: punctuation.separator.comma.edk2dec
 
-          # Architecture Modifiers / Parameters (e.g., IA32, common, X64)
-          - name: variable.parameter.edk2dec
-            match: '(?<=\.)[a-zA-Z0-9_]+\b'
+      # $(arch), $(SkuIdentifier) (e.g., IA32, common, X64, Default)
+      - match: '(?<=\.)[a-zA-Z0-9_]+\b'
+        name: variable.parameter.edk2dec
 
-          # Double-quoted Strings
-          - name: string.quoted.double.edk2dec
-            match: '"[^"\\]*(?:\\.[^"\\]*)*"'
+      # Double-quoted Strings
+      - match: '"[^"\\]*(?:\\.[^"\\]*)*"'
+        name: string.quoted.double.edk2dec
 
   # 3.4 [Defines] Section
   define_statements:
+    begin: '^[ \t]*(DEC_SPECIFICATION|PACKAGE_NAME|PACKAGE_GUID|PACKAGE_VERSION|PACKAGE_UNI_FILE)[ \t]*(=)[ \t]*'
+    end: '$'
+    beginCaptures:
+      '1': { name: keyword.control.edk2dec }               # Highlights [Defines] specific parameters
+      '2': { name: punctuation.separator.equals.edk2dec }  # Highlights the '=' character
     patterns:
-      - begin: '^[ \t]*(DEC_SPECIFICATION|PACKAGE_NAME|PACKAGE_GUID|PACKAGE_VERSION|PACKAGE_UNI_FILE)[ \t]*(=)[ \t]*'
-        end: '$'
-        beginCaptures:
-          '1': { name: keyword.control.edk2dec }               # Highlights [Defines] specific parameters
-          '2': { name: punctuation.separator.equals.edk2dec }  # Highlights the '=' character
-        patterns:
-          - include: source.edk2cmn#RegistryFormatGUID
-          - include: source.edk2cmn#version_expression
-          - include: source.edk2cmn#hex_numbers
-          - include: source.edk2cmn#decimal_numbers
+      - include: source.edk2cmn#RegistryFormatGUID
+      - include: source.edk2cmn#version_expression
+      - include: source.edk2cmn#hex_numbers
+      - include: source.edk2cmn#decimal_numbers
 
   # GUID, Protocol, PPI variable (left side of the equals sign "=")
   guid_protocol_ppi_variable:
-    patterns:
-      - name: variable.other.guid.edk2dec
-        match: '\b[a-zA-Z0-9_]+\b(?=[ \t]*=)'
+    match: '\b[a-zA-Z0-9_]+\b(?=[ \t]*=)'
+    name: variable.other.guid.edk2dec
