@@ -1,7 +1,7 @@
 #==============================================================================
 #
 #  ## @file
-#  Syntax Extension Test INF File for EDK II v1.27.
+#  Test file base on EDK II Module Information (INF) File Specification, Revision 1.30(draft)
 #
 #==============================================================================
 
@@ -49,18 +49,22 @@
   DEFINE MY_HEX_VAL              = 0x1F2A3B4C
   DEFINE MY_STR_VAL              = "VSCode-EDK2-Test-String"
   DEFINE NESTED_MACRO            = $(MY_STR_VAL)_Suffix
+  DEFINE TEST_BUILD_MACRO        = FALSE
 
 [Sources]
-  Common/MainTest.c              | * | * | gEfiMdePkgTokenSpaceGuid.PcdDriverFeatureFlag
-  Common/Helper.h
+  Common/MainTest1.c  |CLANGPDB|*|CC|gEfiMdePkgTokenSpaceGuid.PcdDriverFeatureFlag        # comment
+  Common/MainTest2.c  |VS2022|*|CC|TRUE  # comment
+  Common/MainTest3.c  |VS2022|*|CC|$(TEST_BUILD_MACRO)
+
+  Common/Helper.h       # comment
 
 [Sources.IA32, Sources.X64, Sources.EBC]
-  X86_Ebc/ProcessorSpecific.c    | MSFT
-  X86_Ebc/AsmMath.nasm           | INTEL | "Optional Compiler Flags"
+  X86_Ebc/ProcessorSpecific.c
+  X86_Ebc/AsmMath.nasm
 
 [Sources.ARM, Sources.AARCH64]
-  Arm/ProcessorSpecific.S        | GCC   | * | gEfiMdeModulePkgTokenSpaceGuid.PcdArmFeature
-  Arm/AsmHelper.asm              | RVCT
+  Arm/ProcessorSpecific.S        | GCC | * | * | gEfiMdeModulePkgTokenSpaceGuid.PcdArmFeature
+  Arm/AsmHelper.asm              | RVCT  # comment
 
 [Sources.RISCV64, Sources.LOONGARCH64]
   RiscvLoongarch/Generic.c
@@ -71,7 +75,6 @@
   DXE_DEPEX|Binaries/DxeDriver.depex|RELEASE
   SMM_DEPEX|Binaries/SmmDriver.depex
   TE|Binaries/TeImage.te
-  SEC|Binaries/SecSec.sec
   BIN|Binaries/RawBlob.bin
   LIB|Binaries/StaticLib.lib
   ASL|Binaries/AcpiTable.aml
@@ -79,6 +82,9 @@
   UI|Binaries/UserInterface.ui
   UNI_VER|Binaries/VersionInfo.ver
   UNI_UI|Binaries/UserInterface.ui
+  SUBTYPE_GUID | gEfiIntelGraphicsPeimGuid | VideoBiosRom.bin
+  SUBTYPE_GUID | A9E8D7C6-B5A4-C3B2-1100-998877665544 | MicrocodeUpdate.dat
+  SUBTYPE_GUID | gEfiCustomDataGuid | CustomTable.fv | DEBUG | GCC | * | $(ENABLE_FEATURE)
 
 [Packages]
   MdePkg/MdePkg.dec
@@ -88,8 +94,9 @@
   IntelFrameworkPkg/IntelFrameworkPkg.dec
 
 [LibraryClasses]
+  DEFINE MDE = MdePkg/Library
   BaseLib
-  BaseMemoryLib
+  BaseMemoryLib|FALSE
   DebugLib|gEfiMdePkgTokenSpaceGuid.PcdDebugLibFeatureProperty
   UefiBootServicesTableLib
   UefiDriverEntryPoint
@@ -99,22 +106,13 @@
   IoLib
 
 [Protocols]
-  gEfiPciIoProtocolGuid                 ## CONSUMES
-  gEfiSimpleTextOutProtocolGuid         ## PRODUCES
-  gEfiLoadedImageProtocolGuid           ## SOMETIMES_CONSUMES
-  gEfiDriverBindingProtocolGuid         ## TO_START
-  gEfiComponentNameProtocolGuid         ## BY_START
+  gEfiPciIoProtocolGuid | gEfiMdeModulePkgTokenSpaceGuid.PcdDevicePathSupportDevicePathFromText ## SOMETIMES_PRODUCES
 
 [Guids]
   gEfiVariableGuid                      ## CONSUMES
-  gEfiHobListGuid                       ## SOMETIMES_PRODUCES
-  gEfiEventVirtualAddressChangeGuid     ## CONSUMES
-  gEfiFileInfoGuid                      ## SOMETIMES_CONSUMES
 
 [Ppis]
-  gEfiPeiMasterBootModePpiGuid          ## CONSUMES
-  gPeiNtThunkPpiGuid                    ## SOMETIMES_CONSUMES
-  gEfiPeiStallPpiGuid                   ## PRODUCES
+  gEfiPeiMasterBootModePpiGuid | TRUE      ## CONSUMES
 
 [FeaturePcd]
   gEfiMdePkgTokenSpaceGuid.PcdTypeAFeatureTest | TRUE | 0x00000001
@@ -127,6 +125,9 @@
   gEfiMdePkgTokenSpaceGuid.PcdFixedTestString  | $(MY_STR_VAL)
   gEfiMdePkgTokenSpaceGuid.PcdFixedTestArray   | {0x01, 0x02, 0x03, 0x04, 0x05} | 0x00000003
   gEfiMdePkgTokenSpaceGuid.PcdFixedTestUnicode | L"Unicode String Test"
+  gEfiMdePkgTokenSpaceGuid.PcdFixedTestUniChar | L'A'
+  gEfiMdePkgTokenSpaceGuid.PcdFixedTestAsciicode |"Ascii String Test"
+  gEfiMdePkgTokenSpaceGuid.PcdFixedTestAsciiChar |'A'
 
 [Pcd]
   gEfiMdePkgTokenSpaceGuid.PcdPlatformBootTimeOut | 15
@@ -144,9 +145,6 @@
   TRUE
 
 [Depex.common]
-  TRUE
-
-[Depex.common.PEIM]
   FALSE
 
 [Depex.IA32.DXE_DRIVER]
@@ -177,14 +175,5 @@
 [BuildOptions.IA32]
   MSFT:*_*_IA32_CC_FLAGS = /D TEST_IA32_ONLY
 
-[UserExtensions.TianoCore."ExtraInformation"]
-  StringData = "Hello VSCode Extension Developer Team"
-  MetaData = $(MY_HEX_VAL)
-  NestedBlock = {
-    Key1 = Value1
-    Key2 = Value2
-  }
-
-[UserExtensions.MyCustomVendor.Template_ID]
-  CustomField1 = 0x99
-  CustomField2 = "Custom Payload"
+[UserExtensions.TianoCore."ExtraFiles"]
+  ReadmeFirst.txt
