@@ -6,261 +6,421 @@
   ],
   "patterns": [
     {
-      "include": "#comment"
+      "include": "source.edk2cmn#Comment"
     },
     {
-      "include": "#Section"
-    },
-    {
-      "include": "#define_statements"
-    },
-    {
-      "include": "#macro"
-    },
-    {
-      "include": "#moduleType"
-    },
-    {
-      "include": "#binary_file_type"
-    },
-    {
-      "include": "#constants_and_data"
-    },
-    {
-      "include": "#compiler_flag"
+      "include": "#EDK_II_INF"
     }
   ],
   "repository": {
-    "comment": {
+    "EDK_II_INF": {
       "patterns": [
         {
-          "name": "comment.line.number-sign.edk2inf",
-          "match": "#.*$"
-        }
-      ]
-    },
-    "Section": {
-      "patterns": [
-        {
+          "begin": "^[ \\t]*\\[(?i:(Defines))\\]",
+          "end": "(?=^[ \\t]*\\[)",
           "name": "entity.name.section.edk2inf",
-          "begin": "^[ \\t]*(\\[)",
-          "end": "(\\])",
           "beginCaptures": {
             "1": {
-              "name": "punctuation.definition.section.begin.edk2inf"
-            }
-          },
-          "endCaptures": {
-            "1": {
-              "name": "punctuation.definition.section.end.edk2inf"
+              "name": "keyword.control.edk2inf"
             }
           },
           "patterns": [
             {
-              "name": "invalid.illegal.whitespace.edk2inf",
-              "match": "\\.[ \\t]+"
+              "include": "source.edk2cmn#Comment"
             },
             {
-              "name": "punctuation.separator.dot.edk2inf",
-              "match": "\\."
+              "include": "#DefineStatements"
             },
             {
-              "name": "keyword.control.edk2inf",
-              "match": "\\b(Defines|BuildOptions|LibraryClasses|Packages|FixedPcd|FeaturePcd|PatchPcd|Pcd|PcdEx|Sources|Protocols|Ppis|Guids|Binaries|Depex|UserExtensions)\\b"
+              "include": "source.edk2cmn#MacroDefinition"
             },
             {
-              "name": "string.quoted.double.edk2inf",
-              "match": "\"[^\"\\\\]*(?:\\\\.[^\"\\\\]*)*\""
+              "include": "source.edk2cmn#MACROVAL"
+            }
+          ]
+        },
+        {
+          "begin": "^[ \\t]*\\[(?i:(BuildOptions))\\b",
+          "end": "(?=^[ \\t]*\\[)",
+          "name": "entity.name.section.edk2inf",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.control.edk2inf"
+            }
+          },
+          "patterns": [
+            {
+              "include": "source.edk2cmn#Comment"
             },
             {
-              "name": "punctuation.separator.comma.edk2inf",
-              "match": ",[ \\t]*"
+              "include": "#section_dot_rule"
             },
             {
-              "name": "variable.parameter.edk2inf",
-              "match": "\\b[a-zA-Z0-9_]+\\b"
+              "include": "source.edk2cmn#MacroDefinition"
+            },
+            {
+              "include": "source.edk2cmn#MACROVAL"
+            },
+            {
+              "include": "source.edk2cmn#compiler_flag"
+            }
+          ]
+        },
+        {
+          "begin": "^[ \\t]*\\[(?i:(LibraryClasses))\\b",
+          "end": "(?=^[ \\t]*\\[)",
+          "name": "entity.name.section.edk2inf",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.control.edk2inf"
+            }
+          },
+          "patterns": [
+            {
+              "include": "source.edk2cmn#Comment"
+            },
+            {
+              "include": "#section_dot_rule"
+            },
+            {
+              "include": "source.edk2cmn#MacroDefinition"
+            },
+            {
+              "include": "source.edk2cmn#MACROVAL"
+            },
+            {
+              "include": "source.edk2cmn#boolean_expression"
+            },
+            {
+              "include": "source.edk2cmn#FieldSeparator"
+            }
+          ]
+        },
+        {
+          "begin": "^[ \\t]*\\[(?i:(Packages))\\b",
+          "end": "(?=^[ \\t]*\\[)",
+          "name": "entity.name.section.edk2inf",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.control.edk2inf"
+            }
+          },
+          "patterns": [
+            {
+              "include": "source.edk2cmn#Comment"
+            },
+            {
+              "include": "#section_dot_rule"
+            },
+            {
+              "include": "source.edk2cmn#MacroDefinition"
+            },
+            {
+              "include": "source.edk2cmn#MACROVAL"
+            },
+            {
+              "include": "source.edk2cmn#boolean_expression"
+            },
+            {
+              "include": "source.edk2cmn#FieldSeparator"
+            }
+          ]
+        },
+        {
+          "begin": "^[ \\t]*\\[(?i:(PatchPcd|PcdEx|FeaturePcd|FixedPcd|Pcd))\\b",
+          "end": "(?=^[ \\t]*\\[)",
+          "name": "entity.name.section.edk2inf",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.control.edk2inf"
+            }
+          },
+          "patterns": [
+            {
+              "include": "source.edk2cmn#Comment"
+            },
+            {
+              "include": "#section_dot_rule"
+            },
+            {
+              "include": "source.edk2cmn#PcdName_PcdFieldName"
+            },
+            {
+              "include": "source.edk2cmn#MACROVAL"
+            },
+            {
+              "include": "source.edk2cmn#boolean_expression"
+            },
+            {
+              "include": "source.edk2cmn#hex_numbers"
+            },
+            {
+              "include": "source.edk2cmn#decimal_numbers"
+            },
+            {
+              "include": "source.edk2cmn#string_expression"
+            },
+            {
+              "include": "source.edk2cmn#FieldSeparator"
+            }
+          ]
+        },
+        {
+          "begin": "^[ \\t]*\\[(?i:(Sources))\\b",
+          "end": "(?=^[ \\t]*\\[)",
+          "name": "entity.name.section.edk2inf",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.control.edk2inf"
+            }
+          },
+          "patterns": [
+            {
+              "begin": "\\|(?![^#\\n]*\\|)[ \\t]*",
+              "end": "$",
+              "patterns": [
+                {
+                  "include": "source.edk2cmn#Comment"
+                },
+                {
+                  "include": "source.edk2cmn#MACROVAL"
+                },
+                {
+                  "include": "source.edk2cmn#boolean_expression"
+                },
+                {
+                  "include": "source.edk2cmn#PcdName_PcdFieldName"
+                }
+              ]
+            },
+            {
+              "include": "source.edk2cmn#Comment"
+            },
+            {
+              "include": "#section_dot_rule"
+            },
+            {
+              "include": "source.edk2cmn#MacroDefinition"
+            },
+            {
+              "include": "source.edk2cmn#MACROVAL"
+            }
+          ]
+        },
+        {
+          "begin": "^[ \\t]*\\[(?i:(UserExtensions))\\b",
+          "end": "(?=^[ \\t]*\\[)",
+          "name": "entity.name.section.edk2inf",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.control.edk2inf"
+            }
+          },
+          "patterns": [
+            {
+              "include": "source.edk2cmn#Comment"
+            },
+            {
+              "include": "#section_dot_rule"
+            }
+          ]
+        },
+        {
+          "begin": "^[ \\t]*\\[(?i:(Protocols|Ppis|Guids))\\b",
+          "end": "(?=^[ \\t]*\\[)",
+          "name": "entity.name.section.edk2inf",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.control.edk2inf"
+            }
+          },
+          "patterns": [
+            {
+              "include": "source.edk2cmn#Comment"
+            },
+            {
+              "include": "#section_dot_rule"
+            },
+            {
+              "include": "source.edk2cmn#MacroDefinition"
+            },
+            {
+              "include": "source.edk2cmn#MACROVAL"
+            },
+            {
+              "include": "source.edk2cmn#boolean_expression"
+            },
+            {
+              "include": "source.edk2cmn#PcdName_PcdFieldName"
+            },
+            {
+              "include": "source.edk2cmn#FieldSeparator"
+            }
+          ]
+        },
+        {
+          "begin": "^[ \\t]*\\[(?i:(Depex))\\b",
+          "end": "(?=^[ \\t]*\\[)",
+          "name": "entity.name.section.edk2inf",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.control.edk2inf"
+            }
+          },
+          "patterns": [
+            {
+              "include": "source.edk2cmn#Comment"
+            },
+            {
+              "include": "#section_dot_rule"
+            },
+            {
+              "match": "\\b(BEFORE|AFTER|PUSH|SOR|NOT|AND|OR|TRUE|FALSE|END)\\b",
+              "name": "keyword.operator.edk2inf"
+            }
+          ]
+        },
+        {
+          "begin": "^[ \\t]*\\[(?i:(Binaries))\\b",
+          "end": "(?=^[ \\t]*\\[)",
+          "name": "entity.name.section.edk2inf",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.control.edk2inf"
+            }
+          },
+          "patterns": [
+            {
+              "include": "source.edk2cmn#Comment"
+            },
+            {
+              "include": "#section_dot_rule"
+            },
+            {
+              "include": "source.edk2cmn#MacroDefinition"
+            },
+            {
+              "include": "source.edk2cmn#MACROVAL"
+            },
+            {
+              "include": "source.edk2cmn#RegistryFormatGUID"
+            },
+            {
+              "match": "\\b(UNI_UI|UI|UNI_VER|VER|ACPI|ASL|PE32|PIC|FV|PEI_DEPEX|DXE_DEPEX|SMM_DEPEX|TE|BIN|RAW|COMPAT16|DISPOSABLE|LIB|SUBTYPE_GUID)\\b",
+              "name": "keyword.control.edk2inf"
+            },
+            {
+              "include": "source.edk2cmn#boolean_expression"
+            },
+            {
+              "include": "source.edk2cmn#FieldSeparator"
             }
           ]
         }
       ]
     },
-    "define_statements": {
+    "section_dot_rule": {
+      "begin": "\\G",
+      "end": "\\]",
       "patterns": [
         {
-          "begin": "^[ \\t]*(ENTRY_POINT|UNLOAD_IMAGE|CONSTRUCTOR|DESTRUCTOR)[ \\t]*(=)[ \\t]*",
+          "match": "(?i:\\b(BuildOptions|LibraryClasses|Packages|Sources|UserExtensions|Protocols|Ppis|Guids|Depex|Binaries)\\b)",
+          "name": "keyword.control.edk2inf"
+        },
+        {
+          "match": "\\.[ \\t]+|\\.(?=\\])",
+          "name": "invalid.illegal.whitespace.edk2inf"
+        },
+        {
+          "match": "\\.",
+          "name": "punctuation.separator.dot.edk2inf"
+        },
+        {
+          "match": ",",
+          "name": "punctuation.separator.comma.edk2inf"
+        },
+        {
+          "match": "(?<=[.|])[a-zA-Z0-9_]+\\b",
+          "name": "variable.parameter.edk2inf"
+        },
+        {
+          "match": "\"[^\"\\\\]*(?:\\\\.[^\"\\\\]*)*\"",
+          "name": "string.quoted.double.edk2inf"
+        },
+        {
+          "include": "source.edk2cmn#FieldSeparator"
+        }
+      ]
+    },
+    "DefineStatements": {
+      "patterns": [
+        {
+          "begin": "^[ \\t]*(ENTRY_POINT|UNLOAD_IMAGE|CONSTRUCTOR|DESTRUCTOR)[ \\t]*=",
           "end": "$",
           "beginCaptures": {
             "1": {
               "name": "keyword.control.edk2inf"
-            },
-            "2": {
-              "name": "punctuation.separator.equals.edk2inf"
             }
           },
           "patterns": [
             {
               "name": "entity.name.function.edk2inf",
               "match": "\\b[a-zA-Z0-9_]+\\b"
+            },
+            {
+              "include": "source.edk2cmn#Comment"
             }
           ]
         },
         {
-          "begin": "^[ \\t]*(INF_VERSION|BASE_NAME|FILE_GUID|MODULE_TYPE|UEFI_SPECIFICATION_VERSION|PI_SPECIFICATION_VERSION|LIBRARY_CLASS|BUILD_NUMBER|VERSION_STRING|PCD_IS_DRIVER|SHADOW|CUSTOM_MAKEFILE|DPX_SOURCE|SPEC|MODULE_UNI_FILE|UEFI_HII_RESOURCE_SECTION|PEI_PCD_DRIVER|DXE_PCD_DRIVER|PCI_VENDOR_ID|PCI_DEVICE_ID|PCI_CLASS_CODE|PCI_REVISION|PCI_COMPRESS|EDK_RELEASE_VERSION)[ \\t]*(=)[ \\t]*",
+          "begin": "^[ \\t]*(INF_VERSION|BASE_NAME|FILE_GUID|MODULE_TYPE|UEFI_SPECIFICATION_VERSION|PI_SPECIFICATION_VERSION|LIBRARY_CLASS|BUILD_NUMBER|VERSION_STRING|PCD_IS_DRIVER|SHADOW|CUSTOM_MAKEFILE|DPX_SOURCE|SPEC|MODULE_UNI_FILE|UEFI_HII_RESOURCE_SECTION|PEI_PCD_DRIVER|DXE_PCD_DRIVER|PCI_VENDOR_ID|PCI_DEVICE_ID|PCI_CLASS_CODE|PCI_REVISION|PCI_COMPRESS|EDK_RELEASE_VERSION)[ \\t]*=",
           "end": "$",
           "beginCaptures": {
             "1": {
               "name": "keyword.control.edk2inf"
-            },
-            "2": {
-              "name": "punctuation.separator.equals.edk2inf"
             }
           },
           "patterns": [
             {
-              "include": "#moduleType"
+              "include": "source.edk2cmn#Comment"
             },
             {
-              "include": "#constants_and_data"
+              "include": "#ModuleType"
+            },
+            {
+              "include": "source.edk2cmn#MACROVAL"
+            },
+            {
+              "include": "source.edk2cmn#boolean_expression"
+            },
+            {
+              "include": "source.edk2cmn#hex_numbers"
+            },
+            {
+              "include": "source.edk2cmn#decimal_numbers"
+            },
+            {
+              "include": "source.edk2cmn#RegistryFormatGUID"
+            },
+            {
+              "include": "source.edk2cmn#string_expression"
+            },
+            {
+              "include": "source.edk2cmn#version_expression"
+            },
+            {
+              "include": "source.edk2cmn#operators_operands"
+            },
+            {
+              "include": "source.edk2cmn#FieldSeparator"
             }
           ]
         }
       ]
     },
-    "macro": {
-      "patterns": [
-        {
-          "begin": "^[ \\t]*\\b(DEFINE)\\b[ \\t]+([a-zA-Z_][a-zA-Z0-9_]*)[ \\t]*(=)[ \\t]*",
-          "end": "$",
-          "beginCaptures": {
-            "1": {
-              "name": "keyword.other.define.edk2inf"
-            },
-            "2": {
-              "name": "variable.other.macro.edk2inf"
-            },
-            "3": {
-              "name": "keyword.operator.assignment.edk2inf"
-            }
-          },
-          "patterns": [
-            {
-              "include": "#constants_and_data"
-            }
-          ]
-        }
-      ]
-    },
-    "moduleType": {
-      "patterns": [
-        {
-          "name": "variable.language.edk2inf",
-          "match": "\\b(BASE|SEC|PEI_CORE|PEIM|DXE_CORE|DXE_DRIVER|SMM_CORE|DXE_RUNTIME_DRIVER|DXE_SAL_DRIVER|DXE_SMM_DRIVER|UEFI_DRIVER|UEFI_APPLICATION|USER_DEFINED)\\b"
-        }
-      ]
-    },
-    "binary_file_type": {
-      "patterns": [
-        {
-          "name": "variable.language.edk2inf",
-          "match": "\\b(UNI_UI|UI|UNI_VER|VER|ACPI|ASL|PE32|PIC|FV|PEI_DEPEX|DXE_DEPEX|SMM_DEPEX|TE|BIN|RAW|COMPAT16|DISPOSABLE|LIB)\\b"
-        }
-      ]
-    },
-    "constants_and_data": {
-      "patterns": [
-        {
-          "name": "constant.numeric.guid.edk2inf",
-          "match": "\\b[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}\\b"
-        },
-        {
-          "include": "#macro_expression"
-        },
-        {
-          "include": "#string_expression"
-        },
-        {
-          "include": "#moduleType"
-        },
-        {
-          "name": "keyword.operator.logical.pipe.edk2inf",
-          "match": "\\|"
-        },
-        {
-          "name": "constant.numeric.version.edk2inf",
-          "match": "\\b[0-9]+(\\.[0-9]+)+\\b"
-        },
-        {
-          "name": "constant.language.boolean.edk2inf",
-          "match": "\\b(TRUE|FALSE)\\b"
-        },
-        {
-          "name": "keyword.operator.logical.edk2inf",
-          "match": "\\b(AND|OR|NOT|SOR)\\b"
-        },
-        {
-          "name": "constant.numeric.hex.edk2inf",
-          "match": "\\b0[xX][0-9a-fA-F]+\\b"
-        },
-        {
-          "name": "constant.numeric.decimal.edk2inf",
-          "match": "\\b[0-9]+\\b"
-        }
-      ]
-    },
-    "macro_expression": {
-      "name": "string.interpolated.edk2inf",
-      "begin": "(\\$\\()",
-      "end": "(\\))",
-      "beginCaptures": {
-        "1": {
-          "name": "punctuation.definition.variable.begin.edk2inf"
-        }
-      },
-      "endCaptures": {
-        "1": {
-          "name": "punctuation.definition.variable.end.edk2inf"
-        }
-      },
-      "patterns": [
-        {
-          "name": "variable.other.edk2inf",
-          "match": "[a-zA-Z0-9_]"
-        }
-      ]
-    },
-    "string_expression": {
-      "name": "string.quoted.double.edk2inf",
-      "begin": "(L)?\"",
-      "end": "\"",
-      "beginCaptures": {
-        "1": {
-          "name": "storage.type.string.edk2inf"
-        },
-        "2": {
-          "name": "punctuation.definition.string.begin.edk2inf"
-        }
-      },
-      "endCaptures": {
-        "0": {
-          "name": "punctuation.definition.string.end.edk2inf"
-        }
-      }
-    },
-    "compiler_flag": {
-      "patterns": [
-        {
-          "name": "meta.preprocessor.macro.edk2inf",
-          "match": "(-D|/D)[ \\t]*([a-zA-Z0-9_]+)",
-          "captures": {
-            "1": {
-              "name": "keyword.control.compiler.flag.edk2inf"
-            },
-            "2": {
-              "name": "variable.other.macro.edk2inf"
-            }
-          }
-        }
-      ]
+    "ModuleType": {
+      "match": "\\b(BASE|SEC|PEI_CORE|PEIM|DXE_CORE|DXE_DRIVER|SMM_CORE|DXE_RUNTIME_DRIVER|DXE_SAL_DRIVER|DXE_SMM_DRIVER|UEFI_DRIVER|UEFI_APPLICATION|USER_DEFINED|HOST_APPLICATION)\\b",
+      "name": "variable.other.constant.edk2inf"
     }
   }
 }
