@@ -56,6 +56,9 @@
       "include": "source.edk2cmn#PCDVAL"
     },
     {
+      "include": "source.edk2cmn#PcdName_PcdFieldName"
+    },
+    {
       "include": "#Exec"
     },
     {
@@ -233,6 +236,9 @@
             },
             {
               "include": "source.edk2cmn#PCDVAL"
+            },
+            {
+              "include": "source.edk2cmn#PcdName_PcdFieldName"
             }
           ]
         },
@@ -567,6 +573,9 @@
             },
             {
               "include": "source.edk2cmn#PCDVAL"
+            },
+            {
+              "include": "source.edk2cmn#PcdName_PcdFieldName"
             }
           ]
         },

@@ -25,6 +25,7 @@ patterns:
   - include: source.edk2cmn#pcd_uint_type
   - include: source.edk2cmn#boolean_expression
   - include: source.edk2cmn#PCDVAL
+  - include: source.edk2cmn#PcdName_PcdFieldName
   # Put pattern of [Components] section in the last
   - include: "#Exec"
   - include: "#Edk2Struct"
@@ -109,6 +110,7 @@ repository:
           - include: source.edk2cmn#decimal_numbers
           - include: source.edk2cmn#FieldSeparator
           - include: source.edk2cmn#PCDVAL
+          - include: source.edk2cmn#PcdName_PcdFieldName
 
       # 3.10 [Components] Sections
       - begin: '^[ \t]*\[(?i:(Components))\b'
@@ -281,6 +283,7 @@ repository:
           - include: source.edk2cmn#decimal_numbers
           - include: source.edk2cmn#FieldSeparator
           - include: source.edk2cmn#PCDVAL
+          - include: source.edk2cmn#PcdName_PcdFieldName
 
       # <BuildOptions>
       - begin: '(<)(BuildOptions)(>)'
