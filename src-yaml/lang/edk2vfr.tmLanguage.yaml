@@ -8,10 +8,266 @@ fileTypes:
 
 patterns:
   - include: "#comment"
+  - include: "#comment_block"
+  - include: "#define_directive"
+  - include: "#include_directive"
+  - include: "#vfr_preprocessing_directives"
+  - include: "#vfr_pragma_pack_definition"
+  - include: "#vfr_data_struct_definition"
+  - include: "#vfr_form_definition"
+  - include: "#vfr_if_definition"
+  - include: "#vfr_operators_definition"
+  - include: "#vfr_cname"
+  - include: source.edk2cmn#hex_numbers
+  - include: source.edk2cmn#decimal_numbers
+  - include: source.edk2cmn#boolean_expression
 
 repository:
+
+  ## 2.1 VFR Programming Keywords
   # Component for single-line comments starting with //
   comment:
+    match: '//.*$'
+    name: comment.line.double-slash.edk2vfr
+
+  # Component for multi-line block comments starting with /* and ending with */
+  comment_block:
+    begin: '/\*'
+    end: '\*/'
+    name: comment.block.c.edk2vfr
+
+  # #define directive
+  define_directive:
+    match: '^[ \t]*(#define)\b[ \t]+([a-zA-Z_][a-zA-Z0-9_]*)'
+    captures:
+      1: { name: keyword.other.define.edk2vfr }
+      2: { name: variable.other.macro.edk2vfr }
+
+  # #include directive (e.g., #include "file.vfr")
+  include_directive:
+    begin: '^[ \t]*(#include)\b[ \t]*'
+    end: '$'
+    beginCaptures:
+      1: { name: keyword.control.preprocessor.edk2vfr }
     patterns:
-      - name: comment.line.double-slash.edk2vfr
-        match: '//.*$'
+      - include: "#comment"
+      - include: "#comment_block"
+      - begin: '("|<)'
+        end: '("|>)'
+        name: meta.preprocessor.string.edk2vfr
+
+  # #if, #ifdef, #ifndef, #elif, #else, #endif
+  vfr_preprocessing_directives:
+    begin: '^[ \t]*(#(?:if|ifdef|ifndef|elif|else|endif))\b'
+    end: '$'
+    beginCaptures:
+      1: { name: keyword.control.preprocessor.edk2vfr }
+    patterns:
+      - match: '\b(defined)\b'
+        name: keyword.control.preprocessor.edk2vfr
+      - include: "#vfr_cname"
+
+  # 2.2 VFR Program
+  # #pragma pack ()
+  vfr_pragma_pack_definition:
+    begin: '^[ \t]*(#pragma)\b[ \t]+(pack)[ \t]*'
+    end: '$'
+    beginCaptures:
+      1: { name: keyword.other.define.edk2vfr }
+      2: { name: keyword.other.define.edk2vfr }
+    patterns:
+      - match: '\b(show|push|pop)\b'
+        name: keyword.control.edk2vfr
+      - include: source.edk2cmn#hex_numbers
+      - include: source.edk2cmn#decimal_numbers
+      - include: "#comment"
+      - include: "#comment_block"
+
+  ## 2.3 VFR Data Struct Definition
+  vfr_data_struct_definition:
+    begin: '^[ \t]*(typedef)\b[ \t]+\b(struct)\b'
+    end: '(\})[ \t]*([a-zA-Z_][a-zA-Z0-9_]*)[ \t]*(;)'
+    beginCaptures:
+      1: { name: keyword.other.typedef.edk2vfr }
+      2: { name: keyword.other.typedef.edk2vfr }
+    endCaptures:
+      2: { name: entity.name.type.edk2vfr }
+    patterns:
+      - include: "#comment"
+      - include: "#comment_block"
+
+  ## 2.4 VFR FormSet Definition
+    # formset|endformset
+    # =: guid|title|help|classguid|class|subclass
+  ## 2.6 VFR Default Stores Definition
+    # defaultstore
+    # =: prompt|attribute
+  ## 2.7 VFR Variable Store Definition
+    # varstore|efivarstore|namevaluevarstore
+    # =: varid|name|guid|attribute
+  ### 2.10.5 VFR Question Header Definition
+    # =: name|varid|questionid
+    # keyword: READ_ONLY|INTERACTIVE|RESET_REQUIRED|OPTIONS_ONLY|REST_STYLE
+  ### 2.10.7 VFR Statement Image & Locked Tag Definition
+    # locked
+    # =: image
+  ## 2.11 VFR Form Definition
+    # form|endform
+    # =: formid|title
+  ### 2.11.1 VFR Form Map Definition
+    # formmap|endform
+    # =: formid|maptitle|mapguid
+  ### 2.11.4 VFR Rule Statement Definition
+    # rule|endrule
+  #### 2.11.5.1 VFR SubTitle Definition
+    # subtitle|endsubtitle
+    # =: text|flags
+  #### 2.11.5.2 VFR Text Definition
+    # text
+    # =: help|text|flags|key
+  ##### 2.11.5.3.1 VFR Goto Statement Definition
+    # goto
+    # =: devicePath|formsetguid|formid|question|flags|key
+  ##### 2.11.5.3.2 VFR ResetButton Statement Definition
+    # resetbutton|endresetbutton
+    # =: defaultstore
+  ##### 2.11.6.1.4 VFR Question Tag Refresh Definition
+    # =: refresh interval
+  ##### 2.11.6.3.2 VFR Default Statement Definition
+    # =: default|default value|defaultstore
+  ##### 2.11.6.3.3 VFR Value Statement Definition
+    # =: value
+  ##### 2.11.6.3.5 VFR OneOf Option Statement Definition
+    # option
+    # =: text|value|flags
+    # keyword: OPTION_DEFAULT|OPTION_DEFAULT_MFG|INTERACTIVE|RESET_REQUIRED|DEFAULT
+  ##### 2.11.6.3.6 VFR Read Statement Definition
+    # read
+  ##### 2.11.6.3.7 VFR Write Statement Definition
+    # write
+  ##### 2.11.6.5.1 VFR CheckBox Statement Definition
+    # checkbox|endcheckbox
+    # =: flags|key
+    # keyword: CHECKBOX_DEFAULT|CHECKBOX_DEFAULT_MFG
+  ##### 2.11.6.5.2 VFR Action Statement Definition
+    # action|endaction
+    # =: flags|config
+  ##### 2.11.6.6.1 VFR Numeric Statement Definition
+    # numeric|endnumeric
+    # =: flags|key|minimum|maximum|step
+    # keyword: NUMERIC_SIZE_1|NUMERIC_SIZE_2|NUMERIC_SIZE_4|NUMERIC_SIZE_8|DISPLAY_INT_DEC|DISPLAY_UINT_DEC|DISPLAY_UINT_HEX
+  ##### 2.11.6.6.2 VFR OneOf Statement Definition
+    # oneof|endoneof
+    # =: flags
+  ##### 2.11.6.7.1 VFR String Statement Definition
+    # string|endstring
+    # =: flags|key|minsize|maxsize
+    # keyword: MULTI_LINE
+  ##### 2.11.6.7.2 VFR Password Statement Definition
+    # password|endpassword
+    # =: flags|key|minsize|maxsize
+  #### 2.11.6.8 VFR OrderedList Statement Definition
+    # orderedlist|endlist
+    # =: maxcontainers|flags
+    # keyword: UNIQUE|NOEMPTY
+  #### 2.11.6.9 VFR Date Statement Definition
+    # date|enddate
+    # =: flags|year varid|month varid|day varid|prompt|help|minimum|maximum|step|default
+    # keyword: YEAR_SUPPRESS|MONTH_SUPPRESS|DAY_SUPPRESS|STORAGE_NORMAL|STORAGE_TIME|STORAGE_WAKEUP
+  #### 2.11.6.10 VFR Time Statement Definition
+    # time|endtime
+    # =: flags|hour varid|minute varid|second varid|prompt|help|minimum|maximum|step|default
+    # keyword: HOUR_SUPPRESS|MINUTE_SUPPRESS|SECOND_SUPPRESS|STORAGE_NORMAL|STORAGE_TIME|STORAGE_WAKEUP
+  #### 2.11.8.1 VFR Label Statement Definition
+    # label
+  #### 2.11.8.2 VFR Banner Statement Definition
+    # banner|line|align left|align center|align right
+    # =: title|timeout
+  #### 2.11.8.3 VFR GUID Extension Definition
+    # guidop|endguidop
+    # =: guid|datatype, data.()
+  ### 2.11.9 VFR Modal Statement Definition
+    # modal
+  vfr_form_definition:
+    patterns:
+      # statement begin
+      - match: '^[ \t]*(formset|defaultstore|varstore|efivarstore|namevaluevarstore|form|formmap|rule|subtitle|text|goto|resetbutton|option|read|write|checkbox|action|numeric|oneof|string|password|orderedlist|date|time|label|banner|guidop|modal)\b(?![ \t]*=)'
+        name: storage.type.statement.edk2vfr
+      # statement End
+      - match: '(?<![a-zA-Z0-9_])(endformset|endform|endrule|endsubtitle|endresetbutton|endcheckbox|endaction|endnumeric|endoneof|endstring|endpassword|endlist|enddate|endtime|endguidop)\b[ \t]*;'
+        captures:
+          1: { name: storage.type.statement.edk2vfr }
+
+      # =:
+      # refresh interval
+      - match: '(?<![a-zA-Z0-9_])\brefresh\b[ \t]+\binterval\b(?=[ \t]*=)'
+        name: keyword.control.edk2vfr
+
+      # default value
+      - match: '(?<![a-zA-Z0-9_])\bdefault\b[ \t]+\bvalue\b(?=[ \t]*=)'
+        name: keyword.control.edk2vfr
+      - match: '(?<![a-zA-Z0-9_])\b(year|month|day)\b[ \t]+\bvarid\b(?=[ \t]*=)'
+        name: keyword.control.edk2vfr
+      - match: '(?<![a-zA-Z0-9_])\b(hour|minute|second)\b[ \t]+\bvarid\b(?=[ \t]*=)'
+        name: keyword.control.edk2vfr
+
+      - match: '(?<![a-zA-Z0-9_])(guid|title|help|classguid|class|subclass|prompt|attribute|varid|name|questionid|image|maptitle|mapguid|flags|text|key|devicePath|formsetguid|formid|question|defaultstore|default|value|config|minimum|maximum|step|minsize|maxsize|maxcontainers|datatype)\b[ \t]*='
+        captures:
+          1: { name: keyword.control.edk2vfr }
+
+      - match: '(?<![a-zA-Z0-9_])\b(line|locked)\b'
+        name: keyword.control.edk2vfr
+      - match: '(?<![a-zA-Z0-9_])\balign\b[ \t]+\b(left|right|center)\b'
+        name: keyword.control.edk2vfr
+
+      # keyword:
+      - match: '\b(READ_ONLY|INTERACTIVE|RESET_REQUIRED|OPTIONS_ONLY|REST_STYLE|OPTION_DEFAULT|OPTION_DEFAULT_MFG|INTERACTIVE|RESET_REQUIRED|DEFAULT|CHECKBOX_DEFAULT|CHECKBOX_DEFAULT_MFG|NUMERIC_SIZE_1|NUMERIC_SIZE_2|NUMERIC_SIZE_4|NUMERIC_SIZE_8|DISPLAY_INT_DEC|DISPLAY_UINT_DEC|DISPLAY_UINT_HEX|MULTI_LINE|UNIQUE|NOEMPTY|YEAR_SUPPRESS|MONTH_SUPPRESS|DAY_SUPPRESS|STORAGE_NORMAL|STORAGE_TIME|STORAGE_WAKEUP|HOUR_SUPPRESS|MINUTE_SUPPRESS|SECOND_SUPPRESS)\b'
+        name: keyword.other.edk2vfr
+
+      ### 2.10.6 VFR Constant Value Definition
+      ### 2.10.7 VFR Statement Image & Locked Tag Definition
+      - match: '\b(STRING_TOKEN|IMAGE_TOKEN)[ \t]*\([ \t]*([a-zA-Z_][a-zA-Z0-9_]+)[ \t]*\)'
+        captures:
+          1: { name: keyword.control.edk2vfr }
+          2: { name: variable.other.edk2vfr }
+
+
+  ## 2.8 VFR FormSet DisableIf Definition
+  #### 2.11.7.2 VFR Statement DisalbeIf Definition
+    # disableif|endif
+  ## 2.9 VFR FormSet SuppressIf Definition
+  ##### 2.11.6.3.1 VFR Question SuppressIf Statement Definition
+  #### 2.11.7.3 VFR Statement SuppressIf Definition
+    # suppressif|endif
+  ##### 2.11.6.1.1 VFR Question Tag InconsistentIf Definition
+    # inconsistentif|endif
+  ##### 2.11.6.1.2 VFR Question Tag NoSubmitIf Definition
+    # nosubmitif|endif
+  #### 2.11.7.4 VFR Statement GrayOutIf Definition
+    # grayoutif|endif
+  vfr_if_definition:
+    patterns:
+      # if definition begin
+      - match: '^[ \t]*(disableif|suppressif|inconsistentif|nosubmitif|grayoutif)\b(?![ \t]*=)'
+        name: keyword.control.edk2vfr
+      # if definition End
+      - match: '(?<![a-zA-Z0-9_])(endif)\b[ \t]*;'
+        captures:
+          1: { name: keyword.control.edk2vfr }
+
+  ## 2.12 VFR Expression Statement Definition
+  vfr_operators_definition:
+    patterns:
+      # Latter operators(case-sensitive)
+      - match: '\b(OR|AND|NOT)\b'
+        name: keyword.operator.edk2vfr
+      - match: '\b(catenate|match|dup|ideqval|ideqid|ideqvallist|questionref|ruleref|stringref|pushthis|security|length|questionrefval|stringrefval|boolval|stringval|unintval|toupper|tolower|set|cond|find|mid|token|span|map|match2)\b'
+        name: entity.name.function.edk2vfr
+      # Character operators
+      - match: '\b(\||\&|==|!=|<|<=|>|>=|<<|>>|\+|-|\*|\/|%|~)\b'
+        name: keyword.operator.edk2vfr
+
+  # CName
+  vfr_cname:
+    match: '\b[a-zA-Z_][a-zA-Z0-9_]*\b'
+    name: variable.other.edk2vfr

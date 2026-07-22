@@ -9,16 +9,261 @@
   "patterns": [
     {
       "include": "#comment"
+    },
+    {
+      "include": "#comment_block"
+    },
+    {
+      "include": "#define_directive"
+    },
+    {
+      "include": "#include_directive"
+    },
+    {
+      "include": "#vfr_preprocessing_directives"
+    },
+    {
+      "include": "#vfr_pragma_pack_definition"
+    },
+    {
+      "include": "#vfr_data_struct_definition"
+    },
+    {
+      "include": "#vfr_form_definition"
+    },
+    {
+      "include": "#vfr_if_definition"
+    },
+    {
+      "include": "#vfr_operators_definition"
+    },
+    {
+      "include": "#vfr_cname"
+    },
+    {
+      "include": "source.edk2cmn#hex_numbers"
+    },
+    {
+      "include": "source.edk2cmn#decimal_numbers"
+    },
+    {
+      "include": "source.edk2cmn#boolean_expression"
     }
   ],
   "repository": {
     "comment": {
+      "match": "//.*$",
+      "name": "comment.line.double-slash.edk2vfr"
+    },
+    "comment_block": {
+      "begin": "/\\*",
+      "end": "\\*/",
+      "name": "comment.block.c.edk2vfr"
+    },
+    "define_directive": {
+      "match": "^[ \\t]*(#define)\\b[ \\t]+([a-zA-Z_][a-zA-Z0-9_]*)",
+      "captures": {
+        "1": {
+          "name": "keyword.other.define.edk2vfr"
+        },
+        "2": {
+          "name": "variable.other.macro.edk2vfr"
+        }
+      }
+    },
+    "include_directive": {
+      "begin": "^[ \\t]*(#include)\\b[ \\t]*",
+      "end": "$",
+      "beginCaptures": {
+        "1": {
+          "name": "keyword.control.preprocessor.edk2vfr"
+        }
+      },
       "patterns": [
         {
-          "name": "comment.line.double-slash.edk2vfr",
-          "match": "//.*$"
+          "include": "#comment"
+        },
+        {
+          "include": "#comment_block"
+        },
+        {
+          "begin": "(\"|<)",
+          "end": "(\"|>)",
+          "name": "meta.preprocessor.string.edk2vfr"
         }
       ]
+    },
+    "vfr_preprocessing_directives": {
+      "begin": "^[ \\t]*(#(?:if|ifdef|ifndef|elif|else|endif))\\b",
+      "end": "$",
+      "beginCaptures": {
+        "1": {
+          "name": "keyword.control.preprocessor.edk2vfr"
+        }
+      },
+      "patterns": [
+        {
+          "match": "\\b(defined)\\b",
+          "name": "keyword.control.preprocessor.edk2vfr"
+        },
+        {
+          "include": "#vfr_cname"
+        }
+      ]
+    },
+    "vfr_pragma_pack_definition": {
+      "begin": "^[ \\t]*(#pragma)\\b[ \\t]+(pack)[ \\t]*",
+      "end": "$",
+      "beginCaptures": {
+        "1": {
+          "name": "keyword.other.define.edk2vfr"
+        },
+        "2": {
+          "name": "keyword.other.define.edk2vfr"
+        }
+      },
+      "patterns": [
+        {
+          "match": "\\b(show|push|pop)\\b",
+          "name": "keyword.control.edk2vfr"
+        },
+        {
+          "include": "source.edk2cmn#hex_numbers"
+        },
+        {
+          "include": "source.edk2cmn#decimal_numbers"
+        },
+        {
+          "include": "#comment"
+        },
+        {
+          "include": "#comment_block"
+        }
+      ]
+    },
+    "vfr_data_struct_definition": {
+      "begin": "^[ \\t]*(typedef)\\b[ \\t]+\\b(struct)\\b",
+      "end": "(\\})[ \\t]*([a-zA-Z_][a-zA-Z0-9_]*)[ \\t]*(;)",
+      "beginCaptures": {
+        "1": {
+          "name": "keyword.other.typedef.edk2vfr"
+        },
+        "2": {
+          "name": "keyword.other.typedef.edk2vfr"
+        }
+      },
+      "endCaptures": {
+        "2": {
+          "name": "entity.name.type.edk2vfr"
+        }
+      },
+      "patterns": [
+        {
+          "include": "#comment"
+        },
+        {
+          "include": "#comment_block"
+        }
+      ]
+    },
+    "vfr_form_definition": {
+      "patterns": [
+        {
+          "match": "^[ \\t]*(formset|defaultstore|varstore|efivarstore|namevaluevarstore|form|formmap|rule|subtitle|text|goto|resetbutton|option|read|write|checkbox|action|numeric|oneof|string|password|orderedlist|date|time|label|banner|guidop|modal)\\b(?![ \\t]*=)",
+          "name": "storage.type.statement.edk2vfr"
+        },
+        {
+          "match": "(?<![a-zA-Z0-9_])(endformset|endform|endrule|endsubtitle|endresetbutton|endcheckbox|endaction|endnumeric|endoneof|endstring|endpassword|endlist|enddate|endtime|endguidop)\\b[ \\t]*;",
+          "captures": {
+            "1": {
+              "name": "storage.type.statement.edk2vfr"
+            }
+          }
+        },
+        {
+          "match": "(?<![a-zA-Z0-9_])\\brefresh\\b[ \\t]+\\binterval\\b(?=[ \\t]*=)",
+          "name": "keyword.control.edk2vfr"
+        },
+        {
+          "match": "(?<![a-zA-Z0-9_])\\bdefault\\b[ \\t]+\\bvalue\\b(?=[ \\t]*=)",
+          "name": "keyword.control.edk2vfr"
+        },
+        {
+          "match": "(?<![a-zA-Z0-9_])\\b(year|month|day)\\b[ \\t]+\\bvarid\\b(?=[ \\t]*=)",
+          "name": "keyword.control.edk2vfr"
+        },
+        {
+          "match": "(?<![a-zA-Z0-9_])\\b(hour|minute|second)\\b[ \\t]+\\bvarid\\b(?=[ \\t]*=)",
+          "name": "keyword.control.edk2vfr"
+        },
+        {
+          "match": "(?<![a-zA-Z0-9_])(guid|title|help|classguid|class|subclass|prompt|attribute|varid|name|questionid|image|maptitle|mapguid|flags|text|key|devicePath|formsetguid|formid|question|defaultstore|default|value|config|minimum|maximum|step|minsize|maxsize|maxcontainers|datatype)\\b[ \\t]*=",
+          "captures": {
+            "1": {
+              "name": "keyword.control.edk2vfr"
+            }
+          }
+        },
+        {
+          "match": "(?<![a-zA-Z0-9_])\\b(line|locked)\\b",
+          "name": "keyword.control.edk2vfr"
+        },
+        {
+          "match": "(?<![a-zA-Z0-9_])\\balign\\b[ \\t]+\\b(left|right|center)\\b",
+          "name": "keyword.control.edk2vfr"
+        },
+        {
+          "match": "\\b(READ_ONLY|INTERACTIVE|RESET_REQUIRED|OPTIONS_ONLY|REST_STYLE|OPTION_DEFAULT|OPTION_DEFAULT_MFG|INTERACTIVE|RESET_REQUIRED|DEFAULT|CHECKBOX_DEFAULT|CHECKBOX_DEFAULT_MFG|NUMERIC_SIZE_1|NUMERIC_SIZE_2|NUMERIC_SIZE_4|NUMERIC_SIZE_8|DISPLAY_INT_DEC|DISPLAY_UINT_DEC|DISPLAY_UINT_HEX|MULTI_LINE|UNIQUE|NOEMPTY|YEAR_SUPPRESS|MONTH_SUPPRESS|DAY_SUPPRESS|STORAGE_NORMAL|STORAGE_TIME|STORAGE_WAKEUP|HOUR_SUPPRESS|MINUTE_SUPPRESS|SECOND_SUPPRESS)\\b",
+          "name": "keyword.other.edk2vfr"
+        },
+        {
+          "match": "\\b(STRING_TOKEN|IMAGE_TOKEN)[ \\t]*\\([ \\t]*([a-zA-Z_][a-zA-Z0-9_]+)[ \\t]*\\)",
+          "captures": {
+            "1": {
+              "name": "keyword.control.edk2vfr"
+            },
+            "2": {
+              "name": "variable.other.edk2vfr"
+            }
+          }
+        }
+      ]
+    },
+    "vfr_if_definition": {
+      "patterns": [
+        {
+          "match": "^[ \\t]*(disableif|suppressif|inconsistentif|nosubmitif|grayoutif)\\b(?![ \\t]*=)",
+          "name": "keyword.control.edk2vfr"
+        },
+        {
+          "match": "(?<![a-zA-Z0-9_])(endif)\\b[ \\t]*;",
+          "captures": {
+            "1": {
+              "name": "keyword.control.edk2vfr"
+            }
+          }
+        }
+      ]
+    },
+    "vfr_operators_definition": {
+      "patterns": [
+        {
+          "match": "\\b(OR|AND|NOT)\\b",
+          "name": "keyword.operator.edk2vfr"
+        },
+        {
+          "match": "\\b(catenate|match|dup|ideqval|ideqid|ideqvallist|questionref|ruleref|stringref|pushthis|security|length|questionrefval|stringrefval|boolval|stringval|unintval|toupper|tolower|set|cond|find|mid|token|span|map|match2)\\b",
+          "name": "entity.name.function.edk2vfr"
+        },
+        {
+          "match": "\\b(\\||\\&|==|!=|<|<=|>|>=|<<|>>|\\+|-|\\*|\\/|%|~)\\b",
+          "name": "keyword.operator.edk2vfr"
+        }
+      ]
+    },
+    "vfr_cname": {
+      "match": "\\b[a-zA-Z_][a-zA-Z0-9_]*\\b",
+      "name": "variable.other.edk2vfr"
     }
   }
 }
