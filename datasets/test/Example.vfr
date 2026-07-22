@@ -5,16 +5,20 @@
 //
 //==============================================================================
 
-#include "CustomDriverData.h"
+#include "CustomDriverData.h"  // comment
+#include <CustomDriverData.h>  // comment
+#include <CustomDriver/Data.h>  /* comment */
 
-#define FORMSET_GUID      { 0x12345678, 0x1234, 0x1234, { 0x12, 0x34, 0x56, 0x78, 0x9A, 0xBC, 0xDE, 0xF0 } }
+#define FORMSET_GUID      \
+{ 0x12345678, 0x1234, 0x1234, { 0x12, 0x34, 0x56, 0x78, 0x9A, 0xBC, 0xDE, 0xF0 } }
+
 #define CONFIG_VARSTORE_ID 0x1000
 
 #define FLAG_PRODUCTION    1
 #define FLAG_DEBUG         0
 
-#pragma pack(1)
-typedef struct {
+#pragma pack(push, 1) //
+typedef struct {   /*  */
   UINT8   BootStore;
   UINT16  TimeoutValue;
   BOOLEAN FastBootEnable;
@@ -23,8 +27,8 @@ typedef struct {
   UINT8   StringBuf;
   EFI_HII_DATE MyDate;
   EFI_HII_TIME MyTime;
-} MY_DRIVER_CONFIGURATION;
-#pragma pack()
+} MY_DRIVER_CONFIGURATION;  //
+#pragma pack(pop)  //
 
 formset
   guid      = FORMSET_GUID,
@@ -62,14 +66,14 @@ formset
     label 0x1000;
     label 0x1001;
 
-#if FLAG_PRODUCTION == 1
+#if FLAG_PRODUCTION == 2
     checkbox varid = MyConfig.FastBootEnable,
       prompt   = STRING_TOKEN(STR_CHECKBOX_PROMPT_PROD),
       help     = STRING_TOKEN(STR_CHECKBOX_HELP_PROD),
-      flags    = CHECKBOX_DEFAULT | RESET_REQUIRED,
+      flags    = CHECKBOX_DEFAULT | RESET_REQUIRED | REST_STYLE,
       key      = 0x101,
     endcheckbox;
-#elif FLAG_DEBUG == 1
+#elif defined(FLAG_DEBUG) || defined(FLAG_PRODUCTION)
     checkbox varid = MyConfig.FastBootEnable,
       prompt   = STRING_TOKEN(STR_CHECKBOX_PROMPT_DEBUG),
       help     = STRING_TOKEN(STR_CHECKBOX_HELP_DEBUG),
@@ -92,7 +96,10 @@ formset
       minimum = 0,
       maximum = 60,
       step    = 1,
-      default = 10, defaultstore = MyStandard,
+      refresh interval = 2
+      default = 10,
+      defaultstore = 1,
+      default value = 3
     endnumeric;
 
     oneof varid = MyConfig.BootStore,
@@ -132,25 +139,78 @@ formset
       flags   = Q_TIME_HOUR_MINUTE_SECOND,
     endtime;
 
+    time
+      name    = MyTime,
+      varid   = STestData.mTime,
+      prompt  = STRING_TOKEN(STR_TIME_PROMPT),
+      help    = STRING_TOKEN(STR_TIME_PROMPT),
+      flags   = STORAGE_NORMAL,
+      default = 15:33:33,
+    endtime;
+
+    time
+        hour varid = Time.Hour,
+        prompt     = STRING_TOKEN(STR_TIME_PROMPT),
+        help       = STRING_TOKEN(STR_TIME_HELP),
+        minimum    = 0,
+        maximum    = 23,
+        step       = 1,
+        default    = 0,
+
+        minute varid = Time.Minute,
+        prompt       = STRING_TOKEN(STR_TIME_PROMPT),
+        help         = STRING_TOKEN(STR_TIME_HELP),
+        minimum      = 0,
+        maximum      = 59,
+        step         = 1,
+        default      = 0,
+
+        second varid = Time.Second,
+        prompt       = STRING_TOKEN(STR_TIME_PROMPT),
+        help         = STRING_TOKEN(STR_TIME_HELP),
+        minimum      = 0,
+        maximum      = 59,
+        step         = 1,
+        default      = 0,
+    endtime;
+
+    date
+          year varid       = 2024
+          prompt      = STRING_TOKEN(STR_DATE_PROMPT),
+          help        = STRING_TOKEN(STR_DATE_HELP),
+          minimum     = 2003,
+          maximum     = 2100,
+          step        = 1,
+          default     = 2003,
+
+          month varid = Date.Month
+          prompt      = STRING_TOKEN(STR_DATE_PROMPT),
+          help        = STRING_TOKEN(STR_DATE_HELP),
+          minimum     = 1,
+          maximum     = 12,
+          step        = 1,
+          default     = 1,
+
+          day varid   = Date.Day,
+          prompt      = STRING_TOKEN(STR_DATE_PROMPT),
+          help        = STRING_TOKEN(STR_DATE_HELP),
+          minimum     = 1,
+          maximum     = 31,
+          step        = 0x1,
+          default     = 1,
+    enddate;
+
     goto 2,
       prompt = STRING_TOKEN(STR_GOTO_PROMPT),
       help   = STRING_TOKEN(STR_GOTO_HELP),
       flags  = INTERACTIVE,
       key    = 0x103;
 
-    image
-      imageid = 0x01,
-    endimage;
-
-    animation
-      animationid = 0x02,
-    endanimation;
-
     banner
       title = STRING_TOKEN(STR_BANNER_TITLE),
       line  = 1,
-      align = LEFT,
-    endbanner;
+      align left;
+
 
     password varid = MyConfig.UserSecurityKey,
       prompt  = STRING_TOKEN(STR_PASSWORD_PROMPT),
@@ -168,7 +228,7 @@ formset
     disableif ideqval MyConfig.FastBootEnable == 0;
       grayoutif ideqval MyConfig.TimeoutValue == 10;
         suppressif ideqval MyConfig.BootStore == 1;
-          
+
           numeric varid = MyConfig.BootStore,
             prompt  = STRING_TOKEN(STR_NESTED_PROMPT),
             help    = STRING_TOKEN(STR_NESTED_HELP),
@@ -180,37 +240,37 @@ formset
       endif;
     endif;
 
-    disableif (ideqval MyConfig.TimeoutValue == 0) OR 
-              (ideqval MyConfig.TimeoutValue != 5) AND 
-              NOT (ideqval MyConfig.BootStore > 1) OR 
-              (ideqval MyConfig.BootStore < 4) OR 
-              (ideqval MyConfig.BootStore >= 2) OR 
+    disableif (ideqval MyConfig.TimeoutValue == 0) OR
+              (ideqval MyConfig.TimeoutValue != 5) AND
+              NOT (ideqval MyConfig.BootStore > 1) OR
+              (ideqval MyConfig.BootStore < 4) OR
+              (ideqval MyConfig.BootStore >= 2) OR
               (ideqval MyConfig.BootStore <= 3);
-              
+
       text
         help   = STRING_TOKEN(STR_TEXT_HELP),
         text   = STRING_TOKEN(STR_TEXT_PROMPT);
     endif;
 
-    disableif (ideqval MyConfig.TimeoutValue + 1 == 2) OR 
-              (ideqval MyConfig.TimeoutValue - 1 == 0) OR 
-              (ideqval MyConfig.TimeoutValue * 2 == 20) OR 
-              (ideqval MyConfig.TimeoutValue / 2 == 5) OR 
-              (ideqval MyConfig.TimeoutValue % 3 == 1) OR 
-              ((ideqval MyConfig.TimeoutValue & 1) == 0) OR 
-              ((ideqval MyConfig.TimeoutValue | 2) == 10) OR 
-              ((ideqval MyConfig.TimeoutValue ^ 3) == 9) OR 
+    disableif (ideqval MyConfig.TimeoutValue + 1 == 2) OR
+              (ideqval MyConfig.TimeoutValue - 1 == 0) OR
+              (ideqval MyConfig.TimeoutValue * 2 == 20) OR
+              (ideqval MyConfig.TimeoutValue / 2 == 5) OR
+              (ideqval MyConfig.TimeoutValue % 3 == 1) OR
+              ((ideqval MyConfig.TimeoutValue & 1) == 0) OR
+              ((ideqval MyConfig.TimeoutValue | 2) == 10) OR
+              ((ideqval MyConfig.TimeoutValue ^ 3) == 9) OR
               (~ideqval MyConfig.TimeoutValue == 0);
-              
+
       text
         help   = STRING_TOKEN(STR_TEXT_HELP),
         text   = STRING_TOKEN(STR_TEXT_PROMPT);
     endif;
 
-    disableif (ideqval MyConfig.TimeoutValue << 1 == 20) OR 
+    disableif (ideqval MyConfig.TimeoutValue << 1 == 20) OR
               (ideqval MyConfig.TimeoutValue >> 1 == 5) OR
               ideqval MyConfig.FastBootEnable ? TRUE : FALSE;
-              
+
       text
         help   = STRING_TOKEN(STR_TEXT_HELP),
         text   = STRING_TOKEN(STR_TEXT_PROMPT);
@@ -230,5 +290,8 @@ formset
       flags  = cond(ideqval MyConfig.TimeoutValue == 10 ? 1 : 0);
 
   endform;
+
+  formmap formid = 4,
+
 
 endformset;
