@@ -1,19 +1,17 @@
 import * as vscode from 'vscode';
 
-export function activate(context: vscode.ExtensionContext) {
-    console.log('[EDK2] Extension has been successfully compiled and activated!');
-//    vscode.window.showInformationMessage('[EDK2] Extension has been successfully compiled and activated!');
+// Target language IDs supported for displaying Section on Oulline view
+const targetLanguages_Sections = [
+    { language: 'edk2inf' },
+    { language: 'edk2dec' },
+    { language: 'edk2dsc' },
+    { language: 'edk2fdf' }
+];
 
-    // Target language IDs supported by this extension
-    const targetLanguages = [
-        { language: 'edk2inf' },
-        { language: 'edk2dec' },
-        { language: 'edk2dsc' },
-        { language: 'edk2fdf' }
-    ];
-
-    // Register provider to handle VS Code Outline View
-    const symbolProvider = vscode.languages.registerDocumentSymbolProvider(targetLanguages, {
+// Register provider to handle VS Code Outline View
+const symbolProvider_Sections = vscode.languages.registerDocumentSymbolProvider(
+    targetLanguages_Sections,
+    {
         provideDocumentSymbols(document: vscode.TextDocument): vscode.DocumentSymbol[] {
             const symbols: vscode.DocumentSymbol[] = [];
             const text = document.getText();
@@ -59,9 +57,13 @@ export function activate(context: vscode.ExtensionContext) {
 
             return symbols;
         }
-    });
+    }
+);
 
-    context.subscriptions.push(symbolProvider);
+export function activate(context: vscode.ExtensionContext) {
+    console.log('[EDK2] Extension has been successfully compiled and activated!');
+//    vscode.window.showInformationMessage('[EDK2] Extension has been successfully compiled and activated!');
+    context.subscriptions.push(symbolProvider_Sections);
 }
 
 export function deactivate() {
