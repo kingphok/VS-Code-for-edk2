@@ -8,7 +8,7 @@ const targetLanguages_EDK2_DEFINE = [
 ];
 
 // Caller file syntax: $($(marco_name))
-const EDK2_DEFINE_CALLER_REGEX = /\$\(([a-zA-Z_][a-zA-Z0-9_]*)\)/;
+const EDK2_DEFINE_CALLER_REGEX = /(?<=\$\(\s*)[a-zA-Z_][a-zA-Z0-9_]*(?=\s*\))/;
 
 class main_edk2DefineProvider implements vscode.DefinitionProvider {
     provideDefinition(
@@ -18,8 +18,7 @@ class main_edk2DefineProvider implements vscode.DefinitionProvider {
 
         const range = document.getWordRangeAtPosition(position, EDK2_DEFINE_CALLER_REGEX);
         if (!range) return null;
-        const rawText = document.getText(range);
-        const word = rawText.slice(2, -1);
+        const word = document.getText(range);
 
         console.log(`[EDK2] EDK2 DEFINE: ${word}`);
         return null;

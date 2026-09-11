@@ -5,12 +5,20 @@ const targetLanguages_HII_String_Token = [
     { pattern: '**/*.c' }
 ];
 
+// Caller file syntax: STRING_TOKEN($(token_name))
+const HII_String_Token_CALLER_REGEX = /(?<=STRING_TOKEN\s*\(\s*)[a-zA-Z_][a-zA-Z0-9_]*(?=\s*\))/;
+
 class main_HiiStringTokenProvider implements vscode.DefinitionProvider {
     provideDefinition(
         document: vscode.TextDocument,
         position: vscode.Position
     ): vscode.Location | vscode.Location[] | null {
-        console.log('[EDK2] HII String Token');
+
+        const range = document.getWordRangeAtPosition(position, HII_String_Token_CALLER_REGEX);
+        if (!range) return null;
+        const word = document.getText(range);
+
+        console.log(`[EDK2] HII String Token: ${word}`);
         return null;
     }
 }

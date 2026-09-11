@@ -1,10 +1,7 @@
 import * as vscode from 'vscode';
 
 const targetLanguages_Compiler_Flag = [
-    { language: 'edk2dec' },
-    { language: 'edk2dsc' },
-    { language: 'edk2fdf' },
-    { language: 'edk2inf' },
+    { language: 'edk2vfr' },
     { pattern: '**/*.asl' },
     { pattern: '**/*.asi' },
     { pattern: '**/*.aslc' },
@@ -17,12 +14,20 @@ const targetLanguages_Compiler_Flag = [
     { pattern: '**/*.S' },
 ];
 
+// Caller file syntax: $(marco_name)
+const COMPILER_FLAG_CALLER_REGEX = /[a-zA-Z_][a-zA-Z0-9_]*/;
+
 class main_CompilerFlagProvider implements vscode.DefinitionProvider {
     provideDefinition(
         document: vscode.TextDocument,
         position: vscode.Position
     ): vscode.Location | vscode.Location[] | null {
-        console.log('[EDK2] Compiler Flag');
+
+        const range = document.getWordRangeAtPosition(position, COMPILER_FLAG_CALLER_REGEX);
+        if (!range) return null;
+        const word = document.getText(range);
+
+        console.log(`[EDK2] Compiler Flag: ${word}`);
         return null;
     }
 }
