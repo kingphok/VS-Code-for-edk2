@@ -5,12 +5,20 @@ const targetLanguages_VFR_key = [
     { pattern: '**/*.cpp' },
 ];
 
+// Caller file syntax: $(key_value)
+const VFR_key_CALLER_REGEX = /\b[A-Z_][A-Z0-9_]*\b/;
+
 class main_VfrKeyProvider implements vscode.DefinitionProvider {
     provideDefinition(
         document: vscode.TextDocument,
         position: vscode.Position
     ): vscode.Location | vscode.Location[] | null {
-        console.log('[EDK2] VFR key');
+
+        const range = document.getWordRangeAtPosition(position, VFR_key_CALLER_REGEX);
+        if (!range) return null;
+        const word = document.getText(range);
+
+        console.log(`[EDK2] VFR key: ${word}`);
         return null;
     }
 }

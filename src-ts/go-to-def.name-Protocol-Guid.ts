@@ -11,12 +11,20 @@ const targetLanguages_Protocol_Guid = [
     { pattern: '**/*.h' },
 ];
 
+// Caller file syntax: g*Guid
+const Protocol_Guid_CALLER_REGEX = /\bg[a-zA-Z0-9_]*Guid\b/;
+
 class main_ProtocolGuidProvider implements vscode.DefinitionProvider {
     provideDefinition(
         document: vscode.TextDocument,
         position: vscode.Position
     ): vscode.Location | vscode.Location[] | null {
-        console.log('[EDK2] Protocol Guid');
+
+        const range = document.getWordRangeAtPosition(position, Protocol_Guid_CALLER_REGEX);
+        if (!range) return null;
+        const word = document.getText(range);
+
+        console.log(`[EDK2] Protocol Guid: ${word}`);
         return null;
     }
 }

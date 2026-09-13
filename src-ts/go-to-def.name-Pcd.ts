@@ -18,12 +18,20 @@ const targetLanguages_Pcd = [
     { pattern: '**/*.S' },
 ];
 
+// Caller file syntax: Pcd*
+const PCD_CALLER_REGEX = /\bPcd[a-zA-Z0-9_]*\b/;
+
 class main_PcdProvider implements vscode.DefinitionProvider {
     provideDefinition(
         document: vscode.TextDocument,
         position: vscode.Position
     ): vscode.Location | vscode.Location[] | null {
-        console.log('[EDK2] Pcd');
+
+        const range = document.getWordRangeAtPosition(position, PCD_CALLER_REGEX);
+        if (!range) return null;
+        const word = document.getText(range);
+
+        console.log(`[EDK2] Pcd: ${word}`);
         return null;
     }
 }

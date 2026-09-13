@@ -15,7 +15,7 @@ const targetLanguages_Compiler_Flag = [
 ];
 
 // Caller file syntax: $(marco_name)
-const COMPILER_FLAG_CALLER_REGEX = /[a-zA-Z_][a-zA-Z0-9_]*/;
+const COMPILER_FLAG_CALLER_REGEX = /\b[a-zA-Z_][a-zA-Z0-9_]*\b/;
 
 class main_CompilerFlagProvider implements vscode.DefinitionProvider {
     provideDefinition(
