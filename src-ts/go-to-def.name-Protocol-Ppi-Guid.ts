@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 
-const targetLanguages_Protocol_Guid = [
+const targetLanguages_Protocol_Ppi_Guid = [
     { language: 'edk2dec' },
     { language: 'edk2dsc' },
     { language: 'edk2fdf' },
@@ -14,7 +14,7 @@ const targetLanguages_Protocol_Guid = [
 // Caller file syntax: g*Guid
 const Protocol_Guid_CALLER_REGEX = /\bg[a-zA-Z0-9_]*Guid\b/;
 
-class main_ProtocolGuidProvider implements vscode.DefinitionProvider {
+class main_ProtocolPpiGuidProvider implements vscode.DefinitionProvider {
     provideDefinition(
         document: vscode.TextDocument,
         position: vscode.Position
@@ -24,15 +24,15 @@ class main_ProtocolGuidProvider implements vscode.DefinitionProvider {
         if (!range) return null;
         const word = document.getText(range);
 
-        console.log(`[EDK2] Protocol Guid: ${word}`);
+        console.log(`[EDK2] Protocol Ppi Guid: ${word}`);
         return null;
     }
 }
 
 // Register provider to handle VS Code got to difinition
-export function definitionProvider_Protocol_Guid(): vscode.Disposable {
+export function definitionProvider_Protocol_Ppi_Guid(): vscode.Disposable {
     return vscode.languages.registerDefinitionProvider(
-                                targetLanguages_Protocol_Guid,
-                                new main_ProtocolGuidProvider()
+                                targetLanguages_Protocol_Ppi_Guid,
+                                new main_ProtocolPpiGuidProvider()
                                 );
 }

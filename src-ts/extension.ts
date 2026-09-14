@@ -7,7 +7,7 @@ import { definitionProvider_HII_Image_Token }       from './go-to-def.name-HII-I
 import { definitionProvider_HII_String_Token }      from './go-to-def.name-HII-String-Token';
 import { definitionProvider_Module_Entry_Point }    from './go-to-def.name-Module-Entry-Point';
 import { definitionProvider_Pcd }                   from './go-to-def.name-Pcd';
-import { definitionProvider_Protocol_Guid }         from './go-to-def.name-Protocol-Guid';
+import { definitionProvider_Protocol_Ppi_Guid }     from './go-to-def.name-Protocol-Ppi-Guid';
 import { definitionProvider_VFR_goto_form }         from './go-to-def.name-VFR-goto-form';
 import { definitionProvider_VFR_key }               from './go-to-def.name-VFR-key';
 import { definitionProvider_VFR_Variable_default }  from './go-to-def.name-VFR-Varable-default';
@@ -42,7 +42,7 @@ export function activate(context: vscode.ExtensionContext) {
         definitionProvider_HII_String_Token(),
         definitionProvider_Module_Entry_Point(),
         definitionProvider_Pcd(),
-        definitionProvider_Protocol_Guid(),
+        definitionProvider_Protocol_Ppi_Guid(),
         definitionProvider_VFR_goto_form(),
         definitionProvider_VFR_key(),
         definitionProvider_VFR_Variable_default(),
