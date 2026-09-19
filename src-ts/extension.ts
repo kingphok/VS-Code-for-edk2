@@ -31,11 +31,21 @@ function DatabaseWatching(context: vscode.ExtensionContext) {
 }
 
 export function activate(context: vscode.ExtensionContext) {
-    console.log('[EDK2] Extension has been successfully compiled and activated!');
 
+    // Generic: outline view
     context.subscriptions.push(
         symbolProvider_OutlineSection(),
         symbolProvider_OutlineVarid(),
+    );
+
+    const workspace = vscode.workspace.workspaceFile;
+    if (!workspace || workspace.scheme === 'untitled') {
+        console.log('[EDK2] Some function of extension have been activated!');
+        return;
+    }
+
+    // Must under (Workspace): Go to definition
+    context.subscriptions.push(
         definitionProvider_Compiler_Flag(),
         definitionProvider_EDK2_DEFINE(),
         definitionProvider_HII_Image_Token(),
@@ -51,6 +61,7 @@ export function activate(context: vscode.ExtensionContext) {
     DatabaseIndexing(context);
     DatabaseWatching(context);
 
+    console.log('[EDK2] All function of extension have been activated!');
     //    vscode.window.showInformationMessage('[EDK2] Extension has been successfully compiled and activated!');
 }
 
