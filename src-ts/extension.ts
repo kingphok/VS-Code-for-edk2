@@ -14,6 +14,13 @@ import { definitionProvider_VFR_Variable_default }  from './go-to-def.name-VFR-V
 
 import { initGitignorePaths, Watcher_GitignorePaths } from './path-filter';
 
+import { Watcher_Lang_EDK2DEC } from './go-to-def.index-lang-edk2dec';
+import { Watcher_Lang_EDK2DSC } from './go-to-def.index-lang-edk2dsc';
+import { Watcher_Lang_EDK2FDF } from './go-to-def.index-lang-edk2fdf';
+import { Watcher_Lang_EDK2IDF } from './go-to-def.index-lang-edk2idf';
+import { Watcher_Lang_EDK2UNI } from './go-to-def.index-lang-edk2uni';
+import { Watcher_Lang_EDK2VFR } from './go-to-def.index-lang-edk2vfr';
+
 async function DatabaseIndexing(context: vscode.ExtensionContext) {
     const startTime = performance.now();
 
@@ -27,6 +34,14 @@ function DatabaseWatching(context: vscode.ExtensionContext) {
     const startTime = performance.now();
 
     // Watch file and index it for go to definition database
+    context.subscriptions.push(
+        Watcher_Lang_EDK2DEC(),
+        Watcher_Lang_EDK2DSC(),
+        Watcher_Lang_EDK2FDF(),
+        Watcher_Lang_EDK2IDF(),
+        Watcher_Lang_EDK2UNI(),
+        Watcher_Lang_EDK2VFR()
+    );
 
     const endTime = performance.now();
     console.log(`[EDK2] DatabaseWatching: ${(endTime - startTime).toFixed(2)} ms`);

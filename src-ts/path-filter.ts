@@ -61,3 +61,25 @@ export function Watcher_GitignorePaths(): vscode.FileSystemWatcher {
 
     return gitignoreWatcher;
 }
+
+// Gets custom file associations with default file extensions.
+export function getAllowedFileExtensions(
+    defaultFileExtension: string[],
+    langId: string
+    ): string {
+    const extensions = new Set<string>(defaultFileExtension);
+    const associations = vscode.workspace.getConfiguration('files').get<Record<string, string>>('associations');
+
+    if (associations) {
+        for (const [pattern, associatedLangId ] of Object.entries(associations)) {
+            if (associatedLangId  === langId) {
+                const cleanExt = pattern.replace(/^\*\./, '');
+                if (cleanExt) {
+                    extensions.add(cleanExt);
+                }
+            }
+        }
+    }
+
+    return `**/*.{${Array.from(extensions).join(',')}}`;
+}
