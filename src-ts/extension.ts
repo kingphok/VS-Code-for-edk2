@@ -12,6 +12,8 @@ import { definitionProvider_VFR_goto_form }         from './go-to-def.name-VFR-g
 import { definitionProvider_VFR_key }               from './go-to-def.name-VFR-key';
 import { definitionProvider_VFR_Variable_default }  from './go-to-def.name-VFR-Varable-default';
 
+import { initGitignorePaths, Watcher_GitignorePaths } from './path-filter';
+
 async function DatabaseIndexing(context: vscode.ExtensionContext) {
     const startTime = performance.now();
 
@@ -30,7 +32,7 @@ function DatabaseWatching(context: vscode.ExtensionContext) {
     console.log(`[EDK2] DatabaseWatching: ${(endTime - startTime).toFixed(2)} ms`);
 }
 
-export function activate(context: vscode.ExtensionContext) {
+export async function activate(context: vscode.ExtensionContext) {
 
     // Generic: outline view
     context.subscriptions.push(
@@ -58,6 +60,11 @@ export function activate(context: vscode.ExtensionContext) {
         definitionProvider_VFR_Variable_default(),
     );
 
+    // get exclude path from .gitignore
+    await initGitignorePaths();
+    // Trigger path reloading whenever the root .gitignore is created or modified
+    context.subscriptions.push(Watcher_GitignorePaths());
+
     DatabaseIndexing(context);
     DatabaseWatching(context);
 
@@ -65,7 +72,7 @@ export function activate(context: vscode.ExtensionContext) {
     //    vscode.window.showInformationMessage('[EDK2] Extension has been successfully compiled and activated!');
 }
 
-export function deactivate() {
+export async function deactivate() {
     console.log('[EDK2] Extension has been deactivated.');
 //    vscode.window.showInformationMessage('[EDK2] Extension has been deactivated.');
 }
