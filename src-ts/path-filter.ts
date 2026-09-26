@@ -26,7 +26,7 @@ export async function initGitignorePaths(): Promise<void> {
 
         for (const line of lines) {
             // Skip empty lines or comment lines starting with #
-            if (!line || line.startsWith('#')) continue;
+            if (!line || line.startsWith('#') || line.startsWith('!')) continue;
 
             let cleanPattern = line;
 
