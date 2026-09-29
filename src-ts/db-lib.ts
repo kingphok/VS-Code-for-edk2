@@ -202,4 +202,27 @@ export class DbLib<T extends genericCacheLayout = genericCacheLayout> {
         // TODO: Implement import cache from disk
         return null;
     }
+
+    // Gets locations then resolving to vscode.Location array.
+    public async getLocations(word: string, rootUri: vscode.Uri): Promise<vscode.Location[] | null> {
+        return this.readCache((cache) => {
+            const entries = cache.forward_index.get(word);
+            if (!entries || entries.length === 0) return null;
+
+            const results: vscode.Location[] = [];
+            for (const entry of entries) {
+                const relativePath = cache.paths.get(entry.pathHash);
+                if (relativePath) {
+                    const fileUri = vscode.Uri.joinPath(rootUri, relativePath);
+                    const startPos = new vscode.Position(entry.position.line, entry.position.character);
+                    const endPos = new vscode.Position(entry.position.line, entry.position.character + word.length);
+
+                    results.push(new vscode.Location(fileUri, new vscode.Range(startPos, endPos)));
+                    console.log(`  ${fileUri.fsPath}, line: ${entry.position.line}, char: ${entry.position.character}, length:${word.length}`);
+                }
+            }
+
+            return results.length > 0 ? results : null;
+        });
+    }
 }
