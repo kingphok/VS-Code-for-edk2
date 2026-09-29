@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 
-export let gitignorePaths: string[] = [];
+let gitignorePaths: string[] = [];
 
 // Reads and parses .gitignore files
 export async function initGitignorePaths(): Promise<void> {
@@ -47,6 +47,21 @@ export async function initGitignorePaths(): Promise<void> {
         // Unexpected errors
     }
     console.log('[EDK2] Get exclude paths:', gitignorePaths);
+}
+// Checks whether the given URI matches any gitignore exclusion patterns.
+// Ensures cross-platform compatibility and performs case-sensitive path matching.
+export function isGitIgnorePath(uri: vscode.Uri): boolean {
+    // Normalize path separators to forward slashes '/' for cross-platform compatibility
+    const normalizedPath = uri.fsPath.replace(/\\/g, '/');
+
+    return gitignorePaths.some(ignored => {
+        // Strip leading and trailing slashes from pattern (e.g., '/Build/' -> 'Build')
+        const cleanPattern = ignored.replace(/^\/+|\/+$/g, '');
+        if (!cleanPattern) return false;
+
+        // Perform case-sensitive substring matching
+        return normalizedPath.includes(cleanPattern);
+    });
 }
 
 // Creates and configures the root-level .gitignore system watcher.

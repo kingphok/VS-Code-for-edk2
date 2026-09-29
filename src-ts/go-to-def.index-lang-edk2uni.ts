@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { gitignorePaths, getAllowedFileExtensions} from './path-filter';
+import { isGitIgnorePath, getAllowedFileExtensions} from './path-filter';
 import { Db_HiiStringToken } from './go-to-def.name-HII-String-Token';
 import { ParsedFileResult, hashPathSHA256_64 } from './db-lib';
 
@@ -70,16 +70,14 @@ export async function DbIndexing_Lang_EDK2UNI(context: vscode.ExtensionContext) 
     }
 
     try {
-        // Get allowed file extension -> find all fils -> Excluding file by gitignore paths
+        // Get allowed file extension -> find all files -> Excluding file by gitignore paths
         const fileGlobPattern = getAllowedFileExtensions(['uni', 'UNI'], 'edk2uni');
         const files = await vscode.workspace.findFiles(fileGlobPattern);
-        const targetFiles = files.filter(file =>
-            !gitignorePaths.some(ignored => file.fsPath.includes(ignored))
-        );
+        const targetFiles = files.filter(file => !isGitIgnorePath(file));
 
         // prase all files
         const parseAllResults = await Promise.all(
-            files.map(file => parseFile(file).catch(err => {
+            targetFiles.map(file => parseFile(file).catch(err => {
                 console.error(`[EDK2] Failed to parse file: ${file.fsPath}`, err);
                 return null;
             }))
@@ -99,19 +97,19 @@ export function Watcher_Lang_EDK2UNI(): vscode.FileSystemWatcher {
     const watcher = vscode.workspace.createFileSystemWatcher(DscExtensions);
 
     watcher.onDidChange(async (uri) => {
-        if (gitignorePaths.some(pattern => uri.path.includes(pattern))) return;
+        if (isGitIgnorePath(uri)) return;
         console.log('[EDK2] UNI onDidChange:', uri);
         await indexSingleFile(uri);
     });
 
     watcher.onDidCreate(async (uri) => {
-        if (gitignorePaths.some(pattern => uri.path.includes(pattern))) return;
+        if (isGitIgnorePath(uri)) return;
         console.log('[EDK2] UNI onDidCreate:', uri);
         await indexSingleFile(uri);
     });
 
     watcher.onDidDelete(async (uri) => {
-        if (gitignorePaths.some(pattern => uri.path.includes(pattern))) return;
+        if (isGitIgnorePath(uri)) return;
         console.log('[EDK2] UNI onDidDelete:', uri);
         await unindexSingleFile(uri);
     });
