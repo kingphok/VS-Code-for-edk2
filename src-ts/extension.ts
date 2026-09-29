@@ -18,13 +18,14 @@ import { Watcher_Lang_EDK2DEC } from './go-to-def.index-lang-edk2dec';
 import { Watcher_Lang_EDK2DSC } from './go-to-def.index-lang-edk2dsc';
 import { Watcher_Lang_EDK2FDF } from './go-to-def.index-lang-edk2fdf';
 import { Watcher_Lang_EDK2IDF } from './go-to-def.index-lang-edk2idf';
-import { Watcher_Lang_EDK2UNI } from './go-to-def.index-lang-edk2uni';
+import { DbIndexing_Lang_EDK2UNI, Watcher_Lang_EDK2UNI } from './go-to-def.index-lang-edk2uni';
 import { Watcher_Lang_EDK2VFR } from './go-to-def.index-lang-edk2vfr';
 
 async function DatabaseIndexing(context: vscode.ExtensionContext) {
     const startTime = performance.now();
 
     // Index all files for go to definition database
+    await DbIndexing_Lang_EDK2UNI(context);
 
     const endTime = performance.now();
     console.log(`[EDK2] DatabaseIndexing: ${(endTime - startTime).toFixed(2)} ms`);
@@ -80,7 +81,7 @@ export async function activate(context: vscode.ExtensionContext) {
     // Trigger path reloading whenever the root .gitignore is created or modified
     context.subscriptions.push(Watcher_GitignorePaths());
 
-    DatabaseIndexing(context);
+    await DatabaseIndexing(context);
     DatabaseWatching(context);
 
     console.log('[EDK2] All function of extension have been activated!');
