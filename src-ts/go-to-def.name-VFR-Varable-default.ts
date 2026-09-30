@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import {genericCacheLayout, DbLib} from './db-lib';
 
 const targetLanguages_VFR_Variable_default = [
     { pattern: '**/*.c' },
@@ -6,21 +7,33 @@ const targetLanguages_VFR_Variable_default = [
     { pattern: '**/*.h' },
 ];
 
+// db settings
+export const DB_JSON_VfrVariableDefault: string = "DB.VFR-Varable-default.json";
+export const DB_VERSION:                 string = "1.0";
+export const Cache_VfrVariableDefault: genericCacheLayout = {
+    version: DB_VERSION,
+    paths: new Map(),
+    forward_index: new Map(),
+    reverse_index: new Map()
+};
+export const Db_VfrVariableDefault = new DbLib(Cache_VfrVariableDefault);
+
 // Caller file syntax: $(structure).$(structure_parameter)
 const VFR_Varable_default_CALLER_REGEX = /(?<=\.)[a-zA-Z_][a-zA-Z0-9_]*\b/;
 
 class main_VfrVariableDefultProvider implements vscode.DefinitionProvider {
-    provideDefinition(
+    async provideDefinition(
         document: vscode.TextDocument,
         position: vscode.Position
-    ): vscode.Location | vscode.Location[] | null {
+    ): Promise<vscode.Location | vscode.Location[] | null> {
 
         const range = document.getWordRangeAtPosition(position, VFR_Varable_default_CALLER_REGEX);
         if (!range) return null;
         const word = document.getText(range);
 
         console.log(`[EDK2] VFR Variable default: ${word}`);
-        return null;
+        const workspaceFolders = vscode.workspace.workspaceFolders;
+        return Db_VfrVariableDefault.getLocations(word, workspaceFolders[0].uri);
     }
 }
 

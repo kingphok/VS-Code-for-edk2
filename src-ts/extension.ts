@@ -19,7 +19,7 @@ import { Watcher_Lang_EDK2DSC } from './go-to-def.index-lang-edk2dsc';
 import { Watcher_Lang_EDK2FDF } from './go-to-def.index-lang-edk2fdf';
 import { DbIndexing_Lang_EDK2IDF, Watcher_Lang_EDK2IDF } from './go-to-def.index-lang-edk2idf';
 import { DbIndexing_Lang_EDK2UNI, Watcher_Lang_EDK2UNI } from './go-to-def.index-lang-edk2uni';
-import { Watcher_Lang_EDK2VFR } from './go-to-def.index-lang-edk2vfr';
+import { DbIndexing_Lang_EDK2VFR, Watcher_Lang_EDK2VFR } from './go-to-def.index-lang-edk2vfr';
 
 async function DatabaseIndexing(context: vscode.ExtensionContext) {
     const startTime = performance.now();
@@ -27,6 +27,7 @@ async function DatabaseIndexing(context: vscode.ExtensionContext) {
     // Index all files for go to definition database
     await DbIndexing_Lang_EDK2IDF(context);
     await DbIndexing_Lang_EDK2UNI(context);
+    await DbIndexing_Lang_EDK2VFR(context);
 
     const endTime = performance.now();
     console.log(`[EDK2] DatabaseIndexing: ${(endTime - startTime).toFixed(2)} ms`);
