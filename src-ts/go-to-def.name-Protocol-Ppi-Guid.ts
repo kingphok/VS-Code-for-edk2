@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import {genericCacheLayout, DbLib} from './db-lib';
 
 const targetLanguages_Protocol_Ppi_Guid = [
     { language: 'edk2dec' },
@@ -11,21 +12,33 @@ const targetLanguages_Protocol_Ppi_Guid = [
     { pattern: '**/*.h' },
 ];
 
-// Caller file syntax: g*Guid
+// db settings
+export const DB_JSON_ProtocolPpiGuid: string = "DB.Protocol-Ppi-Guid.json";
+export const DB_VERSION:              string = "1.0";
+export const Cache_ProtocolPpiGuid:   genericCacheLayout = {
+    version: DB_VERSION,
+    paths: new Map(),
+    forward_index: new Map(),
+    reverse_index: new Map()
+};
+export const Db_ProtocolPpiGuid = new DbLib(Cache_ProtocolPpiGuid);
+
+// Caller file syntax: g*Guid or &g*Guid
 const Protocol_Guid_CALLER_REGEX = /\bg[a-zA-Z0-9_]*Guid\b/;
 
 class main_ProtocolPpiGuidProvider implements vscode.DefinitionProvider {
-    provideDefinition(
+    async provideDefinition(
         document: vscode.TextDocument,
         position: vscode.Position
-    ): vscode.Location | vscode.Location[] | null {
+    ): Promise<vscode.Location | vscode.Location[] | null> {
 
         const range = document.getWordRangeAtPosition(position, Protocol_Guid_CALLER_REGEX);
         if (!range) return null;
         const word = document.getText(range);
 
         console.log(`[EDK2] Protocol Ppi Guid: ${word}`);
-        return null;
+        const workspaceFolders = vscode.workspace.workspaceFolders;
+        return Db_ProtocolPpiGuid.getLocations(word, workspaceFolders[0].uri);
     }
 }
 

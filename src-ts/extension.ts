@@ -14,7 +14,7 @@ import { definitionProvider_VFR_Variable_default }  from './go-to-def.name-VFR-V
 
 import { initGitignorePaths, Watcher_GitignorePaths } from './path-filter';
 
-import { Watcher_Lang_EDK2DEC } from './go-to-def.index-lang-edk2dec';
+import { DbIndexing_Lang_EDK2DEC, Watcher_Lang_EDK2DEC } from './go-to-def.index-lang-edk2dec';
 import { Watcher_Lang_EDK2DSC } from './go-to-def.index-lang-edk2dsc';
 import { Watcher_Lang_EDK2FDF } from './go-to-def.index-lang-edk2fdf';
 import { DbIndexing_Lang_EDK2IDF, Watcher_Lang_EDK2IDF } from './go-to-def.index-lang-edk2idf';
@@ -25,6 +25,7 @@ async function DatabaseIndexing(context: vscode.ExtensionContext) {
     const startTime = performance.now();
 
     // Index all files for go to definition database
+    await DbIndexing_Lang_EDK2DEC(context);
     await DbIndexing_Lang_EDK2IDF(context);
     await DbIndexing_Lang_EDK2UNI(context);
     await DbIndexing_Lang_EDK2VFR(context);
