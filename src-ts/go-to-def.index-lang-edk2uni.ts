@@ -6,33 +6,33 @@ import { ParsedFileResult, hashPathSHA256_64 } from './db-lib';
 // #string $(token_name)
 async function parseFile(uri: vscode.Uri): Promise<ParsedFileResult> {
     const fileData = await vscode.workspace.fs.readFile(uri);
-    const content = Buffer.from(fileData).toString('utf8');
+    const content = new TextDecoder('utf-8').decode(fileData);
 
     const relativePath = vscode.workspace.asRelativePath(uri);
     const pathHash = hashPathSHA256_64(relativePath);
 
-    const stringTokenRegex = /^\s*#string\s+([A-Za-z0-9_]+)/gm;
+    const lines = content.split(/\r?\n/);
+    const stringTokenRegex = /^\s*#string\s+([A-Za-z0-9_]+)/;
 
     const wordsWithPos: ParsedFileResult['wordsWithPos'] = [];
     const wordSet = new Set<string>();
-    let match: RegExpExecArray | null;
 
-    while ((match = stringTokenRegex.exec(content)) !== null) {
-        const word = match[1];
+    lines.forEach((lineText, lineIdx) => {
+        const match = stringTokenRegex.exec(lineText);
+        if (match) {
+            const word = match[1];
+            const character = match.index + match[0].indexOf(word);
 
-        const wordStartOffset = match.index + match[0].indexOf(word);
-        const textBeforeWord = content.substring(0, wordStartOffset);
-        const lines = textBeforeWord.split(/\r?\n/);
-
-        const line = lines.length - 1;
-        const character = lines[lines.length - 1].length;
-
-        wordsWithPos.push({
-            word,
-            position: { line, character }
-        });
-        wordSet.add(word);
-    }
+            wordsWithPos.push({
+                word,
+                position: {
+                    line: lineIdx,
+                    character
+                }
+            });
+            wordSet.add(word);
+        }
+    });
 
     return {
         pathHash,
@@ -41,6 +41,7 @@ async function parseFile(uri: vscode.Uri): Promise<ParsedFileResult> {
         wordsWithPos
     };
 }
+
 
 export async function indexSingleFile(uri: vscode.Uri) {
     try {
