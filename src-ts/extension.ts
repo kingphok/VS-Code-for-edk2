@@ -16,7 +16,7 @@ import { initGitignorePaths, Watcher_GitignorePaths } from './path-filter';
 
 import { DbIndexing_Lang_EDK2DEC, Watcher_Lang_EDK2DEC } from './go-to-def.index-lang-edk2dec';
 import { DbIndexing_Lang_EDK2DSC, Watcher_Lang_EDK2DSC } from './go-to-def.index-lang-edk2dsc';
-import { Watcher_Lang_EDK2FDF } from './go-to-def.index-lang-edk2fdf';
+import { DbIndexing_Lang_EDK2FDF, Watcher_Lang_EDK2FDF } from './go-to-def.index-lang-edk2fdf';
 import { DbIndexing_Lang_EDK2IDF, Watcher_Lang_EDK2IDF } from './go-to-def.index-lang-edk2idf';
 import { DbIndexing_Lang_EDK2INF, Watcher_Lang_EDK2INF } from './go-to-def.index-lang-edk2inf';
 import { DbIndexing_Lang_EDK2UNI, Watcher_Lang_EDK2UNI } from './go-to-def.index-lang-edk2uni';
@@ -28,6 +28,7 @@ async function DatabaseIndexing(context: vscode.ExtensionContext) {
     // Index all files for go to definition database
     await DbIndexing_Lang_EDK2DEC(context);
     await DbIndexing_Lang_EDK2DSC(context);
+    await DbIndexing_Lang_EDK2FDF(context);
     await DbIndexing_Lang_EDK2IDF(context);
     await DbIndexing_Lang_EDK2INF(context);
     await DbIndexing_Lang_EDK2UNI(context);
