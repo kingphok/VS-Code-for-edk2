@@ -25,16 +25,17 @@ async function parseFile(uri: vscode.Uri):Promise<DecParsedFileResult> {
     const fileData = await vscode.workspace.fs.readFile(uri);
     const content = new TextDecoder('utf-8').decode(fileData);
 
+    // regex patterns on EDK2DEC
     // Track words and positions for each category independently
+    const ProtocolGuidPpiRegex = /\b(g[A-Za-z0-9_]*Guid)\s*=/;
     const ProtocolPpiGuidWordsSet = new Set<string>();
     const ProtocolPpiGuidWithPos: ParsedFileResult['wordsWithPos'] = [];
 
-    const lines = content.split(/\r?\n/);
-
-    // regex patterns on EDK2DEC
-    const ProtocolGuidPpiRegex = /\b(g[A-Za-z0-9_]*Guid)\s*=/;
     const Edk2DefineRegex = /^\s*DEFINE\s+([A-Za-z_][A-Za-z0-9_]*)\s*=/;
+    const edk2DefineWordsSet = new Set<string>();
+    const edk2DefineWithPos: ParsedFileResult['wordsWithPos'] = [];
 
+    const lines = content.split(/\r?\n/);
     lines.forEach((lineText, lineIdx) => {
         // Extract Protocol Guid Ppi
         const formMatch = ProtocolGuidPpiRegex.exec(lineText);
@@ -52,11 +53,11 @@ async function parseFile(uri: vscode.Uri):Promise<DecParsedFileResult> {
         if (defineMatch) {
             const word = defineMatch[1];
             const character = defineMatch.index + defineMatch[0].indexOf(word);
-            ProtocolPpiGuidWithPos.push({
+            edk2DefineWithPos.push({
                 word,
                 position: {line: lineIdx, character}
             });
-            ProtocolPpiGuidWordsSet.add(word);
+            edk2DefineWordsSet.add(word);
         }
     });
 
@@ -71,8 +72,8 @@ async function parseFile(uri: vscode.Uri):Promise<DecParsedFileResult> {
             Edk2Define: {
                 pathHash,
                 relativePath,
-                words: Array.from(ProtocolPpiGuidWordsSet),
-                wordsWithPos: ProtocolPpiGuidWithPos
+                words: Array.from(edk2DefineWordsSet),
+                wordsWithPos: edk2DefineWithPos
             }
         }
     };

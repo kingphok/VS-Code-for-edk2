@@ -26,23 +26,21 @@ async function parseFile(uri: vscode.Uri):Promise<VfrParsedFileResult> {
     const fileData = await vscode.workspace.fs.readFile(uri);
     const content = new TextDecoder('utf-8').decode(fileData);
 
+    // EDK2 VFR token extraction regex patterns
     // Track words and positions for each category independently
+    const gotoFormRegex = /\bform\s+formid\s*=\s*([A-Za-z0-9_]+)\s*,/;
     const gotoFormsWordsSet = new Set<string>();
     const gotoFormsWithPos: ParsedFileResult['wordsWithPos'] = [];
 
+    const keyRegex = /\bkey\s*=\s*([A-Za-z0-9_]+)\s*[,;]/;
     const vfrKeysWordsSet = new Set<string>();
     const vfrKeysWithPos: ParsedFileResult['wordsWithPos'] = [];
 
+    const defaultRegex = /\bvarid\s*=\s*[A-Za-z_][A-Za-z0-9_]*\.([A-Za-z_][A-Za-z0-9_]*)/;
     const variableDefaultsWordsSet = new Set<string>();
     const variableDefaultsWithPos: ParsedFileResult['wordsWithPos'] = [];
 
     const lines = content.split(/\r?\n/);
-
-    // EDK2 VFR token extraction regex patterns
-    const gotoFormRegex = /\bform\s+formid\s*=\s*([A-Za-z0-9_]+)\s*,/;
-    const keyRegex = /\bkey\s*=\s*([A-Za-z0-9_]+)\s*[,;]/;
-    const defaultRegex = /\bvarid\s*=\s*[A-Za-z_][A-Za-z0-9_]*\.([A-Za-z_][A-Za-z0-9_]*)/;
-
     lines.forEach((lineText, lineIdx) => {
         // Extract VfrGotoForms
         const formMatch = gotoFormRegex.exec(lineText);

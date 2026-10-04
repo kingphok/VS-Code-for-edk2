@@ -28,38 +28,39 @@ async function parseFile(uri: vscode.Uri):Promise<InfParsedFileResult> {
     const fileData = await vscode.workspace.fs.readFile(uri);
     const content = new TextDecoder('utf-8').decode(fileData);
 
+    // regex patterns on EDK2INF
     // Track words and positions for each category independently
-    const CompilerFlagWordsSet = new Set<string>();
-    const CompilerFlagWithPos: ParsedFileResult['wordsWithPos'] = [];
+    const CompilerFlagRegex = /(?:-|\/)D\s*([A-Za-z_][A-Za-z0-9_]*)/;
+    const compilerFlagWordsSet = new Set<string>();
+    const compilerFlagWithPos: ParsedFileResult['wordsWithPos'] = [];
+
+    const Edk2DefineRegex = /^\s*DEFINE\s+([A-Za-z_][A-Za-z0-9_]*)\s*=/;
+    const edk2DefineWordsSet = new Set<string>();
+    const edk2DefineWithPos: ParsedFileResult['wordsWithPos'] = [];
 
     const lines = content.split(/\r?\n/);
-
-    // regex patterns on EDK2INF
-    const CompilerFlagRegex = /(?:-|\/)D\s*([A-Za-z_][A-Za-z0-9_]*)/;
-    const Edk2DefineRegex = /^\s*DEFINE\s+([A-Za-z_][A-Za-z0-9_]*)\s*=/;
-
     lines.forEach((lineText, lineIdx) => {
         // Extract Compiler Flag
         const formMatch = CompilerFlagRegex.exec(lineText);
         if (formMatch) {
             const word = formMatch[1];
             const character = formMatch.index + formMatch[0].indexOf(word);
-            CompilerFlagWithPos.push({
+            compilerFlagWithPos.push({
                 word,
                 position: {line: lineIdx, character}
             });
-            CompilerFlagWordsSet.add(word);
+            compilerFlagWordsSet.add(word);
         }
         // Extract EDK2 Define
         const defineMatch = Edk2DefineRegex.exec(lineText);
         if (defineMatch) {
             const word = defineMatch[1];
             const character = defineMatch.index + defineMatch[0].indexOf(word);
-            CompilerFlagWithPos.push({
+            edk2DefineWithPos.push({
                 word,
                 position: {line: lineIdx, character}
             });
-            CompilerFlagWordsSet.add(word);
+            edk2DefineWordsSet.add(word);
         }
     });
 
@@ -68,14 +69,14 @@ async function parseFile(uri: vscode.Uri):Promise<InfParsedFileResult> {
             CompilerFlag: {
                 pathHash,
                 relativePath,
-                words: Array.from(CompilerFlagWordsSet),
-                wordsWithPos: CompilerFlagWithPos
+                words: Array.from(compilerFlagWordsSet),
+                wordsWithPos: compilerFlagWithPos
             },
             Edk2Define: {
                 pathHash,
                 relativePath,
-                words: Array.from(CompilerFlagWordsSet),
-                wordsWithPos: CompilerFlagWithPos
+                words: Array.from(edk2DefineWordsSet),
+                wordsWithPos: edk2DefineWithPos
             }
         }
     };
