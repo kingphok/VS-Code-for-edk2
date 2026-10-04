@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import {genericCacheLayout, DbLib} from './db-lib';
 
 const targetLanguages_Compiler_Flag = [
     { language: 'edk2vfr' },
@@ -14,21 +15,33 @@ const targetLanguages_Compiler_Flag = [
     { pattern: '**/*.S' },
 ];
 
+// db settings
+export const DB_JSON_CompilerFlag: string = "DB.Compiler-flag.json";
+export const DB_VERSION:           string = "1.0";
+export const Cache_CompilerFlag: genericCacheLayout = {
+    version: DB_VERSION,
+    paths: new Map(),
+    forward_index: new Map(),
+    reverse_index: new Map()
+};
+export const Db_CompilerFlag = new DbLib(Cache_CompilerFlag);
+
 // Caller file syntax: $(marco_name)
 const COMPILER_FLAG_CALLER_REGEX = /\b[a-zA-Z_][a-zA-Z0-9_]*\b/;
 
 class main_CompilerFlagProvider implements vscode.DefinitionProvider {
-    provideDefinition(
+    async provideDefinition(
         document: vscode.TextDocument,
         position: vscode.Position
-    ): vscode.Location | vscode.Location[] | null {
+    ): Promise<vscode.Location | vscode.Location[] | null> {
 
         const range = document.getWordRangeAtPosition(position, COMPILER_FLAG_CALLER_REGEX);
         if (!range) return null;
         const word = document.getText(range);
 
         console.log(`[EDK2] Compiler Flag: ${word}`);
-        return null;
+        const workspaceFolders = vscode.workspace.workspaceFolders;
+        return Db_CompilerFlag.getLocations(word, workspaceFolders[0].uri);
     }
 }
 
