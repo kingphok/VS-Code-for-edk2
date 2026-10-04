@@ -14,7 +14,7 @@ interface DscParsedFileResult {
 
 // CompilerFlag:
 //   -D$(marco_name)
-//   -D $(marco_name)EFINE
+//   -D $(marco_name)
 //   /D$(marco_name)
 //   /D $(marco_name)
 // Edk2Define:
@@ -30,7 +30,7 @@ async function parseFile(uri: vscode.Uri):Promise<DscParsedFileResult> {
 
     // regex patterns on EDK2DSC
     // Track words and positions for each category independently
-    const CompilerFlagRegex = /(?:-|\/)D\s*([A-Za-z_][A-Za-z0-9_]*)(?!\/)/;
+    const CompilerFlagRegex = /(?:-|\/)D\s*([A-Za-z_][A-Za-z0-9_]*)(?!\/)/g;
     const compilerFlagWordsSet = new Set<string>();
     const compilerFlagWithPos: ParsedFileResult['wordsWithPos'] = [];
 
@@ -41,8 +41,9 @@ async function parseFile(uri: vscode.Uri):Promise<DscParsedFileResult> {
     const lines = content.split(/\r?\n/);
     lines.forEach((lineText, lineIdx) => {
         // Extract Compiler Flag
-        const flagMatch = CompilerFlagRegex.exec(lineText);
-        if (flagMatch) {
+        CompilerFlagRegex.lastIndex = 0;
+        let flagMatch: RegExpExecArray | null;
+        while ((flagMatch = CompilerFlagRegex.exec(lineText)) !== null) {
             const word = flagMatch[1];
             const character = flagMatch.index + flagMatch[0].indexOf(word);
             compilerFlagWithPos.push({
