@@ -3,7 +3,6 @@
         "module": "commonjs",
         "target": "ES2022",
         "moduleResolution": "bundler",
-        "types": ["node"],
         "ignoreDeprecations": "6.0",
         "outDir": "./out",
         "rootDir": "./src-ts",

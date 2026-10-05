@@ -1,5 +1,4 @@
 import * as vscode from 'vscode';
-import { createHash } from 'node:crypto';
 
 // File parser layout for storing parserd result
 export interface ParsedFileResult {
@@ -48,10 +47,19 @@ export async function mapConcurrent<T, R>(
     return results;
 }
 
-// SHA-256 / SHA-1 Truncation）
-export function hashPathSHA256_64(filePath: string): string {
+// SHA-256 / SHA-1 (Truncation)
+export async function hashPathSHA256_64(filePath: string): Promise<string> {
     // First 16 characters (64 bits) of SHA256
-    return createHash('sha256').update(filePath).digest('hex').substring(0, 16);
+    const msgBuffer = new TextEncoder().encode(filePath);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+    const view = new DataView(hashBuffer);
+    let result = '';
+    // Loop only 8 times (8 bytes = 64 bits = 16 hex characters).
+    // This entirely skips converting the unused remaining 24 bytes of the SHA-256 hash.
+    for (let i = 0; i < 8; i++) {
+        result += view.getUint8(i).toString(16).padStart(2, '0');
+    }
+    return result;
 }
 
 // ReadWriteLock: Promise-queue-based lock that allows multiple concurrent readers but only one exclusive writer.

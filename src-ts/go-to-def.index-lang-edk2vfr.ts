@@ -20,7 +20,7 @@ interface VfrParsedFileResult {
 async function parseFile(uri: vscode.Uri):Promise<VfrParsedFileResult> {
     const fsPath = uri.fsPath;
     const relativePath = vscode.workspace.asRelativePath(uri);
-    const pathHash = hashPathSHA256_64(relativePath);
+    const pathHash = await hashPathSHA256_64(relativePath);
 
     // Read and decode workspace file content
     const fileData = await vscode.workspace.fs.readFile(uri);
@@ -129,7 +129,7 @@ async function unindexSingleFile(uri: vscode.Uri) {
     try {
         // Calculate relative path and SHA-256 hash
         const relativePath = vscode.workspace.asRelativePath(uri);
-        const pathHash = hashPathSHA256_64(relativePath);
+        const pathHash = await hashPathSHA256_64(relativePath);
         await Promise.all([
             Db_VfrGotoForm.deleteGenCache(pathHash),
             Db_Vfrkey.deleteGenCache(pathHash),

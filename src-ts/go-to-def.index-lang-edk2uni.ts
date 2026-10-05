@@ -9,7 +9,7 @@ async function parseFile(uri: vscode.Uri): Promise<ParsedFileResult> {
     const content = new TextDecoder('utf-8').decode(fileData);
 
     const relativePath = vscode.workspace.asRelativePath(uri);
-    const pathHash = hashPathSHA256_64(relativePath);
+    const pathHash = await hashPathSHA256_64(relativePath);
 
     const lines = content.split(/\r?\n/);
     const stringTokenRegex = /^\s*#string\s+([A-Za-z0-9_]+)/;
@@ -56,7 +56,7 @@ async function unindexSingleFile(uri: vscode.Uri) {
     try {
         // Calculate relative path and SHA-256 hash
         const relativePath = vscode.workspace.asRelativePath(uri);
-        const pathHash = hashPathSHA256_64(relativePath);
+        const pathHash = await hashPathSHA256_64(relativePath);
         await Db_HiiStringToken.deleteGenCache(pathHash);
     } catch (err) {
         console.error(`[EDK2] Failed to unindex file: ${uri.fsPath}`, err);
