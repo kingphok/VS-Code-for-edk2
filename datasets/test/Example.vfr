@@ -80,6 +80,13 @@ formset
       flags    = CHECKBOX_DEFAULT | INTERACTIVE,
       key      = 0x101,
     endcheckbox;
+#elif (FixedPcdGetBool (PcdFastBootSupport))
+    checkbox varid = MyConfig.FastBootEnable,
+      prompt   = STRING_TOKEN(STR_CHECKBOX_PROMPT_DEBUG),
+      help     = STRING_TOKEN(STR_CHECKBOX_HELP_DEBUG),
+      flags    = CHECKBOX_DEFAULT | INTERACTIVE,
+      key      = 0x101,
+    endcheckbox;
 #else
     checkbox varid = MyConfig.FastBootEnable,
       prompt   = STRING_TOKEN(STR_CHECKBOX_PROMPT_DEFAULT),

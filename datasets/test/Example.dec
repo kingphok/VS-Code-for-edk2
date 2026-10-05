@@ -15,6 +15,8 @@
   DEFINE SPEC_REVISION           = 1.27
   DEFINE SECTOR_SIZE             = 0x200
   DEFINE OUTPUT_NAME             = L"SamplePkg"
+  DEFINE OUTPUT_NAME             = L'A'
+  DEFINE OUTPUT_NAME             = 'A'
 
 [Includes]
   DEFINE MDE = Include/Library
@@ -30,6 +32,8 @@
 
 [Includes.IA32, Includes.X64, Includes.ARM, Includes.AARCH64]
   Include/Cpu/Arm
+
+
 
 [LibraryClasses.common]
   DEFINE MDE = Include/Library
