@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import { isGitIgnorePath, getAllowedFileExtensions} from './path-filter';
 import { Db_CompilerFlag } from './go-to-def.name-Compiler-Flag';
 import { Db_EDK2Define } from './go-to-def.name-EDK2-DEFINE';
+import { Db_Pcd } from './go-to-def.name-Pcd';
 import { ParsedFileResult, hashPathSHA256_64 } from './db-lib';
 
 // Internal EDK2DSC parsing data structure
@@ -9,6 +10,7 @@ interface DscParsedFileResult {
     dscDefinition: {
         CompilerFlag: ParsedFileResult;
         Edk2Define:   ParsedFileResult;
+        Pcd:          ParsedFileResult;
     };
 }
 
@@ -19,6 +21,8 @@ interface DscParsedFileResult {
 //   /D $(marco_name)
 // Edk2Define:
 //   DEFINE $(marco_name) =
+// Pcd:
+//   g*Guid.Pcd*|$(value)
 async function parseFile(uri: vscode.Uri):Promise<DscParsedFileResult> {
     const fsPath = uri.fsPath;
     const relativePath = vscode.workspace.asRelativePath(uri);
@@ -37,6 +41,10 @@ async function parseFile(uri: vscode.Uri):Promise<DscParsedFileResult> {
     const Edk2DefineRegex = /^\s*DEFINE\s+([A-Za-z_][A-Za-z0-9_]*)\s*=/;
     const edk2DefineWordsSet = new Set<string>();
     const edk2DefineWithPos: ParsedFileResult['wordsWithPos'] = [];
+
+    const PcdRegex = /[A-Za-z_][A-Za-z0-9_]*\.([A-Za-z_][A-Za-z0-9_]*)\|/;
+    const pcdWordsSet = new Set<string>();
+    const pcdWithPos: ParsedFileResult['wordsWithPos'] = [];
 
     const lines = content.split(/\r?\n/);
     lines.forEach((lineText, lineIdx) => {
@@ -63,6 +71,17 @@ async function parseFile(uri: vscode.Uri):Promise<DscParsedFileResult> {
             });
             edk2DefineWordsSet.add(word);
         }
+        // Extract Pcd
+        const pcdMatch = PcdRegex.exec(lineText);
+        if (pcdMatch) {
+            const word = pcdMatch[1];
+            const character = pcdMatch.index + pcdMatch[0].indexOf(word);
+            pcdWithPos.push({
+                word,
+                position: {line: lineIdx, character}
+            });
+            pcdWordsSet.add(word);
+        }
     });
 
     return {
@@ -78,6 +97,12 @@ async function parseFile(uri: vscode.Uri):Promise<DscParsedFileResult> {
                 relativePath,
                 words: Array.from(edk2DefineWordsSet),
                 wordsWithPos: edk2DefineWithPos
+            },
+            Pcd: {
+                pathHash,
+                relativePath,
+                words: Array.from(pcdWordsSet),
+                wordsWithPos: pcdWithPos
             }
         }
     };
@@ -93,10 +118,12 @@ export async function indexSingleFile(uri: vscode.Uri) {
         // Extract ParsedFileResult directly without remapping structures
         const CompilerFlagResults = parseResult.dscDefinition.CompilerFlag;
         const Edk2DefineResults = parseResult.dscDefinition.Edk2Define;
+        const PcdResults = parseResult.dscDefinition.Pcd;
 
         await Promise.all([
             Db_CompilerFlag.updateGenCache(CompilerFlagResults),
-            Db_EDK2Define.updateGenCache(Edk2DefineResults)
+            Db_EDK2Define.updateGenCache(Edk2DefineResults),
+            Db_Pcd.updateGenCache(PcdResults)
         ]);
     } catch (err) {
         console.error(`[EDK2] Failed to index single file: ${uri.fsPath}`, err);
@@ -110,7 +137,8 @@ async function unindexSingleFile(uri: vscode.Uri) {
         const pathHash = hashPathSHA256_64(relativePath);
         await Promise.all([
             Db_CompilerFlag.deleteGenCache(pathHash),
-            Db_EDK2Define.deleteGenCache(pathHash)
+            Db_EDK2Define.deleteGenCache(pathHash),
+            Db_Pcd.deleteGenCache(pathHash)
         ]);
     } catch (err) {
         console.error(`[EDK2] Failed to unindex file: ${uri.fsPath}`, err);
@@ -138,11 +166,13 @@ export async function DbIndexing_Lang_EDK2DSC(context: vscode.ExtensionContext) 
         // Extract ParsedFileResult directly without remapping structures
         const CompilerFlagResults: ParsedFileResult[] = validResults.map(res => res.dscDefinition.CompilerFlag).filter(res => res.wordsWithPos.length > 0);
         const Edk2DefineResults: ParsedFileResult[] = validResults.map(res => res.dscDefinition.Edk2Define).filter(res => res.wordsWithPos.length > 0);
+        const PcdResults: ParsedFileResult[] = validResults.map(res => res.dscDefinition.Pcd).filter(res => res.wordsWithPos.length > 0);
 
         // First init cache
         await Promise.all([
             Db_CompilerFlag.initGenCache(CompilerFlagResults),
-            Db_EDK2Define.initGenCache(Edk2DefineResults)
+            Db_EDK2Define.initGenCache(Edk2DefineResults),
+            Db_Pcd.initGenCache(PcdResults)
         ]);
         console.log('[EDK2] DSC all DB init done');
 
