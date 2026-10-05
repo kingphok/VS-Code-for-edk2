@@ -1,9 +1,9 @@
 import * as vscode from 'vscode';
 import { isGitIgnorePath, getAllowedFileExtensions} from './path-filter';
+import { ParsedFileResult, mapConcurrent, hashPathSHA256_64 } from './db-lib';
 import { Db_CompilerFlag } from './go-to-def.name-Compiler-Flag';
 import { Db_EDK2Define } from './go-to-def.name-EDK2-DEFINE';
 import { Db_Pcd } from './go-to-def.name-Pcd';
-import { ParsedFileResult, hashPathSHA256_64 } from './db-lib';
 
 // Internal EDK2INF parsing data structure
 interface InfParsedFileResult {
@@ -152,13 +152,15 @@ export async function DbIndexing_Lang_EDK2INF(context: vscode.ExtensionContext) 
         const files = await vscode.workspace.findFiles(fileGlobPattern);
         const targetFiles = files.filter(file => !isGitIgnorePath(file));
 
-        // prase all files
-        const parseAllResults = await Promise.all(
-            targetFiles.map(file => parseFile(file).catch(err => {
+        // Parse all files with a maximum concurrency limit
+        const parseAllResults = await mapConcurrent(targetFiles, 30, async (file) => {
+            try {
+                return await parseFile(file);
+            } catch (err) {
                 console.error(`[EDK2] Failed to parse file: ${file.fsPath}`, err);
                 return null;
-            }))
-        );
+            }
+        });
 
         // Filter out unresolved or errored files
         const validResults = parseAllResults.filter((res): res is InfParsedFileResult => res !== null);

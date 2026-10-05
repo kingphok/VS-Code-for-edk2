@@ -23,6 +23,31 @@ export interface genericCacheLayout {
     reverse_index: Map<string, string[]>;
 }
 
+// Executes asynchronous tasks over an array with a maximum concurrency limit
+// @param items       - Array of data items to process
+// @param concurrency - Maximum number of tasks allowed to run concurrently
+// @param fn          - Asynchronous worker function applied to each item
+// @returns           - A promise that resolves to an array of results in the original order
+export async function mapConcurrent<T, R>(
+    items: T[],
+    concurrency: number,
+    fn: (item: T) => Promise<R>
+): Promise<R[]> {
+    const results: R[] = new Array(items.length);
+    let index = 0;
+
+    // Spawn workers up to the concurrency limit or total item count
+    const workers = Array.from({ length: Math.min(concurrency, items.length) }, async () => {
+        while (index < items.length) {
+            const currentIndex = index++;
+            results[currentIndex] = await fn(items[currentIndex]);
+        }
+    });
+
+    await Promise.all(workers);
+    return results;
+}
+
 // SHA-256 / SHA-1 Truncation）
 export function hashPathSHA256_64(filePath: string): string {
     // First 16 characters (64 bits) of SHA256

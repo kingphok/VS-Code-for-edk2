@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import { isGitIgnorePath, getAllowedFileExtensions} from './path-filter';
+import { ParsedFileResult, mapConcurrent, hashPathSHA256_64 } from './db-lib';
 import { Db_HiiImageToken } from './go-to-def.name-HII-Image-Token';
-import { ParsedFileResult, hashPathSHA256_64 } from './db-lib';
 
 const stringTokenRegex = /^\s*#image\s+([A-Za-z0-9_]+)/gm;
 
@@ -77,13 +77,15 @@ export async function DbIndexing_Lang_EDK2IDF(context: vscode.ExtensionContext) 
         const files = await vscode.workspace.findFiles(fileGlobPattern);
         const targetFiles = files.filter(file => !isGitIgnorePath(file));
 
-        // prase all files
-        const parseAllResults = await Promise.all(
-            targetFiles.map(file => parseFile(file).catch(err => {
+        // Parse all files with a maximum concurrency limit
+        const parseAllResults = await mapConcurrent(targetFiles, 30, async (file) => {
+            try {
+                return await parseFile(file);
+            } catch (err) {
                 console.error(`[EDK2] Failed to parse file: ${file.fsPath}`, err);
                 return null;
-            }))
-        );
+            }
+        });
 
         // First init cache
         await Db_HiiImageToken.initGenCache(parseAllResults);
