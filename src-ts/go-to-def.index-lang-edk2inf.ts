@@ -34,7 +34,7 @@ async function parseFile(uri: vscode.Uri):Promise<InfParsedFileResult> {
 
     // regex patterns on EDK2INF
     // Track words and positions for each category independently
-    const CompilerFlagRegex = /(?:-|\/)D\s*([A-Za-z_][A-Za-z0-9_]*)(?!\/)/g;
+    const CompilerFlagRegex = /(?:^|\s)(?:-|\/)D\s*([A-Za-z_][A-Za-z0-9_]*)(?![A-Za-z0-9_]*[\/\.])/g;
     const compilerFlagWordsSet = new Set<string>();
     const compilerFlagWithPos: ParsedFileResult['wordsWithPos'] = [];
 
