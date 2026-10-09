@@ -16,10 +16,8 @@ const targetLanguages_Compiler_Flag = [
 ];
 
 // db settings
-export const DB_JSON_CompilerFlag: string = "DB.Compiler-flag.json";
-export const DB_VERSION:           string = "1.0";
 export const Cache_CompilerFlag: genericCacheLayout = {
-    version: DB_VERSION,
+    version: "1.0",
     paths: new Map(),
     forward_index: new Map(),
     reverse_index: new Map()

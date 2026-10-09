@@ -64,12 +64,6 @@ async function unindexSingleFile(uri: vscode.Uri) {
 }
 
 export async function DbIndexing_Lang_EDK2UNI(context: vscode.ExtensionContext) {
-    const isEmpty = await Db_HiiStringToken.readCache((cache) => cache.paths.size === 0);
-    if (!isEmpty) {
-        console.log('[EDK2] HII String Token: Get DB done');
-        return;
-    }
-
     try {
         // Get allowed file extension -> find all files -> Excluding file by gitignore paths
         const fileGlobPattern = getAllowedFileExtensions(['uni', 'UNI'], 'edk2uni');
@@ -88,9 +82,9 @@ export async function DbIndexing_Lang_EDK2UNI(context: vscode.ExtensionContext) 
 
         // First init cache
         await Db_HiiStringToken.initGenCache(parseAllResults);
-        console.log('[EDK2] HII String Token: DB init done');
+        console.log('[EDK2] UNI all DB init done');
     } catch (err) {
-        console.error('[EDK2] HII String Token: DB init failed.', err);
+        console.error('[EDK2] UNI: DB init failed.', err);
     }
 }
 

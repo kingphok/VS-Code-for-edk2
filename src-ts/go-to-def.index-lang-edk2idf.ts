@@ -65,12 +65,6 @@ async function unindexSingleFile(uri: vscode.Uri) {
 }
 
 export async function DbIndexing_Lang_EDK2IDF(context: vscode.ExtensionContext) {
-    const isEmpty = await Db_HiiImageToken.readCache((cache) => cache.paths.size === 0);
-    if (!isEmpty) {
-        console.log('[EDK2] HII Image Token: Get DB done');
-        return;
-    }
-
     try {
         // Get allowed file extension -> find all files -> Excluding file by gitignore paths
         const fileGlobPattern = getAllowedFileExtensions(['idf'], 'edk2idf')
@@ -89,9 +83,9 @@ export async function DbIndexing_Lang_EDK2IDF(context: vscode.ExtensionContext) 
 
         // First init cache
         await Db_HiiImageToken.initGenCache(parseAllResults);
-        console.log('[EDK2] HII Image Token: DB init done');
+        console.log('[EDK2] IDF all DB init done');
     } catch (err) {
-        console.error('[EDK2] HII Image Token: DB init failed.', err);
+        console.error('[EDK2] IDF: DB init failed.', err);
     }
 }
 

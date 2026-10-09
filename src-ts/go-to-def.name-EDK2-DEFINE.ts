@@ -9,10 +9,8 @@ const targetLanguages_EDK2_DEFINE = [
 ];
 
 // db settings
-export const DB_JSON_Db_EDK2Define: string = "DB.EDK2-Define.json";
-export const DB_VERSION:            string = "1.0";
 export const Cache_EDK2Define: genericCacheLayout = {
-    version: DB_VERSION,
+    version: "1.0",
     paths: new Map(),
     forward_index: new Map(),
     reverse_index: new Map()

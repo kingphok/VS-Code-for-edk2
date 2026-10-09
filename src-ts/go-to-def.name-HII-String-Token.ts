@@ -7,11 +7,8 @@ const targetLanguages_HII_String_Token = [
 ];
 
 // db settings
-export const DB_JSON_HiiStringToken: string = "DB.HII-String-Token.json";
-export const DB_VERSION:             string = "1.0";
-
 export const Cache_HiiStringToken: genericCacheLayout = {
-    version: DB_VERSION,
+    version: "1.0",
     paths: new Map(),
     forward_index: new Map(),
     reverse_index: new Map()

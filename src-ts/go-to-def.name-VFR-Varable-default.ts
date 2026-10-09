@@ -8,10 +8,8 @@ const targetLanguages_VFR_Variable_default = [
 ];
 
 // db settings
-export const DB_JSON_VfrVariableDefault: string = "DB.VFR-Varable-default.json";
-export const DB_VERSION:                 string = "1.0";
 export const Cache_VfrVariableDefault: genericCacheLayout = {
-    version: DB_VERSION,
+    version: "1.0",
     paths: new Map(),
     forward_index: new Map(),
     reverse_index: new Map()

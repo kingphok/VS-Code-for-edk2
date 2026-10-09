@@ -20,10 +20,8 @@ const targetLanguages_Pcd = [
 ];
 
 // db settings
-export const DB_JSON_Pcd: string = "DB.Pcd.json";
-export const DB_VERSION:  string = "1.0";
 export const Cache_Pcd:   genericCacheLayout = {
-    version: DB_VERSION,
+    version: "1.0",
     paths: new Map(),
     forward_index: new Map(),
     reverse_index: new Map()

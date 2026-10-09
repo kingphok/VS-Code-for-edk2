@@ -5,7 +5,7 @@ import { definitionProvider_Compiler_Flag }         from './go-to-def.name-Compi
 import { definitionProvider_EDK2_DEFINE }           from './go-to-def.name-EDK2-DEFINE';
 import { definitionProvider_HII_Image_Token }       from './go-to-def.name-HII-Image-Token';
 import { definitionProvider_HII_String_Token }      from './go-to-def.name-HII-String-Token';
-import { definitionProvider_Module_Entry_Point }    from './go-to-def.name-Module-Entry-Point';
+//import { definitionProvider_Module_Entry_Point }    from './go-to-def.name-Module-Entry-Point';
 import { definitionProvider_Pcd }                   from './go-to-def.name-Pcd';
 import { definitionProvider_Protocol_Ppi_Guid }     from './go-to-def.name-Protocol-Ppi-Guid';
 import { definitionProvider_VFR_goto_form }         from './go-to-def.name-VFR-goto-form';
@@ -36,10 +36,11 @@ async function DatabaseIndexing(context: vscode.ExtensionContext) {
 
     const endTime = performance.now();
     console.log(`[EDK2] DatabaseIndexing: ${(endTime - startTime).toFixed(2)} ms`);
+    vscode.window.showInformationMessage(`[EDK2] Indexing completed in ${(endTime - startTime).toFixed(2)} ms`);
 }
 
 function DatabaseWatching(context: vscode.ExtensionContext) {
-    const startTime = performance.now();
+//    const startTime = performance.now();
 
     // Watch file and index it for go to definition database
     context.subscriptions.push(
@@ -52,8 +53,8 @@ function DatabaseWatching(context: vscode.ExtensionContext) {
         Watcher_Lang_EDK2VFR()
     );
 
-    const endTime = performance.now();
-    console.log(`[EDK2] DatabaseWatching: ${(endTime - startTime).toFixed(2)} ms`);
+//    const endTime = performance.now();
+//    console.log(`[EDK2] DatabaseWatching: ${(endTime - startTime).toFixed(2)} ms`);
 }
 
 export async function activate(context: vscode.ExtensionContext) {
@@ -67,6 +68,7 @@ export async function activate(context: vscode.ExtensionContext) {
     const workspace = vscode.workspace.workspaceFile;
     if (!workspace || workspace.scheme === 'untitled') {
         console.log('[EDK2] Some function of extension have been activated!');
+//        vscode.window.showInformationMessage('[EDK2] Some function of extension have been activated!');
         return;
     }
 
@@ -76,7 +78,7 @@ export async function activate(context: vscode.ExtensionContext) {
         definitionProvider_EDK2_DEFINE(),
         definitionProvider_HII_Image_Token(),
         definitionProvider_HII_String_Token(),
-        definitionProvider_Module_Entry_Point(),
+//        definitionProvider_Module_Entry_Point(),
         definitionProvider_Pcd(),
         definitionProvider_Protocol_Ppi_Guid(),
         definitionProvider_VFR_goto_form(),
@@ -93,7 +95,7 @@ export async function activate(context: vscode.ExtensionContext) {
     DatabaseWatching(context);
 
     console.log('[EDK2] All function of extension have been activated!');
-    //    vscode.window.showInformationMessage('[EDK2] Extension has been successfully compiled and activated!');
+//    vscode.window.showInformationMessage('[EDK2] All function of extension have been activated!');
 }
 
 export async function deactivate() {

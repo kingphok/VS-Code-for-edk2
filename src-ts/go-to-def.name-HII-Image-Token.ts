@@ -7,10 +7,8 @@ const targetLanguages_HII_Image_Token = [
 ];
 
 // db settings
-export const DB_JSON_HiiImageToken: string = "DB.HII-Image-Token.json";
-export const DB_VERSION:            string = "1.0";
 export const Cache_HiiImageToken: genericCacheLayout = {
-    version: DB_VERSION,
+    version: "1.0",
     paths: new Map(),
     forward_index: new Map(),
     reverse_index: new Map()

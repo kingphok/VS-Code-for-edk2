@@ -220,21 +220,21 @@ export class DbLib<T extends genericCacheLayout = genericCacheLayout> {
         });
     }
 
-    exportCacheToDisk(
-        targetFileName: string,
-        dbVersion: string,
-        dbCache: T
-    ): void {
-        // TODO: Implement export cache to disk
-    }
+    // exportCacheToDisk(
+    //     targetFileName: string,
+    //     dbVersion: string,
+    //     dbCache: T
+    // ): void {
+    //     // TODO: Implement export cache to disk
+    // }
 
-    async importCacheFromDisk(
-        targetFileName: string,
-        dbVersion: string
-    ): Promise<T | null> {
-        // TODO: Implement import cache from disk
-        return null;
-    }
+    // async importCacheFromDisk(
+    //     targetFileName: string,
+    //     dbVersion: string
+    // ): Promise<T | null> {
+    //     // TODO: Implement import cache from disk
+    //     return null;
+    // }
 
     // Gets locations then resolving to vscode.Location array.
     public async getLocations(word: string, rootUri: vscode.Uri): Promise<vscode.Location[] | null> {
