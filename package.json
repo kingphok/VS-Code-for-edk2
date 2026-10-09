@@ -5,7 +5,7 @@
   "version": "0.0.1",
   "publisher": "your-publisher-id",
   "engines": {
-    "vscode": "^1.120.0"
+    "vscode": "^1.140.0"
   },
   "categories": [
     "Programming Languages"
@@ -15,14 +15,17 @@
     "onStartupFinished"
   ],
   "scripts": {
-    "vscode:prepublish": "npm run compile",
-    "compile": "tsc -p ./",
-    "watch": "tsc -watch -p ./",
+    "vscode:prepublish": "npm run package",
+    "compile": "tsc -p ./ --noEmit && node esbuild.js",
+    "watch": "node esbuild.js --watch",
+    "package": "tsc -p ./ --noEmit && node esbuild.js --production",
+    "check-types": "tsc -p ./ --noEmit",
     "pretest": "npm run compile && npm run lint",
     "lint": "eslint src --ext .ts"
   },
   "devDependencies": {
-    "@types/vscode": "^1.125.0",
+    "@types/vscode": "^1.140.0",
+    "esbuild": "^0.28.2",
     "typescript": "^7.0.2"
   },
   "contributes": {

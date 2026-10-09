@@ -1,6 +1,6 @@
 {
     "compilerOptions": {
-        "module": "commonjs",
+        "module": "ESNext",
         "target": "ES2022",
         "moduleResolution": "bundler",
         "ignoreDeprecations": "6.0",
