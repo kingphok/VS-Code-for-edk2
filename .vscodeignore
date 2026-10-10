@@ -1,0 +1,15 @@
+**/*.map
+**/*.ts
+**/*.yaml
+
+.github/**
+.vscode/**
+datasets/**
+src-ts/**
+src-yaml/**
+
+.gitignore
+.gitmodules
+esbuild.js
+tsconfig.json
+yaml2js.ps1
