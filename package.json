@@ -4,6 +4,9 @@
   "description": "VS Code Extension for reading EDK2 Language easily.",
   "version": "0.0.1",
   "publisher": "your-publisher-id",
+  "sponsor": {
+  "url": "https://ko-fi.com/kingphok"
+  },
   "icon": "images/logo.png",
   "galleryBanner": {
     "color": "#3A3A3A",
