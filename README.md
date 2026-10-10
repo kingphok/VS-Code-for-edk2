@@ -22,9 +22,9 @@ More detail information in https://hackmd.io/@kingphok/SyZZAX3SMg
 ## Screenshot
 - Notification for indexing completed
 ![Example-Notification](https://raw.githubusercontent.com/kingphok/VS-Code-for-edk2/refs/heads/main/datasets/screenshot/Example-Notification.png)
-- Go to definition - F12 example for PCD
+- Go to definition - F12 example for Compiler Flag
 ![Example-GoToDefinition_Compiler_Flag](https://raw.githubusercontent.com/kingphok/VS-Code-for-edk2/refs/heads/main/datasets/screenshot/Example-GoToDefinition_Compiler_Flag.png)
-- Go to definition - F12 example for Guid
+- Go to definition - F12 example for EDK2 DEFINE
 ![Example-GoToDefinition_EDK2_DEFINE](https://raw.githubusercontent.com/kingphok/VS-Code-for-edk2/refs/heads/main/datasets/screenshot/Example-GoToDefinition_EDK2_DEFINE.png)
 - Go to definition - F12 example for PCD
 ![Example-GoToDefinition_Pcd](https://raw.githubusercontent.com/kingphok/VS-Code-for-edk2/refs/heads/main/datasets/screenshot/Example-GoToDefinition_Pcd.png)
