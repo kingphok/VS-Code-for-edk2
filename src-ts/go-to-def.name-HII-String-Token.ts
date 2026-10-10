@@ -3,7 +3,8 @@ import {genericCacheLayout, DbLib} from './db-lib';
 
 const targetLanguages_HII_String_Token = [
     { language: 'edk2vfr' },
-    { pattern: '**/*.c' }
+    { pattern: '**/*.c' },
+    { pattern: '**/*.cpp' },
 ];
 
 // db settings
