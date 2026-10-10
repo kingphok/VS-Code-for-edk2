@@ -2,6 +2,7 @@ node_modules/
 out/
 
 datasets/*
+**/*.vsix
 
 !datasets/.gitkeep
 !datasets/edk2-DecSpecification
@@ -11,4 +12,5 @@ datasets/*
 !datasets/edk2-InfSpecification
 !datasets/edk2-UniSpecification
 !datasets/edk2-VfrSpecification
+!datasets/screenshot/*
 !datasets/test/*
