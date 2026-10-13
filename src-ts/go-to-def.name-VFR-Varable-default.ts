@@ -17,7 +17,7 @@ export const Cache_VfrVariableDefault: genericCacheLayout = {
 export const Db_VfrVariableDefault = new DbLib(Cache_VfrVariableDefault);
 
 // Caller file syntax: $(structure).$(structure_parameter)
-const VFR_Varable_default_CALLER_REGEX = /(?<=\.)[a-zA-Z_][a-zA-Z0-9_]*\b/;
+const VFR_Varable_default_CALLER_REGEX = /(?<=\.|->)[a-zA-Z_][a-zA-Z0-9_]*\b/;
 
 class main_VfrVariableDefultProvider implements vscode.DefinitionProvider {
     async provideDefinition(
